@@ -2,6 +2,20 @@
 
 Newest first. Each entry: context, decision, consequences.
 
+## D-016 Edge Functions use the Anthropic SDK from npm under Deno (2026-10-27)
+Decision: `_shared/vision/anthropic.ts` calls `client.beta.messages.create` from `@anthropic-ai/sdk@1.3.0` with `fallbacks: "default"` so a safety refusal is retried on a fallback model inside the same call. Default `VISION_MODEL` is `claude-opus-5-5`; `claude-sonnet-5-5` and `claude-haiku-5-5` are the cheaper switches (see `docs/COSTS.md`). The adapter is the only file that knows the provider.
+
+## D-015 Metadata stripping happens in two places (2026-10-27)
+Context: the client uploads straight to private Storage, so a server cannot sit in the upload path without a second function.
+Decision: the client re-encodes every photo to a fresh JPEG with `expo-image-manipulator` (no EXIF is carried over). `analyze-meal` and `read-label` additionally strip APP1 to APP15 and COM segments byte-wise and overwrite the stored object when anything was removed, before sending bytes to the provider. Photos uploaded with consent off are never sent anywhere.
+
+## D-014 AI output schema carries an optional nutrient estimate (2026-10-27)
+Context: the brief's output shape has no nutrient numbers, but the fallback rule needs AI-estimated nutrients when no source matches.
+Decision: `analyzedItemSchema.nutrients_per100_estimate` (nullable). It is used only when `search_foods` finds no match above the similarity threshold, and the resulting row is a user-owned `foods` record with `source = ai_estimate`.
+
+## D-013 Clarifying answers are applied deterministically on the client (2026-10-27)
+Decision: counts multiply the per-unit portion the model was told to return; size words scale grams (small 0.75, large 1.3); fraction words set `fraction_eaten`; fat answers add a separate oil, butter or ghee item from `FAT_PER100`; ingredient answers become assumptions. No second model call is made for answers. Logic in `apps/mobile/src/features/photo/analyze.ts`.
+
 ## D-012 Email magic link plus password sign-in (2026-10-27)
 Context: the spec asks for magic links. Playwright cannot click a mailed link in CI, and the Supabase provider is unchanged either way.
 Decision: Supabase Auth with magic link as the primary path and email + password as a second path on the same screen. E2E tests sign in with a seeded password user.

@@ -27,7 +27,7 @@ const valid = {
 
 describe('analyzeMealResponseSchema', () => {
   it('accepts a well-formed response', () => {
-    expect(analyzeMealResponseSchema.parse(valid)).toEqual(valid);
+    expect(analyzeMealResponseSchema.parse(valid)).toMatchObject(valid);
   });
 
   it('rejects more than four questions', () => {

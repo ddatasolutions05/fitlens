@@ -17,6 +17,17 @@ export const analyzedItemSchema = z.object({
   db_query_terms: z.array(z.string().min(1).max(60)).min(1).max(6),
   confidence: confidenceSchema,
   uncertainty_drivers: z.array(z.string().max(120)).max(6),
+  // Used only when no database source matches. Labelled "AI estimate" in the app.
+  nutrients_per100_estimate: z
+    .object({
+      kcal: z.number().min(0).max(900).nullable(),
+      protein_g: z.number().min(0).max(100).nullable(),
+      carbs_g: z.number().min(0).max(100).nullable(),
+      fat_g: z.number().min(0).max(100).nullable(),
+      fibre_g: z.number().min(0).max(60).nullable(),
+    })
+    .nullable()
+    .default(null),
 });
 
 export const packagedItemSchema = z.object({
