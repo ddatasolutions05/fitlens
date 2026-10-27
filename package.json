@@ -1,0 +1,42 @@
+{
+  "name": "fitlens",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm -w apps/mobile run web",
+    "typecheck": "npm -w packages/core run typecheck && npm -w packages/schemas run typecheck && npm -w apps/mobile run typecheck",
+    "lint": "eslint packages scripts supabase/test && npm -w apps/mobile run lint",
+    "test": "vitest run --project core --project schemas",
+    "test:db": "vitest run --project db",
+    "test:e2e": "playwright test",
+    "test:all": "npm run test && npm run test:db",
+    "migrate": "tsx scripts/db/migrate.ts",
+    "db:reset": "tsx scripts/db/migrate.ts --reset",
+    "seed": "tsx scripts/food-import/run.ts",
+    "functions:check": "node scripts/functions-check.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^24.0.0",
+    "@types/pg": "^8.15.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.0",
+    "@typescript-eslint/parser": "^8.46.0",
+    "dotenv": "^17.0.0",
+    "eslint": "^9.39.0",
+    "pg": "^8.16.0",
+    "tsx": "^4.20.0",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.5"
+  },
+  "overrides": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
