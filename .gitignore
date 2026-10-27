@@ -20,3 +20,6 @@ evals/meal-photos/**/*.png
 evals/meal-photos/**/*.heic
 evals/meal-photos/**/results/
 .vscode/
+e2e/fixtures/*.jpg
+e2e/fixtures/*.jpeg
+e2e/fixtures/*.png
