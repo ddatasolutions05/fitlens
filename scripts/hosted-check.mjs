@@ -12,8 +12,8 @@ page.on('pageerror', (e) => errors.push(String(e)));
 await page.goto(base, { waitUntil: 'networkidle' });
 await page.waitForTimeout(3000);
 const signIn = await page.getByTestId('sign-in-screen').isVisible().catch(() => false);
-const google = await page.getByText('Google sign-in: not configured').isVisible().catch(() => false);
-console.log(`root: url=${page.url()} signIn=${signIn} providerStatus=${google}`);
+const providers = await page.locator('[data-testid^="oauth-"]').count();
+console.log(`root: url=${page.url()} signIn=${signIn} oauthButtons=${providers}`);
 
 await page.goto(`${base}today`, { waitUntil: 'networkidle' });
 await page.waitForTimeout(3000);
