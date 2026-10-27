@@ -50,6 +50,19 @@ browser keeps the old bundle and e2e results lie.
   inserting through the Management API. With the database password the
   direct route is `DATABASE_URL=<pooler url> npm run seed -- --source all`.
 - E2E: `e2e/global-setup.ts` wipes the e2e user's rows before each run.
+- Photo spec: `E2E_VISION_CONFIGURED=1` plus a real photo at `e2e/fixtures/meal.jpg` (gitignored, never commit third-party images).
+
+## Hosting (GitHub Pages)
+
+- Repo `ddatasolutions05/fitlens` (public; Pages needs a public repo on the free plan).
+- Every push to `main` runs `.github/workflows/ci.yml` and `deploy.yml`. The deploy
+  exports the web build with `EXPO_PUBLIC_BASE_PATH=/fitlens` (sub-path hosting
+  via `experiments.baseUrl` in `app.config.js`) and publishes to
+  https://ddatasolutions05.github.io/fitlens/ with `404.html` as the SPA fallback.
+- Build-time values come from repo variables `EXPO_PUBLIC_SUPABASE_URL` and
+  `EXPO_PUBLIC_SUPABASE_ANON_KEY` (`gh variable set`). No secrets in the build.
+- The Pages URL is in the Supabase auth allow list and is the site URL, so
+  confirmation, magic-link and recovery emails point there.
 
 ## Local toolchain on this machine
 
