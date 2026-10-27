@@ -32,8 +32,11 @@ jobs:
           EXPO_PUBLIC_SUPABASE_URL: ${{ vars.EXPO_PUBLIC_SUPABASE_URL }}
           EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
           EXPO_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
-      - name: SPA fallback for client-side routes
-        run: cp apps/mobile/dist/index.html apps/mobile/dist/404.html && touch apps/mobile/dist/.nojekyll
+      - name: Sub-path asset links and SPA fallback
+        run: |
+          sed -i 's#href="/manifest.webmanifest"#href="/${{ github.event.repository.name }}/manifest.webmanifest"#; s#href="/icons/#href="/${{ github.event.repository.name }}/icons/#' apps/mobile/dist/index.html
+          cp apps/mobile/dist/index.html apps/mobile/dist/404.html
+          touch apps/mobile/dist/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
           path: apps/mobile/dist
