@@ -390,7 +390,7 @@ isOneToOne: false
                   ]
                 },"daily_totals": {
                   Row: {
-                    "carbs_g": number | null,"carbs_unknown": number | null,"fat_g": number | null,"fat_unknown": number | null,"fibre_g": number | null,"fibre_unknown": number | null,"item_count": number | null,"kcal": number | null,"kcal_high": number | null,"kcal_low": number | null,"kcal_unknown": number | null,"local_date": string,"meal_count": number | null,"protein_g": number | null,"protein_unknown": number | null,"sat_fat_g": number | null,"sat_fat_unknown": number | null,"sodium_mg": number | null,"sodium_unknown": number | null,"user_id": string
+                    "carbs_g": number | null,"carbs_unknown": number | null,"fat_g": number | null,"fat_unknown": number | null,"fibre_g": number | null,"fibre_unknown": number | null,"item_count": number | null,"kcal": number | null,"kcal_high": number | null,"kcal_low": number | null,"kcal_unknown": number | null,"local_date": string,"meal_count": number | null,"protein_g": number | null,"protein_unknown": number | null,"ranged_count": number | null,"sat_fat_g": number | null,"sat_fat_unknown": number | null,"sodium_mg": number | null,"sodium_unknown": number | null,"user_id": string
                   }
                   ComputedFields: never
                   Relationships: [
@@ -407,7 +407,10 @@ isOneToOne: false
                 }
           }
           Functions: {
-            "goal_for_date":
+            "add_ai_cost":
+{ Args: { "p_cost": number,"p_local_date": string,"p_user": string }; Returns: undefined
+                           },
+"goal_for_date":
 { Args: { "p_date": string }; Returns: {
               "activity_level": string,
 "activity_mode": string,
@@ -434,6 +437,9 @@ isOneToOne: false
         isOneToOne: false
         isSetofReturn: true
       } },
+"increment_ai_usage":
+{ Args: { "p_cap": number,"p_cost"?: number,"p_kind": string,"p_local_date": string,"p_user": string }; Returns: boolean
+                           },
 "search_foods":
 { Args: { "p_limit"?: number,"p_query": string }; Returns: {
               "attribution": string,"brand": string,"carbs_g": number,"default_serving_g": number,"fat_g": number,"favourite": boolean,"fibre_g": number,"id": string,"kcal": number,"name": string,"owner_user_id": string,"protein_g": number,"rank_bucket": number,"sat_fat_g": number,"similarity": number,"sodium_mg": number,"source": string,"use_count": number,"usual_grams": number,"variant_label": string,"verified": boolean

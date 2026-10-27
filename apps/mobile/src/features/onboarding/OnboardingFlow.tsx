@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import {
   ACTIVITY_LEVEL_LABELS,
@@ -112,6 +112,7 @@ export function OnboardingFlow() {
   const logWeight = useLogWeight();
   const tz = deviceTimeZone();
   const today = todayLocal(tz);
+  const weightId = useRef(newIdempotencyKey());
 
   const set = <K extends keyof Answers>(key: K, value: Answers[K]) => setA((prev) => ({ ...prev, [key]: value }));
 
@@ -180,7 +181,6 @@ export function OnboardingFlow() {
         training_days_per_week: a.trainingDays,
         training_type: a.trainingType.trim() || null,
         training_minutes: a.trainingMinutes,
-        onboarding_completed_at: new Date().toISOString(),
       });
       await upsertPrefs.mutateAsync({
         diet_pattern: a.dietPattern,
@@ -190,9 +190,10 @@ export function OnboardingFlow() {
         ai_photo_consent_at: a.aiConsent ? new Date().toISOString() : null,
         ai_consent_version: a.aiConsent ? config.aiConsentVersion : null,
       });
-      await logWeight.mutateAsync({ id: newIdempotencyKey(), kg: Math.round(kg * 100) / 100, measuredAt: new Date().toISOString(), localDate: today, tz, note: 'Entered during setup' });
+      await logWeight.mutateAsync({ id: weightId.current, kg: Math.round(kg * 100) / 100, measuredAt: new Date().toISOString(), localDate: today, tz, note: 'Entered during setup' });
       await addGoal.mutateAsync(plan.row);
-      router.replace('/(tabs)/today');
+      await upsertProfile.mutateAsync({ onboarding_completed_at: new Date().toISOString() });
+      router.replace('/today');
     } catch (err) {
       setError(errorMessage(err));
     } finally {

@@ -208,6 +208,7 @@ function TargetsForm({ p, current, kg, today }: { p: ProfileRow; current: GoalVe
         ))}
       </Card>
 
+      {trackingOnly ? null : (
       <Card style={{ gap: space.md }}>
         <Segmented<'calc' | 'manual'>
           label="Override"
@@ -230,6 +231,7 @@ function TargetsForm({ p, current, kg, today }: { p: ProfileRow; current: GoalVe
           </View>
         ) : null}
       </Card>
+      )}
 
       {error ? (
         <Text color="danger" variant="small">

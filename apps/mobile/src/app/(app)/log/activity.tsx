@@ -5,6 +5,7 @@ import { WORKOUT_TYPES, deviceTimeZone, localDateTimeToIso, todayLocal, workoutE
 
 import { useLogSteps, useLogWorkout } from '@/features/logs/hooks';
 import { newIdempotencyKey } from '@/features/meals/model';
+import { errorMessage } from '@/lib/net';
 import { useLatestWeight } from '@/features/profile/hooks';
 import { Button, Card, Input, NumberField, Screen, Segmented, Text, space } from '@/ui';
 
@@ -33,6 +34,7 @@ export default function LogActivity() {
 
   async function save() {
     setError(null);
+    try {
     if (kind === 'steps') {
       if (steps == null || steps < 0 || steps > 100000) {
         setError('Enter steps between 0 and 100,000.');
@@ -47,6 +49,9 @@ export default function LogActivity() {
       await logWorkout.mutateAsync({ id: newIdempotencyKey(), type, intensity, minutes, localDate, tz, startAt, kg, note: note.trim() || null });
     }
     router.back();
+    } catch (err) {
+      setError(errorMessage(err));
+    }
   }
 
   return (

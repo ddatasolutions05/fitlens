@@ -1,2 +1,2 @@
-export * from './ai';
-export * from './functions';
+export * from './ai.ts';
+export * from './functions.ts';

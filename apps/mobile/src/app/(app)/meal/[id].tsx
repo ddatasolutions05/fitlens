@@ -25,7 +25,7 @@ export default function MealDetail() {
       ) : meal.isError ? (
         <ErrorState message={(meal.error as Error).message} onRetry={() => meal.refetch()} />
       ) : !meal.data ? (
-        <EmptyState title="Meal not found" body="It may have been deleted." action={{ label: 'Back to Today', onPress: () => router.replace('/(tabs)/today') }} />
+        <EmptyState title="Meal not found" body="It may have been deleted." action={{ label: 'Back to Today', onPress: () => router.replace('/today') }} />
       ) : (
         <MealEditor mode="existing" />
       )}

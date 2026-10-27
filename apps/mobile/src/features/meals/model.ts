@@ -53,6 +53,8 @@ export interface MealDraft {
   title: string | null;
   items: DraftItem[];
   photos: DraftPhoto[];
+  /** True when this meal was already confirmed before the current edit. */
+  previouslyConfirmed: boolean;
 }
 
 export function newLocalId(): string {
@@ -84,6 +86,7 @@ export function emptyDraft(i: { localDate: string; eatenAt: string; tz: string; 
     title: null,
     items: [],
     photos: [],
+    previouslyConfirmed: false,
   };
 }
 
@@ -133,13 +136,9 @@ export function draftTotals(items: DraftItem[]): DraftTotals {
   const per = items.map(itemNutrients);
   const totals = sumNutrients(per.map((p) => p.nutrients));
   const ranges = per.map((p) => p.kcalRange).filter((r): r is [number, number] => r != null);
+  const pointSum = per.filter((p) => !p.kcalRange && p.nutrients.kcal != null).reduce((a, p) => a + (p.nutrients.kcal as number), 0);
   const kcalRangeTotal: [number, number] | null =
-    ranges.length > 0
-      ? [
-          ranges.reduce((a, r) => a + r[0], 0) + per.filter((p) => !p.kcalRange).reduce((a, p) => a + (p.nutrients.kcal ?? 0), 0),
-          ranges.reduce((a, r) => a + r[1], 0) + per.filter((p) => !p.kcalRange).reduce((a, p) => a + (p.nutrients.kcal ?? 0), 0),
-        ]
-      : null;
+    ranges.length > 0 ? [ranges.reduce((a, r) => a + r[0], 0) + pointSum, ranges.reduce((a, r) => a + r[1], 0) + pointSum] : null;
   return { ...totals, kcalRange: kcalRangeTotal };
 }
 

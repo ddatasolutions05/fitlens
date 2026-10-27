@@ -40,7 +40,7 @@ export function ensureDraft(i: { localDate: string; source: MealSource; tz?: str
   const now = new Date();
   const isToday = i.localDate === todayLocal(tz);
   const eatenAt = isToday ? now.toISOString() : localDateTimeToIso(i.localDate, '12:00', tz);
-  if (!draft || draft.mealId || draft.localDate !== i.localDate) {
+  if (!draft || draft.localDate !== i.localDate) {
     draft = emptyDraft({ localDate: i.localDate, eatenAt, tz, mealType: mealTypeForHour(isToday ? now.getHours() : 12), source: i.source });
     emit();
   }

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { analyzeMealResponseSchema, labelReadSchema } from './ai';
+import { analyzeMealResponseSchema, labelReadSchema } from './ai.ts';
 
 // analyze-meal
 export const analyzeMealRequestSchema = z.object({

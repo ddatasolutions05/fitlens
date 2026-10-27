@@ -32,11 +32,20 @@ test.describe('manual food log', () => {
     await gramsInput.fill('50');
     await expect(page.getByTestId('meal-kcal')).toContainText('200');
 
+    // A draft must not count: keep it, check Today, then come back and confirm.
+    await page.getByTestId('save-draft').click();
+    await expect(page.getByTestId('today-screen')).toBeVisible();
+    const draftRow = page.locator('[data-testid^="meal-"]').filter({ hasText: 'E2E test bar' }).first();
+    await expect(draftRow).toContainText('Draft');
+    const eatenBefore = (await page.locator('[aria-label^="Calories:"]').first().getAttribute('aria-label')) ?? '';
+    await draftRow.click();
     await page.getByTestId('confirm-meal').click();
     await expect(page.getByTestId('meal-confirmed')).toBeVisible();
     await page.getByTestId('done').click();
 
     await expect(page.getByTestId('today-screen')).toBeVisible();
+    const eatenAfter = (await page.locator('[aria-label^="Calories:"]').first().getAttribute('aria-label')) ?? '';
+    expect(eatenAfter).not.toBe(eatenBefore);
     const mealRow = page.locator('[data-testid^="meal-"]').filter({ hasText: 'E2E test bar' }).first();
     await expect(mealRow).toContainText('200 kcal');
 

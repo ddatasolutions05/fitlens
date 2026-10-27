@@ -35,7 +35,7 @@ export default function DiaryScreen() {
           <View style={{ gap: space.sm }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <Text variant="heading">Meals</Text>
-              <Button label="Add food" size="sm" variant="secondary" onPress={() => router.push({ pathname: '/food/search', params: { date: localDate } })} />
+              <Button label="Add food" size="sm" variant="secondary" onPress={() => router.push({ pathname: '/food/search', params: { date: localDate, fresh: '1' } })} />
             </View>
             <MealTimeline meals={day.data?.meals ?? []} drafts={day.data?.drafts ?? []} hideNumbers={hideNumbers} />
           </View>

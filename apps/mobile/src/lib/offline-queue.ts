@@ -100,7 +100,7 @@ export async function runOrQueue<P>(kind: string, payload: P): Promise<{ queued:
   await load();
   const handler = handlers.get(kind);
   if (!handler) throw new Error(`No handler registered for ${kind}`);
-  if (isProbablyOnline() && queue.length === 0) {
+  if (isProbablyOnline() && queue.every((c) => c.parked)) {
     try {
       await handler(payload as never);
       return { queued: false };

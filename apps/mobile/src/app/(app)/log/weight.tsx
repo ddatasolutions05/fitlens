@@ -6,6 +6,7 @@ import { deviceTimeZone, kgToLb, lbToKg, localDateTimeToIso, timeInZone, todayLo
 import { useLogWeight } from '@/features/logs/hooks';
 import { useLatestWeight, useProfile } from '@/features/profile/hooks';
 import { newIdempotencyKey } from '@/features/meals/model';
+import { errorMessage } from '@/lib/net';
 import { Button, Card, Input, NumberField, Screen, Text, space } from '@/ui';
 
 export default function LogWeight() {
@@ -35,6 +36,7 @@ export default function LogWeight() {
       return;
     }
     setError(null);
+    try {
     await log.mutateAsync({
       id: newIdempotencyKey(),
       kg: Math.round(kg * 100) / 100,
@@ -44,6 +46,9 @@ export default function LogWeight() {
       note: note.trim() || null,
     });
     router.back();
+    } catch (err) {
+      setError(errorMessage(err));
+    }
   }
 
   return (

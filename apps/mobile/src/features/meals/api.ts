@@ -99,7 +99,7 @@ export async function saveMeal(p: SaveMealPayload): Promise<MealRow> {
     if (photoError) throw photoError;
   }
 
-  if (p.status === 'confirmed') {
+  if (p.status === 'confirmed' && !draft.previouslyConfirmed) {
     for (const item of draft.items) {
       if (item.foodId) {
         const { error: usageError } = await supabase.rpc('touch_food_usage', { p_food_id: item.foodId, p_grams: item.grams });
@@ -176,6 +176,7 @@ export function draftFromMeal(meal: MealWithItems): MealDraft {
     mealType: meal.meal_type as MealDraft['mealType'],
     source: meal.source,
     title: meal.title,
+    previouslyConfirmed: meal.status === 'confirmed',
     items: meal.meal_items.map((mi) => ({
       localId: mi.id,
       foodId: mi.food_id,

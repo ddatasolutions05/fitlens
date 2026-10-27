@@ -87,11 +87,28 @@ counts), `daily_water`, `daily_activity` (one step source per day),
 | 7 | Steps, workouts, weight, water | built, needs project | typecheck/lint clean |
 | 8 | Progress charts + post-meal feedback | built, needs project | feedback rules unit tested incl. tone |
 | 9 | Export, photo deletion, account deletion | built, needs project | functions typecheck; screens wired |
-| R | Fresh-context review against section 16 | in progress | |
+| R | Fresh-context review against section 16 | done | Found 4 P0 and 6 P1 issues; all fixed in commit "fix: review findings" (see below) |
+
+Review findings and fixes (2026-10-27): the usage RPC lived only in the
+`fitlens` schema so analyses would always fail (public wrappers added in
+migration 0009); deep links rendered before the session was known and crashed
+under static rendering (all signed-in routes moved under `app/(app)` with a
+loading gate); the schemas package used extension-less imports Deno cannot
+run (`.ts` extensions added, verified with `deno eval`); a second photo or
+"Add another item" started a new meal (draft lifecycle reworked with explicit
+`fresh` and `replace` params); the day kcal range ignored items without a
+range (view rewritten, SQL test added); tracking-only could still display a
+stale deficit target; mode B never received workouts; macros showed decimals;
+feedback double counted edited meals; three e2e selectors were wrong; pace
+lost precision in `numeric(4,3)`; onboarding marked itself complete before
+its writes finished; log modals swallowed errors; saved meals were promised
+but not surfaced (now listed under Add food).
 
 Verified live in this environment: the web build (Metro bundle compiles), the
 setup guide at 375 px with no horizontal scroll, route guards (Playwright:
-2 passed, 7 skipped with reasons).
+2 passed, 7 skipped with reasons), and that `/today`, `/scan`, `/meal/edit`
+and `/profile/targets` return 200 (not 500) when a Supabase URL is configured
+but no session exists.
 
 ## 5. Open risks
 

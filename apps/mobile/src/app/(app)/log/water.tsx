@@ -5,6 +5,7 @@ import { deviceTimeZone, localDateTimeToIso, todayLocal } from '@fitlens/core';
 
 import { useLogWater } from '@/features/logs/hooks';
 import { newIdempotencyKey } from '@/features/meals/model';
+import { errorMessage } from '@/lib/net';
 import { Button, Card, NumberField, Screen, Text, space } from '@/ui';
 
 export default function LogWater() {
@@ -14,8 +15,11 @@ export default function LogWater() {
   const isToday = localDate === todayLocal(tz);
   const log = useLogWater();
   const [custom, setCustom] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   async function add(ml: number) {
+    setError(null);
+    try {
     await log.mutateAsync({
       id: newIdempotencyKey(),
       ml: Math.round(ml),
@@ -24,6 +28,9 @@ export default function LogWater() {
       tz,
     });
     router.back();
+    } catch (err) {
+      setError(errorMessage(err));
+    }
   }
 
   return (
@@ -38,6 +45,11 @@ export default function LogWater() {
           <Button label="500 ml" style={{ flex: 1 }} onPress={() => void add(500)} loading={log.isPending} testID="water-500" />
         </View>
         <NumberField label="Custom amount (ml)" value={custom} onChangeNumber={setCustom} decimals={0} placeholder="330" testID="water-custom" />
+        {error ? (
+          <Text color="danger" variant="small">
+            {error}
+          </Text>
+        ) : null}
         <Button label="Add custom" variant="secondary" disabled={!custom || custom <= 0 || custom > 5000} onPress={() => custom && void add(custom)} loading={log.isPending} />
         <Button label="Cancel" variant="ghost" onPress={() => router.back()} />
       </Card>

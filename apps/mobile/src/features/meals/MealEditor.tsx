@@ -71,7 +71,21 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
     try {
       const result = await save.mutateAsync({ draft, status: 'confirmed' });
       const t = draftTotals(draft.items);
-      const dayBefore = day.data?.totals?.totals ?? null;
+      const dayBeforeRaw = day.data?.totals?.totals ?? null;
+      const previous = draft.mealId ? (day.data?.meals.find((m) => m.id === draft.mealId)?.meal_items ?? []) : [];
+      const prevSum = (key: 'kcal' | 'protein_g' | 'carbs_g' | 'fat_g' | 'fibre_g' | 'sodium_mg' | 'sat_fat_g') =>
+        previous.reduce<number | null>((acc, mi) => (mi[key] == null ? acc : (acc ?? 0) + Number(mi[key])), null);
+      const dayBefore = dayBeforeRaw
+        ? {
+            kcal: subNullable(dayBeforeRaw.kcal, prevSum('kcal')),
+            protein_g: subNullable(dayBeforeRaw.protein_g, prevSum('protein_g')),
+            carbs_g: subNullable(dayBeforeRaw.carbs_g, prevSum('carbs_g')),
+            fat_g: subNullable(dayBeforeRaw.fat_g, prevSum('fat_g')),
+            fibre_g: subNullable(dayBeforeRaw.fibre_g, prevSum('fibre_g')),
+            sodium_mg: subNullable(dayBeforeRaw.sodium_mg, prevSum('sodium_mg')),
+            sat_fat_g: subNullable(dayBeforeRaw.sat_fat_g, prevSum('sat_fat_g')),
+          }
+        : null;
       const dayAfter = {
         kcal: addNullable(dayBefore?.kcal ?? null, t.totals.kcal),
         protein_g: addNullable(dayBefore?.protein_g ?? null, t.totals.protein_g),
@@ -94,8 +108,8 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
       );
       setConfirmedId(draft.mealId ?? (result.queued ? 'queued' : 'saved'));
       setSelectedDate(draft.localDate);
-      setUndoLeft(Math.round(config.undoWindowMs / 1000));
-      undoTimer.current = setInterval(() => {
+      setUndoLeft(draft.previouslyConfirmed ? 0 : Math.round(config.undoWindowMs / 1000));
+      if (!draft.previouslyConfirmed) undoTimer.current = setInterval(() => {
         setUndoLeft((s) => {
           if (s <= 1 && undoTimer.current) {
             clearInterval(undoTimer.current);
@@ -141,7 +155,7 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
     try {
       if (draft.mealId) await del.mutateAsync({ mealId: draft.mealId, localDate: draft.localDate });
       setDraft(null);
-      router.replace('/(tabs)/today');
+      router.replace('/today');
     } catch (err) {
       setError(errorMessage(err));
     }
@@ -149,7 +163,7 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
 
   function finish() {
     setDraft(null);
-    router.replace('/(tabs)/today');
+    router.replace('/today');
   }
 
   if (confirmedId) {
@@ -390,6 +404,11 @@ function WhyLine({ why }: { why: string }) {
 function addNullable(a: number | null, b: number | null): number | null {
   if (a == null && b == null) return null;
   return (a ?? 0) + (b ?? 0);
+}
+
+function subNullable(a: number | null, b: number | null): number | null {
+  if (a == null) return null;
+  return a - (b ?? 0);
 }
 
 const styles = StyleSheet.create({

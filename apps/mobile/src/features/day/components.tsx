@@ -46,10 +46,10 @@ export function DateSwitcher({ localDate, onChange }: { localDate: string; onCha
   );
 }
 
-export function CalorieCard({ day, hideNumbers, tdeeEstimate }: { day: DaySummary; hideNumbers: boolean; tdeeEstimate: number | null }) {
+export function CalorieCard({ day, hideNumbers, trackingOnly, tdeeEstimate }: { day: DaySummary; hideNumbers: boolean; trackingOnly: boolean; tdeeEstimate: number | null }) {
   const { colors } = useTheme();
   const eaten = day.totals?.totals.kcal ?? null;
-  const target = day.goal?.calorie_target ?? null;
+  const target = trackingOnly ? null : (day.goal?.calorie_target ?? null);
   const unknown = day.totals?.unknown.kcal ?? 0;
   const remaining = eaten != null && target != null ? target - eaten : null;
 
@@ -70,7 +70,9 @@ export function CalorieCard({ day, hideNumbers, tdeeEstimate }: { day: DaySummar
   const value = eaten == null ? (day.logged ? '—' : 'Not logged') : displayKcal(eaten);
   const caption =
     target == null
-      ? 'No target set'
+      ? trackingOnly
+        ? 'Tracking only, no calorie target'
+        : 'No target set'
       : eaten == null
         ? `Target ${target.toLocaleString()} kcal`
         : remaining != null && remaining >= 0
@@ -91,7 +93,7 @@ export function CalorieCard({ day, hideNumbers, tdeeEstimate }: { day: DaySummar
           Food target
         </Text>
         <Text variant="title" tabular testID="calorie-target">
-          {target != null ? `${target.toLocaleString()} kcal` : 'Not set'}
+          {target != null ? `${target.toLocaleString()} kcal` : trackingOnly ? 'Not set (tracking only)' : 'Not set'}
         </Text>
         {day.totals?.kcalRange ? (
           <Text variant="caption" color="textFaint">
@@ -107,7 +109,7 @@ export function CalorieCard({ day, hideNumbers, tdeeEstimate }: { day: DaySummar
           <Text variant="small" style={{ color: colors.textMuted }}>
             Estimated TDEE{' '}
             <Text variant="small" tabular style={{ color: colors.weight }}>
-              {tdeeEstimate != null ? `${tdeeEstimate.toLocaleString()} kcal` : 'unknown'}
+              {tdeeEstimate != null ? `${(roundKcal(tdeeEstimate) ?? 0).toLocaleString()} kcal` : 'unknown'}
             </Text>
           </Text>
           <Text variant="caption" style={{ color: colors.accent }}>
@@ -180,9 +182,9 @@ export function ActivityCard({ day, unitSystem }: { day: DaySummary; unitSystem:
 export function QuickActions({ localDate }: { localDate: string }) {
   return (
     <View style={{ gap: space.sm }}>
-      <Button label="Scan meal" size="lg" onPress={() => router.push({ pathname: '/scan', params: { date: localDate } })} testID="quick-scan" />
+      <Button label="Scan meal" size="lg" onPress={() => router.push({ pathname: '/scan', params: { date: localDate, fresh: '1' } })} testID="quick-scan" />
       <View style={styles.actionRow}>
-        <Button label="Add food" variant="secondary" style={styles.actionBtn} onPress={() => router.push({ pathname: '/food/search', params: { date: localDate } })} testID="quick-add-food" />
+        <Button label="Add food" variant="secondary" style={styles.actionBtn} onPress={() => router.push({ pathname: '/food/search', params: { date: localDate, fresh: '1' } })} testID="quick-add-food" />
         <Button label="Weight" variant="secondary" style={styles.actionBtn} onPress={() => router.push({ pathname: '/log/weight', params: { date: localDate } })} testID="quick-weight" />
       </View>
       <View style={styles.actionRow}>
@@ -232,9 +234,9 @@ export function MealTimeline({ meals, drafts, hideNumbers }: { meals: MealWithIt
 
 function MealRow({ meal, draft, hideNumbers }: { meal: MealWithItems; draft?: boolean; hideNumbers: boolean }) {
   const { colors } = useTheme();
-  const kcal = meal.meal_items.reduce<{ sum: number; any: boolean }>(
-    (acc, mi) => (mi.kcal == null ? acc : { sum: acc.sum + Number(mi.kcal), any: true }),
-    { sum: 0, any: false },
+  const kcal = meal.meal_items.reduce<{ sum: number; any: boolean; unknown: number }>(
+    (acc, mi) => (mi.kcal == null ? { ...acc, unknown: acc.unknown + 1 } : { ...acc, sum: acc.sum + Number(mi.kcal), any: true }),
+    { sum: 0, any: false, unknown: 0 },
   );
   const names = meal.meal_items.map((mi) => mi.name_snapshot).join(', ');
   const photo = meal.meal_photos[0];
@@ -264,7 +266,7 @@ function MealRow({ meal, draft, hideNumbers }: { meal: MealWithItems; draft?: bo
       </View>
       {!hideNumbers ? (
         <Text variant="bodyStrong" tabular>
-          {kcal.any ? `${roundKcal(kcal.sum)?.toLocaleString()} kcal` : 'unknown'}
+          {kcal.any ? `${roundKcal(kcal.sum)?.toLocaleString()} kcal${kcal.unknown > 0 ? ' +?' : ''}` : 'unknown'}
         </Text>
       ) : null}
     </Pressable>

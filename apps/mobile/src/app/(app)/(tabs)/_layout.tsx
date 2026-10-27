@@ -71,7 +71,7 @@ function TabBar({ state, navigation }: BottomTabBarProps) {
             accessibilityRole="button"
             accessibilityLabel="Scan meal"
             testID="scan-meal"
-            onPress={() => router.push('/scan')}
+            onPress={() => router.push({ pathname: '/scan', params: { fresh: '1' } })}
             style={({ pressed }) => [styles.camera, { backgroundColor: colors.accent, opacity: pressed ? 0.85 : 1 }]}
           >
             <Text style={{ color: colors.onAccent, fontSize: 24, lineHeight: 28 }}>📷</Text>

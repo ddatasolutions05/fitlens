@@ -9,7 +9,7 @@ test.describe('missing data is distinct from zero', () => {
     await signIn(page);
     await completeOnboardingIfNeeded(page);
     await page.goto('/today');
-    // Go back 400 days: nothing can be logged there.
+    // Three days back: the seeded test user never logs there.
     for (let i = 0; i < 3; i += 1) await page.getByTestId('date-prev').click();
     await expect(page.getByTestId('today-screen')).toContainText('Not logged');
     await expect(page.getByTestId('today-screen')).not.toContainText(/\b0 kcal\b/);

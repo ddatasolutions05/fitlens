@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { ACTIVITY_LEVEL_LABELS, ACTIVITY_MULTIPLIERS, todayLocal, type ActivityLevel } from '@fitlens/core';
+import { ACTIVITY_LEVEL_LABELS, ACTIVITY_MULTIPLIERS, roundKcal, todayLocal, type ActivityLevel } from '@fitlens/core';
 
 import { useDay } from '@/features/day/hooks';
 import { useProfile } from '@/features/profile/hooks';
@@ -12,7 +12,7 @@ export default function TdeeExplainer() {
   const day = useDay(today);
   const estimate =
     profile.data && day.data
-      ? energyEstimateFor({ profile: profile.data, goal: day.data.goal, kg: day.data.weight?.kg ?? null, localDate: today, steps: day.data.steps, workouts: [] })
+      ? energyEstimateFor({ profile: profile.data, goal: day.data.goal, kg: day.data.weight?.kg ?? null, localDate: today, steps: day.data.steps, workouts: day.data.workouts })
       : null;
   const goal = day.data?.goal ?? null;
   const level = (goal?.activity_level ?? 'sedentary') as ActivityLevel;
@@ -49,7 +49,7 @@ export default function TdeeExplainer() {
                 : `Activity-level mode: REE × ${ACTIVITY_MULTIPLIERS[level]} (${ACTIVITY_LEVEL_LABELS[level]}). Logged steps and workouts are shown but not added, because the multiplier already includes typical activity.`}
             </Text>
             <Text tabular variant="heading">
-              {estimate ? `${estimate.tdee.tdee.toLocaleString()} kcal` : 'unknown'}
+              {estimate ? `${(roundKcal(estimate.tdee.tdee) ?? 0).toLocaleString()} kcal` : 'unknown'}
             </Text>
             {estimate ? (
               <Text variant="caption" color="textFaint">
@@ -61,7 +61,9 @@ export default function TdeeExplainer() {
             <Text variant="heading">3. Food target</Text>
             <Text variant="small">
               {goal?.calorie_target != null
-                ? `${goal.calorie_target.toLocaleString()} kcal. ${goal.rationale ?? ''}`
+                ? profile.data?.mode === 'tracking_only'
+                  ? 'No calorie target in tracking-only mode.'
+                  : `${goal.calorie_target.toLocaleString()} kcal. ${goal.rationale ?? ''}`
                 : goal
                   ? 'No calorie target in tracking-only mode.'
                   : 'No target yet.'}

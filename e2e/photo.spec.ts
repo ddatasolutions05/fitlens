@@ -21,7 +21,8 @@ test.describe('photo flow against the real configured AI', () => {
     const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.getByTestId('choose-photo').click()]);
     await chooser.setFiles(fixture);
     await page.getByTestId('analyze').click();
-    if (await page.getByTestId('clarify').isVisible({ timeout: 60_000 }).catch(() => false)) {
+    await Promise.race([page.getByTestId('clarify').waitFor({ timeout: 90_000 }), page.getByTestId('meal-editor').waitFor({ timeout: 90_000 })]);
+    if (await page.getByTestId('clarify').isVisible()) {
       await page.getByTestId('clarify-continue').click();
     }
     await expect(page.getByTestId('meal-editor')).toBeVisible({ timeout: 90_000 });

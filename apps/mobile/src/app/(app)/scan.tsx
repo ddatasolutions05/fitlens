@@ -1,5 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { todayLocal } from '@fitlens/core';
 import type { AnalyzeMealResult, ClarifyingQuestion } from '@fitlens/schemas';
@@ -18,9 +18,12 @@ import { Button, Card, NotConfigured, Screen, Segmented, Skeleton, Text, space }
 type Stage = 'idle' | 'uploading' | 'analyzing' | 'clarify' | 'mapping' | 'failed';
 
 export default function ScanScreen() {
-  const params = useLocalSearchParams<{ date?: string }>();
+  const params = useLocalSearchParams<{ date?: string; fresh?: string }>();
   const localDate = params.date ?? todayLocal();
   const userId = useUserId();
+  useEffect(() => {
+    if (params.fresh === '1') setDraft(null);
+  }, [params.fresh]);
   const prefs = usePreferences();
   const features = useFeatures();
   const [stage, setStage] = useState<Stage>('idle');
@@ -204,7 +207,7 @@ export default function ScanScreen() {
               {p.name}: {p.reason} Use the values from the label or barcode rather than a visual guess.
             </Text>
           ))}
-          <Button label="Enter from the label" variant="secondary" size="sm" onPress={() => router.push({ pathname: '/food/manual', params: { date: localDate } })} />
+          <Button label="Enter from the label" variant="secondary" size="sm" onPress={() => router.push({ pathname: '/food/manual', params: { date: localDate } })} testID="packaged-manual" />
         </Card>
       ) : null}
       {unmatched.length > 0 ? (

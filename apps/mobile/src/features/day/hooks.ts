@@ -14,6 +14,7 @@ export interface DayTotals {
   totals: Per100;
   unknown: Record<keyof Per100, number>;
   kcalRange: [number, number] | null;
+  rangedCount: number;
   mealCount: number;
   itemCount: number;
 }
@@ -29,6 +30,7 @@ export interface DaySummary {
   workoutCount: number;
   workoutMinutes: number | null;
   workoutKcal: number | null;
+  workouts: { met: number; minutes: number }[];
   weight: { kg: number; localDate: string } | null;
   trend: TrendPoint[];
   trendDirection: 'down' | 'up' | 'flat' | 'unknown';
@@ -62,7 +64,8 @@ function totalsFromRow(row: TotalsRow | null): DayTotals | null {
       sodium_mg: Number(row.sodium_unknown ?? 0),
       sat_fat_g: Number(row.sat_fat_unknown ?? 0),
     },
-    kcalRange: row.kcal_low != null && row.kcal_high != null ? [Number(row.kcal_low), Number(row.kcal_high)] : null,
+    kcalRange: Number(row.ranged_count ?? 0) > 0 && row.kcal_low != null && row.kcal_high != null ? [Number(row.kcal_low), Number(row.kcal_high)] : null,
+    rangedCount: Number(row.ranged_count ?? 0),
     mealCount: Number(row.meal_count ?? 0),
     itemCount: Number(row.item_count ?? 0),
   };
@@ -70,7 +73,7 @@ function totalsFromRow(row: TotalsRow | null): DayTotals | null {
 
 export async function fetchDay(userId: string, localDate: string): Promise<DaySummary> {
   const trendFrom = addDays(localDate, -35);
-  const [totalsRes, waterRes, activityRes, statusRes, goalRes, weightsRes, meals] = await Promise.all([
+  const [totalsRes, waterRes, activityRes, statusRes, goalRes, weightsRes, meals, workoutsRes] = await Promise.all([
     supabase.from('daily_totals').select('*').eq('user_id', userId).eq('local_date', localDate).maybeSingle(),
     supabase.from('daily_water').select('ml').eq('user_id', userId).eq('local_date', localDate).maybeSingle(),
     supabase.from('daily_activity').select('*').eq('user_id', userId).eq('local_date', localDate).maybeSingle(),
@@ -84,8 +87,9 @@ export async function fetchDay(userId: string, localDate: string): Promise<DaySu
       .lte('local_date', localDate)
       .order('measured_at', { ascending: true }),
     fetchMealsForDate(userId, localDate),
+    supabase.from('activity_records').select('met, duration_min').eq('user_id', userId).eq('local_date', localDate).eq('kind', 'workout'),
   ]);
-  for (const r of [totalsRes, waterRes, activityRes, statusRes, goalRes, weightsRes]) {
+  for (const r of [totalsRes, waterRes, activityRes, statusRes, goalRes, weightsRes, workoutsRes]) {
     if (r.error) throw r.error;
   }
 
@@ -111,6 +115,7 @@ export async function fetchDay(userId: string, localDate: string): Promise<DaySu
     workoutCount: Number(activity?.workout_count ?? 0),
     workoutMinutes: activity?.workout_minutes != null ? Number(activity.workout_minutes) : null,
     workoutKcal: activity?.workout_kcal != null ? Number(activity.workout_kcal) : null,
+    workouts: (workoutsRes.data ?? []).filter((w) => w.met != null && w.duration_min != null).map((w) => ({ met: Number(w.met), minutes: Number(w.duration_min) })),
     weight: lastWeight ? { kg: lastWeight.kg, localDate: lastWeight.localDate } : null,
     trend,
     trendDirection: trendDirection(trend),

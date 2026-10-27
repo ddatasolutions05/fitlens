@@ -1,6 +1,9 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, useState, type ReactNode } from 'react';
 
+import '@/features/logs/hooks';
+import '@/features/meals/hooks';
+
 import { isNetworkError } from './net';
 import { startQueue } from './offline-queue';
 

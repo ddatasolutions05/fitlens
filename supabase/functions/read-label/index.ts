@@ -26,7 +26,7 @@ Deno.serve(
 
     const provider = makeVisionProvider(env);
     const localDate = localDateIn(profile?.timezone ?? 'UTC');
-    const { data: allowed } = await caller.admin.rpc('increment_ai_usage', { p_user: caller.userId, p_local_date: localDate, p_kind: 'label_reads', p_cap: env.aiDailyLimit, p_cost: 0 } as never);
+    const { data: allowed } = await caller.admin.rpc('increment_ai_usage', { p_user: caller.userId, p_local_date: localDate, p_kind: 'label_reads', p_cap: env.aiDailyLimit, p_cost: 0 });
     if (!allowed) throw new HttpError(429, 'rate_limited', `Daily limit of ${env.aiDailyLimit} label reads reached`);
 
     const { data: blob, error } = await caller.admin.storage.from('meal-photos').download(body.data.storage_path);
@@ -56,7 +56,7 @@ Deno.serve(
       try {
         const parsed = labelReadSchema.safeParse(extractJson(res.text));
         if (parsed.success) {
-          await caller.admin.from('ai_usage').update({ est_cost_usd: cost }).eq('user_id', caller.userId).eq('local_date', localDate);
+          await caller.admin.rpc('add_ai_cost', { p_user: caller.userId, p_local_date: localDate, p_cost: cost });
           const result: ReadLabelResult = { prompt_version: LABEL_PROMPT_VERSION, model: res.model, result: parsed.data };
           return json(result, 200, { 'x-request-id': requestId });
         }

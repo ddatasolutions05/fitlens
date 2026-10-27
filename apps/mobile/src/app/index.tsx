@@ -34,7 +34,7 @@ function OnboardingGate() {
     );
   }
   if (!profile.data?.onboarding_completed_at) return <Redirect href="/onboarding" />;
-  return <Redirect href="/(tabs)/today" />;
+  return <Redirect href="/today" />;
 }
 
 function Loading({ label }: { label: string }) {

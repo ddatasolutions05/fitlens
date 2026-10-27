@@ -18,7 +18,9 @@ export default function ExportScreen() {
     try {
       const { data, error: err } = await supabase.functions.invoke('export-data', { method: 'POST' });
       if (err) {
-        const body = functionErrorSchema.safeParse(data);
+        let payload: unknown = data;
+        if (payload == null && 'context' in err && err.context instanceof Response) payload = await err.context.json().catch(() => null);
+        const body = functionErrorSchema.safeParse(payload);
         throw new Error(body.success ? body.data.error.message : err.message);
       }
       const parsed = exportDataResultSchema.parse(data);

@@ -41,7 +41,7 @@ Deno.serve(
       p_kind: 'analyses',
       p_cap: env.aiDailyLimit,
       p_cost: 0,
-    } as never);
+    });
     if (usageError) throw new HttpError(500, 'usage_error', 'Could not record usage');
     if (!allowed) throw new HttpError(429, 'rate_limited', `Daily limit of ${env.aiDailyLimit} analyses reached`);
 
@@ -105,7 +105,7 @@ Deno.serve(
       }
     }
 
-    await caller.admin.from('ai_usage').update({ est_cost_usd: totalCost }).eq('user_id', caller.userId).eq('local_date', localDate);
+    await caller.admin.rpc('add_ai_cost', { p_user: caller.userId, p_local_date: localDate, p_cost: totalCost });
 
     if (!validated) {
       await caller.admin

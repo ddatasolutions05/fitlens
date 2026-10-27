@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { todayLocal } from '@fitlens/core';
 
 import { useCreateUserFood } from '@/features/food/hooks';
-import { addItem, ensureDraft } from '@/features/meals/draft-store';
+import { addItem, ensureDraft, setDraft, updateItem } from '@/features/meals/draft-store';
 import { newItem } from '@/features/meals/model';
 import { errorMessage } from '@/lib/net';
 import { Button, Card, Input, NumberField, Screen, Segmented, Text, space } from '@/ui';
@@ -12,7 +12,7 @@ import { Button, Card, Input, NumberField, Screen, Segmented, Text, space } from
 type Basis = 'serving' | 'per100';
 
 export default function ManualFood() {
-  const params = useLocalSearchParams<{ date?: string }>();
+  const params = useLocalSearchParams<{ date?: string; fresh?: string; replace?: string }>();
   const localDate = params.date ?? todayLocal();
   const create = useCreateUserFood();
   const [name, setName] = useState('');
@@ -59,9 +59,9 @@ export default function ManualFood() {
         });
         foodId = food.id;
       }
+      if (params.fresh === '1') setDraft(null);
       ensureDraft({ localDate, source: 'manual' });
-      addItem(
-        newItem({
+      const item = newItem({
           foodId,
           name: name.trim(),
           grams: basis === 'serving' ? (servingG as number) : 100,
@@ -69,8 +69,9 @@ export default function ManualFood() {
           per100: p,
           provenance: 'user',
           sourceName: null,
-        }),
-      );
+        });
+      if (params.replace) updateItem(params.replace, { ...item, localId: params.replace });
+      else addItem(item);
       router.replace('/meal/edit');
     } catch (err) {
       setError(errorMessage(err));

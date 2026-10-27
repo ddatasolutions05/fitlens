@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { analyzeMealResponseSchema, extractJson, labelReadSchema } from './ai';
+import { analyzeMealResponseSchema, extractJson, labelReadSchema } from './ai.ts';
 
 const valid = {
   items: [

@@ -1,4 +1,4 @@
-import { formatInt, formatNumber } from './format';
+import { formatInt } from './format';
 
 /** Nutrients per 100 g. Null means unknown, never zero. */
 export interface Per100 {
@@ -81,7 +81,7 @@ export function roundGrams(n: number | null): number | null {
 /** Display string. Null shows as 'unknown'. Grams under 10 keep one decimal. */
 export function formatNutrient(value: number | null, unit: 'kcal' | 'g' | 'mg' | 'ml'): string {
   if (value == null) return 'unknown';
-  if (unit === 'g' && Math.abs(value) < 10) return `${formatNumber(value, 1)} g`;
+  if (unit === 'kcal') return `${formatInt(Math.round(value / 10) * 10)} kcal`;
   return `${formatInt(value)} ${unit}`;
 }
 

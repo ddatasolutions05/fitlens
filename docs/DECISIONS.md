@@ -23,7 +23,7 @@ Consequences: no new provider; one extra form on the sign-in screen.
 
 ## D-011 Charts are drawn with react-native-svg (2026-10-27)
 Context: Victory Native 43 requires `@shopify/react-native-skia` and Reanimated, and on web ships a multi-MB CanvasKit wasm.
-Decision: a small chart kit (`src/ui/charts`) on `react-native-svg`, which works on web through `react-native-svg`'s web backend.
+Decision: a small chart kit (`apps/mobile/src/features/progress/charts.tsx`) on `react-native-svg`, which works on web through `react-native-svg`'s web backend.
 Consequences: fewer chart types, but every chart is under our control for gaps, accessible colours and reduced motion.
 
 ## D-010 npm workspaces (2026-10-27)
@@ -56,7 +56,7 @@ Decision: `search_foods` SQL function orders by (own recents and favourites) > v
 - Indian foods: INDB (Indian Nutrient Databank, Anuvaad Solutions) is published for research use; IFCT 2017 is a PDF. Licence for redistribution of either is not confirmed. Decision: ship a curated seed of common Indian dishes authored for this project with household servings and variants, cite IFCT/INDB as references in the row's `source_ref`, and leave the INDB importer behind a flag until terms are confirmed. Status: open, see PLAN risks.
 
 ## D-003 Vision provider (2026-10-27)
-Decision: `VisionProvider` interface in `supabase/functions/_shared/vision/`, Anthropic implementation using the Messages API with image blocks and a JSON-only instruction. Model from `VISION_MODEL` (default `claude-sonnet-4-5`). Retention terms are documented in `docs/PRIVACY.md` from Anthropic's published commercial terms, not assumed.
+Decision: `VisionProvider` interface in `supabase/functions/_shared/vision/`, Anthropic implementation using the Messages API with image blocks and a JSON-only instruction. Model from `VISION_MODEL` (default `claude-opus-5-5`, see D-016). Retention terms are documented in `docs/PRIVACY.md` from Anthropic's published commercial terms, not assumed.
 
 ## D-002 Offline queue (2026-10-27)
 Decision: a small command queue in AsyncStorage (`src/lib/offline-queue.ts`), replayed on reconnect with exponential backoff (1s, 2s, 4s, max 5 tries, then parked with a visible "needs attention" state). Commands are plain JSON with an idempotency key. TanStack Query mutations enqueue when offline and apply optimistic updates.

@@ -27,14 +27,14 @@ export async function completeOnboardingIfNeeded(page: Page): Promise<void> {
   await page.getByTestId('continue').click();
   // Step 1: about you
   await page.getByTestId('birth-date').fill('1990-05-10');
-  await page.getByRole('radio', { name: 'Male' }).click();
+  await page.getByRole('radio', { name: 'Male', exact: true }).click();
   await page.getByTestId('continue').click();
   // Step 2: body
   await page.getByTestId('height').fill('180');
   await page.getByTestId('weight').fill('80');
   await page.getByTestId('continue').click();
   // Step 3: activity
-  await page.getByRole('radio', { name: /Moderately/i }).click();
+  await page.getByRole('radio', { name: /^Moderate/ }).click();
   await page.getByTestId('continue').click();
   // Step 4: goal
   await page.getByRole('radio', { name: 'Fat loss' }).click();

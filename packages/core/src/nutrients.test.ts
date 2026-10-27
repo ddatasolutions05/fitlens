@@ -68,9 +68,9 @@ describe('rounding and formatting', () => {
   });
 
   it('formats', () => {
-    expect(formatNutrient(1950.4, 'kcal')).toBe('1,950 kcal');
+    expect(formatNutrient(1954, 'kcal')).toBe('1,950 kcal');
     expect(formatNutrient(28.4, 'g')).toBe('28 g');
-    expect(formatNutrient(2.75, 'g')).toBe('2.8 g');
+    expect(formatNutrient(2.75, 'g')).toBe('3 g');
     expect(formatNutrient(643, 'mg')).toBe('643 mg');
     expect(formatNutrient(null, 'g')).toBe('unknown');
   });

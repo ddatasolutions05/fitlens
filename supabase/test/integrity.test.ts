@@ -140,6 +140,26 @@ describe('daily totals', () => {
     expect(Number(totals.rows[0].kcal_unknown)).toBe(1);
   });
 
+  it('the kcal range covers every item, with point estimates for items without a range', async () => {
+    const date = '2026-10-25';
+    const meal = await insertMeal(user, { localDate: date });
+    await insertItem(user, meal, 300);
+    await as(user, (c) =>
+      c.query(
+        `insert into meal_items (user_id, meal_id, name_snapshot, grams, kcal, kcal_low, kcal_high, provenance)
+         values ($1, $2, 'ranged', 100, 200, 150, 260, 'ai_estimate')`,
+        [user.id, meal],
+      ),
+    );
+    const totals = await as(user, (c) =>
+      c.query('select kcal, kcal_low, kcal_high, ranged_count from daily_totals where user_id = $1 and local_date = $2', [user.id, date]),
+    );
+    expect(Number(totals.rows[0].kcal)).toBe(500);
+    expect(Number(totals.rows[0].kcal_low)).toBe(450);
+    expect(Number(totals.rows[0].kcal_high)).toBe(560);
+    expect(Number(totals.rows[0].ranged_count)).toBe(1);
+  });
+
   it('other users never see my totals', async () => {
     const totals = await as(other, (c) => c.query('select * from daily_totals where user_id = $1', [user.id]));
     expect(totals.rowCount).toBe(0);

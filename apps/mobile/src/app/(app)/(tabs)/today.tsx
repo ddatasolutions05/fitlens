@@ -27,7 +27,7 @@ export default function TodayScreen() {
       kg: day.data.weight?.kg ?? null,
       localDate,
       steps: day.data.steps,
-      workouts: [],
+      workouts: day.data.workouts,
     });
   }, [day.data, profile.data, localDate]);
 
@@ -38,7 +38,7 @@ export default function TodayScreen() {
       logged: d.logged,
       totals: d.totals?.totals ?? null,
       targets: d.goal
-        ? { calorieTarget: d.goal.calorie_target, proteinG: d.goal.protein_g, fibreG: d.goal.fibre_g, waterMl: d.goal.water_ml }
+        ? { calorieTarget: profile.data?.mode === 'tracking_only' ? null : d.goal.calorie_target, proteinG: d.goal.protein_g, fibreG: d.goal.fibre_g, waterMl: d.goal.water_ml }
         : null,
       waterMl: d.waterMl,
       hasWeightToday: d.weight?.localDate === localDate,
@@ -66,7 +66,7 @@ export default function TodayScreen() {
         <ErrorState message={(day.error as Error).message} onRetry={() => day.refetch()} />
       ) : day.data ? (
         <>
-          <CalorieCard day={day.data} hideNumbers={hideNumbers} tdeeEstimate={estimate?.tdee.tdee ?? null} />
+          <CalorieCard day={day.data} hideNumbers={hideNumbers} trackingOnly={profile.data?.mode === 'tracking_only'} tdeeEstimate={estimate?.tdee.tdee ?? null} />
           {hideNumbers ? null : <MacroCard day={day.data} />}
           {insight ? <InsightCard text={insight.text} /> : null}
           <QuickActions localDate={localDate} />
