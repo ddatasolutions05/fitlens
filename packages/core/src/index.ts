@@ -12,3 +12,4 @@ export * from './day';
 export * from './matching';
 export * from './feedback/rules';
 export * from './feedback/tone';
+export * from './feedback/day';

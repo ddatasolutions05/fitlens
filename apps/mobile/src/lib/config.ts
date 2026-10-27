@@ -1,0 +1,34 @@
+// Runtime configuration. Only EXPO_PUBLIC_* values are available in the client.
+
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim() ?? '';
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY?.trim() ?? '';
+
+function looksLikeUrl(value: string): boolean {
+  return /^https?:\/\/[^\s]+$/.test(value) && !value.includes('your-project');
+}
+
+export const config = {
+  supabaseUrl,
+  supabaseAnonKey,
+  supabaseConfigured: looksLikeUrl(supabaseUrl) && supabaseAnonKey.length > 20 && !supabaseAnonKey.includes('your-anon'),
+  photoMaxPx: 1600,
+  signedUrlSeconds: 300,
+  undoWindowMs: 5000,
+  aiConsentVersion: '2026-10-27',
+} as const;
+
+export interface SetupProblem {
+  key: string;
+  message: string;
+}
+
+export function setupProblems(): SetupProblem[] {
+  const problems: SetupProblem[] = [];
+  if (!looksLikeUrl(supabaseUrl)) {
+    problems.push({ key: 'EXPO_PUBLIC_SUPABASE_URL', message: 'Set EXPO_PUBLIC_SUPABASE_URL to your Supabase project URL.' });
+  }
+  if (supabaseAnonKey.length <= 20 || supabaseAnonKey.includes('your-anon')) {
+    problems.push({ key: 'EXPO_PUBLIC_SUPABASE_ANON_KEY', message: 'Set EXPO_PUBLIC_SUPABASE_ANON_KEY to the anon key from Project Settings > API.' });
+  }
+  return problems;
+}
