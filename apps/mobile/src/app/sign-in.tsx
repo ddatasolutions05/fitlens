@@ -8,7 +8,9 @@ import { useSession } from '@/features/auth/session';
 import { config } from '@/lib/config';
 import { errorMessage } from '@/lib/net';
 import { getSupabase } from '@/lib/supabase';
-import { Button, Card, Input, NotConfigured, Screen, Segmented, Text, radius, space, touch, useTheme } from '@/ui';
+import Svg, { Path } from 'react-native-svg';
+
+import { Button, Card, Input, Screen, Segmented, Text, radius, space, touch, useTheme } from '@/ui';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -195,15 +197,19 @@ export default function SignIn() {
         )}
       </Card>
 
-      <Card style={{ gap: space.md }}>
-        <Text variant="small" color="textMuted">
-          Or continue with
-        </Text>
-        <View style={{ gap: space.sm }}>
-          <ProviderButton label="Google" enabled={providers.data?.google ?? false} loading={busy === 'google'} onPress={() => oauth('google')} reason="Google sign-in is not enabled on this project yet. Enable it under Authentication, Providers in the Supabase dashboard with a Google OAuth client." />
-          <ProviderButton label="Apple" enabled={providers.data?.apple ?? false} loading={busy === 'apple'} onPress={() => oauth('apple')} reason="Apple sign-in needs an Apple Developer account and a Services ID; enable it under Authentication, Providers." />
+      {providers.data?.google || providers.data?.apple ? (
+        <View style={{ gap: space.md }}>
+          <View style={styles.divider}>
+            <View style={[styles.rule, { backgroundColor: colors.border }]} />
+            <Text variant="caption" color="textFaint">
+              or
+            </Text>
+            <View style={[styles.rule, { backgroundColor: colors.border }]} />
+          </View>
+          {providers.data?.google ? <ProviderButton provider="google" loading={busy === 'google'} onPress={() => oauth('google')} /> : null}
+          {providers.data?.apple ? <ProviderButton provider="apple" loading={busy === 'apple'} onPress={() => oauth('apple')} /> : null}
         </View>
-      </Card>
+      ) : null}
 
       <Text variant="caption" color="textFaint">
         Your data stays in your own account. Photos are only sent to an AI provider after you explicitly opt in. By creating an account you accept that nutrition estimates are approximate and not medical advice.
@@ -217,9 +223,37 @@ export default function SignIn() {
   );
 }
 
-function ProviderButton({ label, enabled, loading, onPress, reason }: { label: string; enabled: boolean; loading: boolean; onPress: () => void; reason: string }) {
-  if (!enabled) return <NotConfigured feature={`${label} sign-in`} reason={reason} />;
-  return <Button label={`Continue with ${label}`} variant="ghost" onPress={onPress} loading={loading} testID={`oauth-${label.toLowerCase()}`} />;
+function ProviderButton({ provider, loading, onPress }: { provider: 'google' | 'apple'; loading: boolean; onPress: () => void }) {
+  const { colors } = useTheme();
+  const label = provider === 'google' ? 'Continue with Google' : 'Continue with Apple';
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      onPress={onPress}
+      disabled={loading}
+      testID={`oauth-${provider}`}
+      style={({ pressed }) => [
+        styles.provider,
+        provider === 'apple' ? { backgroundColor: colors.text, borderColor: colors.text } : { backgroundColor: colors.surface, borderColor: colors.border },
+        { opacity: pressed || loading ? 0.8 : 1 },
+      ]}
+    >
+      {provider === 'google' ? (
+        <Svg width={20} height={20} viewBox="0 0 48 48">
+          <Path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.2C12.4 13.7 17.7 9.5 24 9.5z" />
+          <Path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 7-10.3 7-17.7z" />
+          <Path fill="#FBBC05" d="M10.5 28.6A14.5 14.5 0 0 1 9.7 24c0-1.6.3-3.1.8-4.6l-7.9-6.2A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.9-6.2z" />
+          <Path fill="#34A853" d="M24 48c6.3 0 11.7-2.1 15.6-5.7l-7.7-6c-2.1 1.4-4.8 2.3-7.9 2.3-6.3 0-11.6-4.2-13.5-10l-7.9 6.2C6.5 42.6 14.6 48 24 48z" />
+        </Svg>
+      ) : (
+        <Text style={{ color: colors.bg, fontSize: 20, lineHeight: 22 }}></Text>
+      )}
+      <Text variant="bodyStrong" style={{ color: provider === 'apple' ? colors.bg : colors.text }}>
+        {loading ? 'Opening…' : label}
+      </Text>
+    </Pressable>
+  );
 }
 
 function friendly(message: string): string {
@@ -232,6 +266,18 @@ function friendly(message: string): string {
 }
 
 const styles = StyleSheet.create({
+  divider: { flexDirection: 'row', alignItems: 'center', gap: space.md },
+  rule: { flex: 1, height: StyleSheet.hairlineWidth },
+  provider: {
+    minHeight: 52,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: space.md,
+    paddingHorizontal: space.lg,
+  },
   links: { gap: space.xs, alignItems: 'flex-start' },
   link: { minHeight: touch.min, justifyContent: 'center', paddingHorizontal: space.xs, borderRadius: radius.sm },
 });

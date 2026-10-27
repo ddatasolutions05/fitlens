@@ -11,8 +11,9 @@ test.describe('sign-in screen', () => {
     await expect(page.getByTestId('sign-in')).toBeDisabled();
     await expect(page.getByTestId('forgot-password')).toBeVisible();
     await expect(page.getByTestId('send-link')).toBeVisible();
-    // Providers come from the project's public settings; disabled ones say so instead of failing on click.
-    await expect(page.getByText('Google sign-in: not configured')).toBeVisible();
+    // Providers come from the project's public settings; disabled ones are hidden rather than shown as broken buttons.
+    await expect(page.getByTestId('oauth-google')).toHaveCount(0);
+    await expect(page.getByText(/not configured/)).toHaveCount(0);
     await page.getByRole('radio', { name: 'Create account' }).click();
     await expect(page.getByTestId('sign-up')).toBeDisabled();
     await page.getByTestId('email').fill(e2eUser.email);
