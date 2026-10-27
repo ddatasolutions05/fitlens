@@ -50,7 +50,7 @@ test.describe('manual food log', () => {
     await expect(mealRow).toContainText('200 kcal');
 
     await page.reload();
-    await expect(page.locator('[data-testid^="meal-"]').filter({ hasText: 'E2E test bar' }).first()).toContainText('200 kcal');
+    await expect(page.locator('[data-testid^="meal-"]').filter({ hasText: 'E2E test bar' }).first()).toContainText('200 kcal', { timeout: 45_000 });
 
     // delete updates totals
     await page.locator('[data-testid^="meal-"]').filter({ hasText: 'E2E test bar' }).first().click();

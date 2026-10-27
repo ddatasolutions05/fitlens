@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  checks:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      - run: npm run functions:check
+      - name: Typecheck packages and scripts
+        run: npm -w packages/core run typecheck && npm -w packages/schemas run typecheck && npx tsc --noEmit -p scripts/food-import/tsconfig.json
+      - name: Export web (also generates typed routes)
+        run: npx expo export --platform web --output-dir /tmp/fitlens-web
+        working-directory: apps/mobile
+        env:
+          EXPO_PUBLIC_SUPABASE_URL: https://example.supabase.co
+          EXPO_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-anon-key-not-a-secret
+          CI: '1'
+      - run: npm -w apps/mobile run typecheck
+
+  sql:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: fitlens_test
+        ports: ['54329:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run test:db
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:54329/fitlens_test

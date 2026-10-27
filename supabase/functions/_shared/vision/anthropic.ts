@@ -35,8 +35,14 @@ export class AnthropicVisionProvider implements VisionProvider {
   constructor(
     apiKey: string,
     readonly model: string,
+    workspaceId: string | null = null,
   ) {
-    this.client = new Anthropic({ apiKey, maxRetries: 1, timeout: 90_000 });
+    this.client = new Anthropic({
+      apiKey,
+      maxRetries: 1,
+      timeout: 90_000,
+      ...(workspaceId ? { defaultHeaders: { 'anthropic-workspace-id': workspaceId } } : {}),
+    });
   }
 
   async complete(req: VisionRequest): Promise<VisionResponse> {

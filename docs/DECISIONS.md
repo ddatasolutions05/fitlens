@@ -2,6 +2,11 @@
 
 Newest first. Each entry: context, decision, consequences.
 
+## D-017 Sign-in methods and provider detection (2026-10-27)
+Context: the owner wants email and password accounts, magic links and Google sign-in.
+Decision: the sign-in screen offers Sign in and Create account with email and password, a magic-link alternative, forgot-password recovery (`/reset-password`), and Google and Apple buttons. Which providers appear is read live from the project's public `/auth/v1/settings`; a disabled provider shows "Not configured" with the dashboard steps instead of a button that fails. On native the OAuth flow uses `expo-web-browser` and the PKCE code exchange. Email confirmation stays on. The built-in Supabase mailer is capped at 2 emails an hour, so a custom SMTP sender is the next step before more than one person uses the app.
+Consequences: Google needs a Google Cloud OAuth client id and secret entered in Supabase (Authentication, Providers); Apple needs an Apple Developer Services ID. Neither can be created from this repo.
+
 ## D-016 Edge Functions use the Anthropic SDK from npm under Deno (2026-10-27)
 Decision: `_shared/vision/anthropic.ts` calls `client.beta.messages.create` from `@anthropic-ai/sdk@1.3.0` with `fallbacks: "default"` so a safety refusal is retried on a fallback model inside the same call. Default `VISION_MODEL` is `claude-opus-5-5`; `claude-sonnet-5-5` and `claude-haiku-5-5` are the cheaper switches (see `docs/COSTS.md`). The adapter is the only file that knows the provider.
 

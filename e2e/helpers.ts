@@ -12,7 +12,6 @@ export function requireSupabase(): void {
 
 export async function signIn(page: Page): Promise<void> {
   await page.goto('/sign-in');
-  await page.getByRole('radio', { name: 'Password' }).click();
   await page.getByTestId('email').fill(e2eUser.email);
   await page.getByTestId('password').fill(e2eUser.password);
   await page.getByTestId('sign-in').click();

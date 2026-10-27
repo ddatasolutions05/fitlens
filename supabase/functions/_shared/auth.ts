@@ -8,6 +8,7 @@ export interface Env {
   serviceRoleKey: string;
   visionProvider: string | null;
   anthropicApiKey: string | null;
+  anthropicWorkspaceId: string | null;
   visionModel: string;
   aiDailyLimit: number;
   fdcApiKey: string | null;
@@ -24,6 +25,7 @@ export function readEnv(): Env {
     serviceRoleKey,
     visionProvider: Deno.env.get('VISION_PROVIDER') || null,
     anthropicApiKey: Deno.env.get('ANTHROPIC_API_KEY') || null,
+    anthropicWorkspaceId: Deno.env.get('ANTHROPIC_WORKSPACE_ID') || null,
     visionModel: Deno.env.get('VISION_MODEL') || 'claude-opus-5-5',
     aiDailyLimit: Number(Deno.env.get('AI_DAILY_LIMIT') ?? '30') || 30,
     fdcApiKey: Deno.env.get('FDC_API_KEY') || null,

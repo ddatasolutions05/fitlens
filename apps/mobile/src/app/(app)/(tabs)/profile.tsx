@@ -75,6 +75,7 @@ export default function ProfileScreen() {
       </Card>
 
       <Card style={{ gap: space.xs }}>
+        <Row title="Sign-in and security" subtitle="Password, email, linked sign-in methods" onPress={() => router.push('/profile/security')} />
         <Row title="Export my data" subtitle="JSON and CSV with photos, as a zip" onPress={() => router.push('/profile/export')} />
         <Row title="Delete account" subtitle="Removes every row and photo" onPress={() => router.push('/profile/delete')} />
         <Row title="Connected health apps" subtitle="Apple Health and Health Connect need a native build" onPress={() => router.push('/profile/integrations')} />

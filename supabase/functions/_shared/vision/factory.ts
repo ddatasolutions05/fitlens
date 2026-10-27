@@ -23,5 +23,5 @@ export function visionStatus(env: Env): VisionStatus {
 export function makeVisionProvider(env: Env): VisionProvider {
   const status = visionStatus(env);
   if (!status.configured) throw new HttpError(503, 'not_configured', status.reason ?? 'Vision provider not configured');
-  return new AnthropicVisionProvider(env.anthropicApiKey as string, env.visionModel);
+  return new AnthropicVisionProvider(env.anthropicApiKey as string, env.visionModel, env.anthropicWorkspaceId);
 }

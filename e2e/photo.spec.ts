@@ -15,7 +15,7 @@ test.describe('photo flow against the real configured AI', () => {
     await signIn(page);
     await completeOnboardingIfNeeded(page);
     await page.goto('/profile/privacy');
-    await page.getByRole('radio', { name: 'Allowed' }).click();
+    await page.getByRole('radio', { name: 'Allowed', exact: true }).click();
 
     await page.goto('/scan');
     const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.getByTestId('choose-photo').click()]);
