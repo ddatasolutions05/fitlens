@@ -8,6 +8,8 @@ function looksLikeUrl(value: string): boolean {
 }
 
 export const config = {
+  /** Sub-path the web build is served from, e.g. /fitlens on GitHub Pages. Empty locally. */
+  basePath: (process.env.EXPO_PUBLIC_BASE_PATH ?? '').replace(/\/$/, ''),
   supabaseUrl,
   supabaseAnonKey,
   supabaseConfigured: looksLikeUrl(supabaseUrl) && supabaseAnonKey.length > 20 && !supabaseAnonKey.includes('your-anon'),
