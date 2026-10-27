@@ -17,6 +17,12 @@ export default defineConfig({
       },
       {
         test: {
+          name: 'scripts',
+          include: ['scripts/food-import/**/*.test.ts'],
+        },
+      },
+      {
+        test: {
           name: 'db',
           include: ['supabase/test/**/*.test.ts'],
           testTimeout: 60_000,

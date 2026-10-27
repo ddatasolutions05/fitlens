@@ -8,9 +8,9 @@
   ],
   "scripts": {
     "dev": "npm -w apps/mobile run web",
-    "typecheck": "npm -w packages/core run typecheck && npm -w packages/schemas run typecheck && npm -w apps/mobile run typecheck",
+    "typecheck": "npm -w packages/core run typecheck && npm -w packages/schemas run typecheck && tsc --noEmit -p scripts/food-import/tsconfig.json && npm -w apps/mobile run typecheck",
     "lint": "eslint packages scripts supabase/test && npm -w apps/mobile run lint",
-    "test": "vitest run --project core --project schemas",
+    "test": "vitest run --project core --project schemas --project scripts",
     "test:db": "vitest run --project db",
     "test:e2e": "playwright test",
     "test:all": "npm run test && npm run test:db",

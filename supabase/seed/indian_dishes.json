@@ -1,0 +1,2370 @@
+{
+  "version": 1,
+  "note": "Per 100 g. Compiled from IFCT 2017 (NIN Hyderabad) published values and typical home recipes; approximate. carbs_g is total carbohydrate including fibre. Variants with added fat are computed by mass from the base dish.",
+  "foods": [
+    {
+      "slug": "dal_toor_plain",
+      "name": "Toor dal (arhar), cooked, plain",
+      "kcal": 71,
+      "protein_g": 5,
+      "carbs_g": 13,
+      "fat_g": 0.5,
+      "fibre_g": 2.8,
+      "sodium_mg": 200,
+      "sat_fat_g": 0.1,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        },
+        {
+          "label": "1 cup",
+          "grams": 240
+        }
+      ]
+    },
+    {
+      "slug": "dal_toor_tadka",
+      "name": "Toor dal, tadka",
+      "kcal": 98,
+      "protein_g": 4.8,
+      "carbs_g": 12.6,
+      "fat_g": 3.7,
+      "fibre_g": 2.7,
+      "sodium_mg": 194,
+      "sat_fat_g": 2.09,
+      "default_serving_g": 155,
+      "variant_of": "dal_toor_plain",
+      "variant_label": "tadka (1 tsp ghee)",
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 103.3
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 155
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 206.7
+        },
+        {
+          "label": "1 cup",
+          "grams": 248
+        }
+      ]
+    },
+    {
+      "slug": "dal_toor_ghee",
+      "name": "Toor dal with ghee",
+      "kcal": 142,
+      "protein_g": 4.6,
+      "carbs_g": 11.9,
+      "fat_g": 9,
+      "fibre_g": 2.6,
+      "sodium_mg": 183,
+      "sat_fat_g": 5.38,
+      "default_serving_g": 164,
+      "variant_of": "dal_toor_plain",
+      "variant_label": "with 1 tbsp ghee",
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 109.3
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 164
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 218.7
+        },
+        {
+          "label": "1 cup",
+          "grams": 262.4
+        }
+      ]
+    },
+    {
+      "slug": "dal_moong_plain",
+      "name": "Moong dal (yellow), cooked, plain",
+      "kcal": 71,
+      "protein_g": 5.5,
+      "carbs_g": 12.5,
+      "fat_g": 0.4,
+      "fibre_g": 2.5,
+      "sodium_mg": 200,
+      "sat_fat_g": 0.1,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        },
+        {
+          "label": "1 cup",
+          "grams": 240
+        }
+      ]
+    },
+    {
+      "slug": "dal_moong_tadka",
+      "name": "Moong dal, tadka",
+      "kcal": 97,
+      "protein_g": 5.3,
+      "carbs_g": 12.1,
+      "fat_g": 3.6,
+      "fibre_g": 2.4,
+      "sodium_mg": 194,
+      "sat_fat_g": 2.09,
+      "default_serving_g": 155,
+      "variant_of": "dal_moong_plain",
+      "variant_label": "tadka (1 tsp ghee)",
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 103.3
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 155
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 206.7
+        },
+        {
+          "label": "1 cup",
+          "grams": 248
+        }
+      ]
+    },
+    {
+      "slug": "dal_masoor_plain",
+      "name": "Masoor dal (red lentil), cooked, plain",
+      "kcal": 76,
+      "protein_g": 5.8,
+      "carbs_g": 13.5,
+      "fat_g": 0.4,
+      "fibre_g": 2.6,
+      "sodium_mg": 200,
+      "sat_fat_g": 0.1,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        },
+        {
+          "label": "1 cup",
+          "grams": 240
+        }
+      ]
+    },
+    {
+      "slug": "dal_masoor_tadka",
+      "name": "Masoor dal, tadka",
+      "kcal": 102,
+      "protein_g": 5.6,
+      "carbs_g": 13.1,
+      "fat_g": 3.6,
+      "fibre_g": 2.5,
+      "sodium_mg": 194,
+      "sat_fat_g": 0.52,
+      "default_serving_g": 155,
+      "variant_of": "dal_masoor_plain",
+      "variant_label": "tadka (1 tsp oil)",
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 103.3
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 155
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 206.7
+        },
+        {
+          "label": "1 cup",
+          "grams": 248
+        }
+      ]
+    },
+    {
+      "slug": "dal_makhani",
+      "name": "Dal makhani",
+      "kcal": 134,
+      "protein_g": 5.5,
+      "carbs_g": 13,
+      "fat_g": 7.5,
+      "fibre_g": 4,
+      "sodium_mg": 330,
+      "sat_fat_g": 4.2,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "chole",
+      "name": "Chole (chickpea curry)",
+      "kcal": 148,
+      "protein_g": 6.5,
+      "carbs_g": 20,
+      "fat_g": 6,
+      "fibre_g": 6,
+      "sodium_mg": 380,
+      "sat_fat_g": 0.8,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "rajma",
+      "name": "Rajma (kidney bean curry)",
+      "kcal": 126,
+      "protein_g": 6,
+      "carbs_g": 18,
+      "fat_g": 4.5,
+      "fibre_g": 5.5,
+      "sodium_mg": 350,
+      "sat_fat_g": 0.6,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "kadhi",
+      "name": "Kadhi (besan and curd curry), plain",
+      "kcal": 79,
+      "protein_g": 3.2,
+      "carbs_g": 7,
+      "fat_g": 4.5,
+      "fibre_g": 1,
+      "sodium_mg": 330,
+      "sat_fat_g": 1.6,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "sambar",
+      "name": "Sambar",
+      "kcal": 57,
+      "protein_g": 2.8,
+      "carbs_g": 8,
+      "fat_g": 2,
+      "fibre_g": 2.2,
+      "sodium_mg": 300,
+      "sat_fat_g": 0.3,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        },
+        {
+          "label": "1 cup",
+          "grams": 240
+        }
+      ]
+    },
+    {
+      "slug": "rasam",
+      "name": "Rasam",
+      "kcal": 29,
+      "protein_g": 0.8,
+      "carbs_g": 4,
+      "fat_g": 1.2,
+      "fibre_g": 0.7,
+      "sodium_mg": 350,
+      "sat_fat_g": 0.2,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        },
+        {
+          "label": "1 cup",
+          "grams": 240
+        }
+      ]
+    },
+    {
+      "slug": "palak_paneer",
+      "name": "Palak paneer",
+      "kcal": 145,
+      "protein_g": 7,
+      "carbs_g": 5.5,
+      "fat_g": 11,
+      "fibre_g": 2,
+      "sodium_mg": 380,
+      "sat_fat_g": 5.5,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "paneer_bhurji",
+      "name": "Paneer bhurji",
+      "kcal": 232,
+      "protein_g": 13,
+      "carbs_g": 5,
+      "fat_g": 18,
+      "fibre_g": 1,
+      "sodium_mg": 350,
+      "sat_fat_g": 10,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "paneer_butter_masala",
+      "name": "Paneer butter masala",
+      "kcal": 206,
+      "protein_g": 8,
+      "carbs_g": 8,
+      "fat_g": 16,
+      "fibre_g": 1.2,
+      "sodium_mg": 420,
+      "sat_fat_g": 9,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "paneer",
+      "name": "Paneer (cottage cheese), fresh",
+      "kcal": 265,
+      "protein_g": 18.3,
+      "carbs_g": 1.2,
+      "fat_g": 20.8,
+      "fibre_g": 0,
+      "sodium_mg": 22,
+      "sat_fat_g": 13,
+      "default_serving_g": 30,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 cube",
+          "grams": 15
+        },
+        {
+          "label": "1 piece (large)",
+          "grams": 30
+        },
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        }
+      ]
+    },
+    {
+      "slug": "egg_curry",
+      "name": "Egg curry",
+      "kcal": 127,
+      "protein_g": 7.5,
+      "carbs_g": 4.5,
+      "fat_g": 9,
+      "fibre_g": 0.8,
+      "sodium_mg": 380,
+      "sat_fat_g": 2.3,
+      "default_serving_g": 120,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 egg with gravy",
+          "grams": 120
+        },
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "egg_bhurji",
+      "name": "Egg bhurji",
+      "kcal": 172,
+      "protein_g": 11,
+      "carbs_g": 3,
+      "fat_g": 13,
+      "fibre_g": 0.6,
+      "sodium_mg": 330,
+      "sat_fat_g": 3.5,
+      "default_serving_g": 120,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "2 eggs",
+          "grams": 120
+        },
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "chicken_curry",
+      "name": "Chicken curry, home style",
+      "kcal": 147,
+      "protein_g": 13,
+      "carbs_g": 4,
+      "fat_g": 9,
+      "fibre_g": 0.8,
+      "sodium_mg": 400,
+      "sat_fat_g": 2.3,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "butter_chicken",
+      "name": "Butter chicken",
+      "kcal": 200,
+      "protein_g": 13,
+      "carbs_g": 6,
+      "fat_g": 14,
+      "fibre_g": 0.8,
+      "sodium_mg": 450,
+      "sat_fat_g": 7,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "fish_curry",
+      "name": "Fish curry",
+      "kcal": 126,
+      "protein_g": 12,
+      "carbs_g": 4,
+      "fat_g": 7,
+      "fibre_g": 0.6,
+      "sodium_mg": 380,
+      "sat_fat_g": 1.5,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "aloo_gobi_dry",
+      "name": "Aloo gobi, dry",
+      "kcal": 92,
+      "protein_g": 2.5,
+      "carbs_g": 13,
+      "fat_g": 4,
+      "fibre_g": 2.8,
+      "sodium_mg": 300,
+      "sat_fat_g": 0.5,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "aloo_gobi_gravy",
+      "name": "Aloo gobi, gravy",
+      "kcal": 144,
+      "protein_g": 2,
+      "carbs_g": 10.2,
+      "fat_g": 11.1,
+      "fibre_g": 2.2,
+      "sodium_mg": 274,
+      "sat_fat_g": 1.43,
+      "default_serving_g": 150,
+      "variant_of": "aloo_gobi_dry",
+      "variant_label": "gravy, 1 tbsp oil",
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "bhindi_dry",
+      "name": "Bhindi masala, dry",
+      "kcal": 93,
+      "protein_g": 2.4,
+      "carbs_g": 9,
+      "fat_g": 6,
+      "fibre_g": 3.5,
+      "sodium_mg": 280,
+      "sat_fat_g": 0.8,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "bhindi_gravy",
+      "name": "Bhindi masala, gravy",
+      "kcal": 144,
+      "protein_g": 1.9,
+      "carbs_g": 7.8,
+      "fat_g": 12.3,
+      "fibre_g": 2.6,
+      "sodium_mg": 262,
+      "sat_fat_g": 1.61,
+      "default_serving_g": 150,
+      "variant_of": "bhindi_dry",
+      "variant_label": "gravy, 1 tbsp oil",
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "mixed_veg_sabzi_dry",
+      "name": "Mixed vegetable sabzi, dry",
+      "kcal": 76,
+      "protein_g": 2.5,
+      "carbs_g": 9,
+      "fat_g": 4,
+      "fibre_g": 3,
+      "sodium_mg": 300,
+      "sat_fat_g": 0.5,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "mixed_veg_sabzi_gravy",
+      "name": "Mixed vegetable sabzi, gravy",
+      "kcal": 135,
+      "protein_g": 2,
+      "carbs_g": 7.8,
+      "fat_g": 11.1,
+      "fibre_g": 2.3,
+      "sodium_mg": 274,
+      "sat_fat_g": 1.43,
+      "default_serving_g": 150,
+      "variant_of": "mixed_veg_sabzi_dry",
+      "variant_label": "gravy, 1 tbsp oil",
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "aloo_sabzi_dry",
+      "name": "Aloo sabzi (jeera aloo), dry",
+      "kcal": 113,
+      "protein_g": 2,
+      "carbs_g": 17,
+      "fat_g": 4.5,
+      "fibre_g": 2,
+      "sodium_mg": 300,
+      "sat_fat_g": 0.6,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "aloo_sabzi_gravy",
+      "name": "Aloo sabzi (jeera aloo), gravy",
+      "kcal": 156,
+      "protein_g": 1.6,
+      "carbs_g": 12.7,
+      "fat_g": 11.4,
+      "fibre_g": 1.7,
+      "sodium_mg": 274,
+      "sat_fat_g": 1.49,
+      "default_serving_g": 150,
+      "variant_of": "aloo_sabzi_dry",
+      "variant_label": "gravy, 1 tbsp oil",
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "lauki_sabzi_dry",
+      "name": "Lauki (bottle gourd) sabzi, dry",
+      "kcal": 47,
+      "protein_g": 0.8,
+      "carbs_g": 5,
+      "fat_g": 3,
+      "fibre_g": 1.5,
+      "sodium_mg": 250,
+      "sat_fat_g": 0.4,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "lauki_sabzi_gravy",
+      "name": "Lauki (bottle gourd) sabzi, gravy",
+      "kcal": 117,
+      "protein_g": 0.9,
+      "carbs_g": 5.3,
+      "fat_g": 10.5,
+      "fibre_g": 1.4,
+      "sodium_mg": 244,
+      "sat_fat_g": 1.37,
+      "default_serving_g": 150,
+      "variant_of": "lauki_sabzi_dry",
+      "variant_label": "gravy, 1 tbsp oil",
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "baingan_bharta",
+      "name": "Baingan bharta",
+      "kcal": 78,
+      "protein_g": 1.8,
+      "carbs_g": 8,
+      "fat_g": 5,
+      "fibre_g": 3,
+      "sodium_mg": 300,
+      "sat_fat_g": 0.7,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "rice_plain",
+      "name": "Rice, white, cooked, plain",
+      "kcal": 126,
+      "protein_g": 2.7,
+      "carbs_g": 28.2,
+      "fat_g": 0.3,
+      "fibre_g": 0.4,
+      "sodium_mg": 1,
+      "sat_fat_g": 0.1,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        },
+        {
+          "label": "1 cup",
+          "grams": 160
+        }
+      ]
+    },
+    {
+      "slug": "jeera_rice",
+      "name": "Jeera rice",
+      "kcal": 150,
+      "protein_g": 2.6,
+      "carbs_g": 27.2,
+      "fat_g": 3.5,
+      "fibre_g": 0.4,
+      "sodium_mg": 188,
+      "sat_fat_g": 2.08,
+      "default_serving_g": 155.8,
+      "variant_of": "rice_plain",
+      "variant_label": "jeera rice (1 tsp ghee)",
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 103.8
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 155.8
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 207.7
+        },
+        {
+          "label": "1 cup",
+          "grams": 166.1
+        }
+      ]
+    },
+    {
+      "slug": "khichdi",
+      "name": "Khichdi (moong dal and rice)",
+      "kcal": 117,
+      "protein_g": 4.5,
+      "carbs_g": 20,
+      "fat_g": 2.5,
+      "fibre_g": 1.8,
+      "sodium_mg": 250,
+      "sat_fat_g": 1.3,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "khichdi_ghee",
+      "name": "Khichdi with ghee",
+      "kcal": 142,
+      "protein_g": 4.4,
+      "carbs_g": 19.4,
+      "fat_g": 5.6,
+      "fibre_g": 1.7,
+      "sodium_mg": 242,
+      "sat_fat_g": 3.25,
+      "default_serving_g": 155,
+      "variant_of": "khichdi",
+      "variant_label": "with 1 tsp ghee",
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 103.3
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 155
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 206.7
+        }
+      ]
+    },
+    {
+      "slug": "biryani_veg",
+      "name": "Vegetable biryani",
+      "kcal": 164,
+      "protein_g": 3.5,
+      "carbs_g": 25,
+      "fat_g": 6,
+      "fibre_g": 2,
+      "sodium_mg": 380,
+      "sat_fat_g": 2,
+      "default_serving_g": 200,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        },
+        {
+          "label": "1 plate",
+          "grams": 300
+        }
+      ]
+    },
+    {
+      "slug": "biryani_chicken",
+      "name": "Chicken biryani",
+      "kcal": 177,
+      "protein_g": 9,
+      "carbs_g": 20,
+      "fat_g": 7,
+      "fibre_g": 1,
+      "sodium_mg": 400,
+      "sat_fat_g": 2.2,
+      "default_serving_g": 200,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        },
+        {
+          "label": "1 plate",
+          "grams": 350
+        }
+      ]
+    },
+    {
+      "slug": "pulao_veg",
+      "name": "Vegetable pulao",
+      "kcal": 145,
+      "protein_g": 3,
+      "carbs_g": 24,
+      "fat_g": 4.5,
+      "fibre_g": 1.6,
+      "sodium_mg": 320,
+      "sat_fat_g": 1.4,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "roti_plain",
+      "name": "Roti (phulka), whole wheat, plain",
+      "kcal": 258,
+      "protein_g": 9.5,
+      "carbs_g": 55,
+      "fat_g": 1.7,
+      "fibre_g": 7.5,
+      "sodium_mg": 150,
+      "sat_fat_g": 0.3,
+      "default_serving_g": 40,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 roti (small)",
+          "grams": 30
+        },
+        {
+          "label": "1 roti (medium)",
+          "grams": 40
+        },
+        {
+          "label": "1 roti (large)",
+          "grams": 55
+        }
+      ]
+    },
+    {
+      "slug": "roti_ghee",
+      "name": "Roti with ghee",
+      "kcal": 296,
+      "protein_g": 8.9,
+      "carbs_g": 51.8,
+      "fat_g": 7.5,
+      "fibre_g": 7.1,
+      "sodium_mg": 141,
+      "sat_fat_g": 3.92,
+      "default_serving_g": 42.5,
+      "variant_of": "roti_plain",
+      "variant_label": "with 1/2 tsp ghee",
+      "servings": [
+        {
+          "label": "1 roti (small)",
+          "grams": 31.9
+        },
+        {
+          "label": "1 roti (medium)",
+          "grams": 42.5
+        },
+        {
+          "label": "1 roti (large)",
+          "grams": 58.4
+        }
+      ]
+    },
+    {
+      "slug": "chapati",
+      "name": "Chapati, whole wheat, oil in dough",
+      "kcal": 267,
+      "protein_g": 9,
+      "carbs_g": 50,
+      "fat_g": 5,
+      "fibre_g": 7,
+      "sodium_mg": 250,
+      "sat_fat_g": 0.8,
+      "default_serving_g": 45,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 chapati (small)",
+          "grams": 35
+        },
+        {
+          "label": "1 chapati (medium)",
+          "grams": 45
+        },
+        {
+          "label": "1 chapati (large)",
+          "grams": 60
+        }
+      ]
+    },
+    {
+      "slug": "chapati_ghee",
+      "name": "Chapati with ghee",
+      "kcal": 330,
+      "protein_g": 8.1,
+      "carbs_g": 45,
+      "fat_g": 14.5,
+      "fibre_g": 6.3,
+      "sodium_mg": 225,
+      "sat_fat_g": 6.91,
+      "default_serving_g": 50,
+      "variant_of": "chapati",
+      "variant_label": "with 1 tsp ghee",
+      "servings": [
+        {
+          "label": "1 chapati (small)",
+          "grams": 38.9
+        },
+        {
+          "label": "1 chapati (medium)",
+          "grams": 50
+        },
+        {
+          "label": "1 chapati (large)",
+          "grams": 66.7
+        }
+      ]
+    },
+    {
+      "slug": "paratha_plain",
+      "name": "Paratha, plain",
+      "kcal": 319,
+      "protein_g": 8,
+      "carbs_g": 45,
+      "fat_g": 13,
+      "fibre_g": 5,
+      "sodium_mg": 350,
+      "sat_fat_g": 4,
+      "default_serving_g": 75,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 paratha (small)",
+          "grams": 50
+        },
+        {
+          "label": "1 paratha (medium)",
+          "grams": 75
+        },
+        {
+          "label": "1 paratha (large)",
+          "grams": 100
+        }
+      ]
+    },
+    {
+      "slug": "paratha_aloo",
+      "name": "Aloo paratha",
+      "kcal": 258,
+      "protein_g": 6,
+      "carbs_g": 38,
+      "fat_g": 10,
+      "fibre_g": 4,
+      "sodium_mg": 380,
+      "sat_fat_g": 3.5,
+      "default_serving_g": 120,
+      "variant_of": "paratha_plain",
+      "variant_label": "aloo stuffed",
+      "servings": [
+        {
+          "label": "1 paratha (small)",
+          "grams": 80
+        },
+        {
+          "label": "1 paratha (medium)",
+          "grams": 120
+        },
+        {
+          "label": "1 paratha (large)",
+          "grams": 160
+        }
+      ]
+    },
+    {
+      "slug": "naan",
+      "name": "Naan, plain",
+      "kcal": 281,
+      "protein_g": 9,
+      "carbs_g": 50,
+      "fat_g": 5.5,
+      "fibre_g": 2.2,
+      "sodium_mg": 450,
+      "sat_fat_g": 1.5,
+      "default_serving_g": 90,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 naan (medium)",
+          "grams": 90
+        },
+        {
+          "label": "1 naan (large)",
+          "grams": 120
+        }
+      ]
+    },
+    {
+      "slug": "naan_butter",
+      "name": "Butter naan",
+      "kcal": 313,
+      "protein_g": 8.4,
+      "carbs_g": 46.4,
+      "fat_g": 10.9,
+      "fibre_g": 2,
+      "sodium_mg": 464,
+      "sat_fat_g": 5.07,
+      "default_serving_g": 97,
+      "variant_of": "naan",
+      "variant_label": "butter naan (1/2 tbsp butter)",
+      "servings": [
+        {
+          "label": "1 naan (medium)",
+          "grams": 97
+        },
+        {
+          "label": "1 naan (large)",
+          "grams": 129.3
+        }
+      ]
+    },
+    {
+      "slug": "puri",
+      "name": "Puri, fried",
+      "kcal": 349,
+      "protein_g": 7,
+      "carbs_g": 42,
+      "fat_g": 18,
+      "fibre_g": 4.5,
+      "sodium_mg": 280,
+      "sat_fat_g": 3,
+      "default_serving_g": 25,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 puri",
+          "grams": 25
+        },
+        {
+          "label": "1 puri (large)",
+          "grams": 35
+        }
+      ]
+    },
+    {
+      "slug": "thepla",
+      "name": "Thepla (methi)",
+      "kcal": 292,
+      "protein_g": 9,
+      "carbs_g": 40,
+      "fat_g": 12,
+      "fibre_g": 6,
+      "sodium_mg": 400,
+      "sat_fat_g": 2,
+      "default_serving_g": 40,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 thepla",
+          "grams": 40
+        }
+      ]
+    },
+    {
+      "slug": "poha",
+      "name": "Poha",
+      "kcal": 144,
+      "protein_g": 2.6,
+      "carbs_g": 24,
+      "fat_g": 4.5,
+      "fibre_g": 1.5,
+      "sodium_mg": 280,
+      "sat_fat_g": 0.6,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        },
+        {
+          "label": "1 plate",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "upma",
+      "name": "Upma (rava)",
+      "kcal": 141,
+      "protein_g": 3.2,
+      "carbs_g": 21,
+      "fat_g": 5.2,
+      "fibre_g": 1.5,
+      "sodium_mg": 300,
+      "sat_fat_g": 0.8,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        },
+        {
+          "label": "1 plate",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "idli",
+      "name": "Idli",
+      "kcal": 120,
+      "protein_g": 3.9,
+      "carbs_g": 26,
+      "fat_g": 0.4,
+      "fibre_g": 1.5,
+      "sodium_mg": 260,
+      "sat_fat_g": 0.1,
+      "default_serving_g": 40,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 idli (small)",
+          "grams": 30
+        },
+        {
+          "label": "1 idli (medium)",
+          "grams": 40
+        },
+        {
+          "label": "1 idli (large)",
+          "grams": 55
+        }
+      ]
+    },
+    {
+      "slug": "dosa_plain",
+      "name": "Dosa, plain",
+      "kcal": 178,
+      "protein_g": 4,
+      "carbs_g": 31,
+      "fat_g": 4.5,
+      "fibre_g": 1.3,
+      "sodium_mg": 240,
+      "sat_fat_g": 0.7,
+      "default_serving_g": 85,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 dosa (small)",
+          "grams": 60
+        },
+        {
+          "label": "1 dosa (medium)",
+          "grams": 85
+        },
+        {
+          "label": "1 dosa (large)",
+          "grams": 120
+        }
+      ]
+    },
+    {
+      "slug": "dosa_masala",
+      "name": "Masala dosa",
+      "kcal": 144,
+      "protein_g": 3,
+      "carbs_g": 24.2,
+      "fat_g": 4.3,
+      "fibre_g": 1.6,
+      "sodium_mg": 279,
+      "sat_fat_g": 0.6,
+      "default_serving_g": 165,
+      "variant_of": "dosa_plain",
+      "variant_label": "masala (potato filling)",
+      "servings": [
+        {
+          "label": "1 masala dosa (small)",
+          "grams": 120
+        },
+        {
+          "label": "1 masala dosa (medium)",
+          "grams": 165
+        },
+        {
+          "label": "1 masala dosa (large)",
+          "grams": 230
+        }
+      ]
+    },
+    {
+      "slug": "uttapam",
+      "name": "Uttapam (onion)",
+      "kcal": 154,
+      "protein_g": 4.5,
+      "carbs_g": 26,
+      "fat_g": 4,
+      "fibre_g": 2,
+      "sodium_mg": 300,
+      "sat_fat_g": 0.6,
+      "default_serving_g": 120,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 uttapam",
+          "grams": 120
+        }
+      ]
+    },
+    {
+      "slug": "medu_vada",
+      "name": "Medu vada",
+      "kcal": 278,
+      "protein_g": 9,
+      "carbs_g": 27,
+      "fat_g": 16,
+      "fibre_g": 5,
+      "sodium_mg": 400,
+      "sat_fat_g": 2.2,
+      "default_serving_g": 40,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 vada",
+          "grams": 40
+        }
+      ]
+    },
+    {
+      "slug": "dhokla",
+      "name": "Dhokla (khaman)",
+      "kcal": 164,
+      "protein_g": 6.5,
+      "carbs_g": 22,
+      "fat_g": 6,
+      "fibre_g": 2,
+      "sodium_mg": 400,
+      "sat_fat_g": 0.9,
+      "default_serving_g": 30,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 piece",
+          "grams": 30
+        },
+        {
+          "label": "1 plate (4 pieces)",
+          "grams": 120
+        }
+      ]
+    },
+    {
+      "slug": "samosa",
+      "name": "Samosa (potato)",
+      "kcal": 293,
+      "protein_g": 4.6,
+      "carbs_g": 32,
+      "fat_g": 17,
+      "fibre_g": 3,
+      "sodium_mg": 420,
+      "sat_fat_g": 3.5,
+      "default_serving_g": 75,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 samosa (small)",
+          "grams": 50
+        },
+        {
+          "label": "1 samosa (medium)",
+          "grams": 75
+        },
+        {
+          "label": "1 samosa (large)",
+          "grams": 100
+        }
+      ]
+    },
+    {
+      "slug": "pakora_onion",
+      "name": "Pakora (onion)",
+      "kcal": 261,
+      "protein_g": 6,
+      "carbs_g": 25,
+      "fat_g": 16,
+      "fibre_g": 3.5,
+      "sodium_mg": 380,
+      "sat_fat_g": 2,
+      "default_serving_g": 20,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 piece",
+          "grams": 20
+        },
+        {
+          "label": "1 plate (6 pieces)",
+          "grams": 120
+        }
+      ]
+    },
+    {
+      "slug": "aloo_tikki",
+      "name": "Aloo tikki",
+      "kcal": 174,
+      "protein_g": 2.5,
+      "carbs_g": 22,
+      "fat_g": 9,
+      "fibre_g": 2.5,
+      "sodium_mg": 380,
+      "sat_fat_g": 1.2,
+      "default_serving_g": 50,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 tikki",
+          "grams": 50
+        }
+      ]
+    },
+    {
+      "slug": "pav_bhaji",
+      "name": "Pav bhaji (bhaji only)",
+      "kcal": 102,
+      "protein_g": 2.5,
+      "carbs_g": 11,
+      "fat_g": 6,
+      "fibre_g": 2.8,
+      "sodium_mg": 400,
+      "sat_fat_g": 3,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "vada_pav",
+      "name": "Vada pav",
+      "kcal": 278,
+      "protein_g": 6,
+      "carbs_g": 38,
+      "fat_g": 12,
+      "fibre_g": 3,
+      "sodium_mg": 500,
+      "sat_fat_g": 2,
+      "default_serving_g": 130,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 piece",
+          "grams": 130
+        }
+      ]
+    },
+    {
+      "slug": "chana_chaat",
+      "name": "Chana chaat",
+      "kcal": 131,
+      "protein_g": 7,
+      "carbs_g": 23,
+      "fat_g": 2.5,
+      "fibre_g": 6,
+      "sodium_mg": 350,
+      "sat_fat_g": 0.3,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "sprouts_salad",
+      "name": "Sprouts salad (moong)",
+      "kcal": 56,
+      "protein_g": 4,
+      "carbs_g": 10,
+      "fat_g": 0.5,
+      "fibre_g": 2.5,
+      "sodium_mg": 150,
+      "sat_fat_g": 0.1,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "besan_chilla",
+      "name": "Besan chilla",
+      "kcal": 181,
+      "protein_g": 9.5,
+      "carbs_g": 22,
+      "fat_g": 7,
+      "fibre_g": 4,
+      "sodium_mg": 300,
+      "sat_fat_g": 1,
+      "default_serving_g": 70,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 chilla (small)",
+          "grams": 50
+        },
+        {
+          "label": "1 chilla (medium)",
+          "grams": 70
+        },
+        {
+          "label": "1 chilla (large)",
+          "grams": 100
+        }
+      ]
+    },
+    {
+      "slug": "moong_dal_chilla",
+      "name": "Moong dal chilla",
+      "kcal": 150,
+      "protein_g": 9,
+      "carbs_g": 19,
+      "fat_g": 5,
+      "fibre_g": 3.5,
+      "sodium_mg": 280,
+      "sat_fat_g": 0.8,
+      "default_serving_g": 70,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 chilla (small)",
+          "grams": 50
+        },
+        {
+          "label": "1 chilla (medium)",
+          "grams": 70
+        },
+        {
+          "label": "1 chilla (large)",
+          "grams": 100
+        }
+      ]
+    },
+    {
+      "slug": "masala_oats",
+      "name": "Masala oats, cooked",
+      "kcal": 99,
+      "protein_g": 4.2,
+      "carbs_g": 15,
+      "fat_g": 3,
+      "fibre_g": 2.3,
+      "sodium_mg": 280,
+      "sat_fat_g": 0.6,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        },
+        {
+          "label": "1 cup",
+          "grams": 240
+        }
+      ]
+    },
+    {
+      "slug": "curd",
+      "name": "Curd (dahi), whole milk",
+      "kcal": 60,
+      "protein_g": 3.1,
+      "carbs_g": 3,
+      "fat_g": 4,
+      "fibre_g": 0,
+      "sodium_mg": 32,
+      "sat_fat_g": 2.5,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        },
+        {
+          "label": "1 cup",
+          "grams": 245
+        }
+      ]
+    },
+    {
+      "slug": "raita_cucumber",
+      "name": "Raita (cucumber)",
+      "kcal": 55,
+      "protein_g": 2.8,
+      "carbs_g": 4.5,
+      "fat_g": 3,
+      "fibre_g": 0.4,
+      "sodium_mg": 220,
+      "sat_fat_g": 1.9,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "lassi_sweet",
+      "name": "Lassi, sweet",
+      "kcal": 91,
+      "protein_g": 3,
+      "carbs_g": 13,
+      "fat_g": 3,
+      "fibre_g": 0,
+      "sodium_mg": 45,
+      "sat_fat_g": 1.9,
+      "default_serving_g": 250,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 glass",
+          "grams": 250
+        },
+        {
+          "label": "1 cup",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "lassi_salted",
+      "name": "Lassi, salted",
+      "kcal": 55,
+      "protein_g": 3,
+      "carbs_g": 4,
+      "fat_g": 3,
+      "fibre_g": 0,
+      "sodium_mg": 300,
+      "sat_fat_g": 1.9,
+      "default_serving_g": 250,
+      "variant_of": "lassi_sweet",
+      "variant_label": "salted, no sugar",
+      "servings": [
+        {
+          "label": "1 glass",
+          "grams": 250
+        },
+        {
+          "label": "1 cup",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "chai_milk_sugar",
+      "name": "Chai with milk and sugar",
+      "kcal": 51,
+      "protein_g": 1.8,
+      "carbs_g": 7,
+      "fat_g": 1.7,
+      "fibre_g": 0,
+      "sodium_mg": 20,
+      "sat_fat_g": 1.1,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 cup",
+          "grams": 150
+        },
+        {
+          "label": "1 cutting (small cup)",
+          "grams": 80
+        },
+        {
+          "label": "1 glass",
+          "grams": 250
+        }
+      ]
+    },
+    {
+      "slug": "chai_milk_no_sugar",
+      "name": "Chai with milk, no sugar",
+      "kcal": 33,
+      "protein_g": 1.8,
+      "carbs_g": 2.6,
+      "fat_g": 1.7,
+      "fibre_g": 0,
+      "sodium_mg": 20,
+      "sat_fat_g": 1.1,
+      "default_serving_g": 150,
+      "variant_of": "chai_milk_sugar",
+      "variant_label": "no sugar",
+      "servings": [
+        {
+          "label": "1 cup",
+          "grams": 150
+        },
+        {
+          "label": "1 cutting (small cup)",
+          "grams": 80
+        },
+        {
+          "label": "1 glass",
+          "grams": 250
+        }
+      ]
+    },
+    {
+      "slug": "buttermilk",
+      "name": "Buttermilk (chaas), salted",
+      "kcal": 19,
+      "protein_g": 1.2,
+      "carbs_g": 1.8,
+      "fat_g": 0.8,
+      "fibre_g": 0,
+      "sodium_mg": 180,
+      "sat_fat_g": 0.5,
+      "default_serving_g": 250,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 glass",
+          "grams": 250
+        },
+        {
+          "label": "1 cup",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "kheer",
+      "name": "Kheer (rice)",
+      "kcal": 139,
+      "protein_g": 3.8,
+      "carbs_g": 22,
+      "fat_g": 4,
+      "fibre_g": 0.2,
+      "sodium_mg": 50,
+      "sat_fat_g": 2.4,
+      "default_serving_g": 150,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "gulab_jamun",
+      "name": "Gulab jamun, in syrup",
+      "kcal": 372,
+      "protein_g": 4.5,
+      "carbs_g": 55,
+      "fat_g": 15,
+      "fibre_g": 0.3,
+      "sodium_mg": 40,
+      "sat_fat_g": 6,
+      "default_serving_g": 45,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 piece (small)",
+          "grams": 30
+        },
+        {
+          "label": "1 piece (medium)",
+          "grams": 45
+        }
+      ]
+    },
+    {
+      "slug": "jalebi",
+      "name": "Jalebi",
+      "kcal": 396,
+      "protein_g": 2.5,
+      "carbs_g": 63,
+      "fat_g": 15,
+      "fibre_g": 0.5,
+      "sodium_mg": 20,
+      "sat_fat_g": 4,
+      "default_serving_g": 30,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 piece",
+          "grams": 30
+        },
+        {
+          "label": "1 plate (100 g)",
+          "grams": 100
+        }
+      ]
+    },
+    {
+      "slug": "sooji_halwa",
+      "name": "Sooji halwa",
+      "kcal": 307,
+      "protein_g": 3.5,
+      "carbs_g": 40,
+      "fat_g": 15,
+      "fibre_g": 1,
+      "sodium_mg": 30,
+      "sat_fat_g": 8.5,
+      "default_serving_g": 100,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 katori (small)",
+          "grams": 100
+        },
+        {
+          "label": "1 katori (medium)",
+          "grams": 150
+        },
+        {
+          "label": "1 katori (large)",
+          "grams": 200
+        }
+      ]
+    },
+    {
+      "slug": "ghee",
+      "name": "Ghee",
+      "kcal": 896,
+      "protein_g": 0,
+      "carbs_g": 0,
+      "fat_g": 99.5,
+      "fibre_g": 0,
+      "sodium_mg": 2,
+      "sat_fat_g": 61.9,
+      "default_serving_g": 5,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 tsp",
+          "grams": 5
+        },
+        {
+          "label": "1 tbsp",
+          "grams": 14
+        }
+      ]
+    },
+    {
+      "slug": "mustard_oil",
+      "name": "Mustard oil",
+      "kcal": 900,
+      "protein_g": 0,
+      "carbs_g": 0,
+      "fat_g": 100,
+      "fibre_g": 0,
+      "sodium_mg": 0,
+      "sat_fat_g": 11.6,
+      "default_serving_g": 4.5,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 tsp",
+          "grams": 4.5
+        },
+        {
+          "label": "1 tbsp",
+          "grams": 13.6
+        }
+      ]
+    },
+    {
+      "slug": "coconut_chutney",
+      "name": "Coconut chutney",
+      "kcal": 202,
+      "protein_g": 3.5,
+      "carbs_g": 9,
+      "fat_g": 18,
+      "fibre_g": 5,
+      "sodium_mg": 350,
+      "sat_fat_g": 15,
+      "default_serving_g": 50,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 tbsp",
+          "grams": 15
+        },
+        {
+          "label": "1 katori (small)",
+          "grams": 50
+        }
+      ]
+    },
+    {
+      "slug": "mint_chutney",
+      "name": "Mint coriander chutney",
+      "kcal": 40,
+      "protein_g": 2.5,
+      "carbs_g": 8,
+      "fat_g": 0.5,
+      "fibre_g": 3.5,
+      "sodium_mg": 450,
+      "sat_fat_g": 0.1,
+      "default_serving_g": 15,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 tbsp",
+          "grams": 15
+        }
+      ]
+    },
+    {
+      "slug": "pickle_mango",
+      "name": "Mango pickle, in oil",
+      "kcal": 158,
+      "protein_g": 1,
+      "carbs_g": 6,
+      "fat_g": 15,
+      "fibre_g": 2.5,
+      "sodium_mg": 2500,
+      "sat_fat_g": 1.8,
+      "default_serving_g": 5,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 tsp",
+          "grams": 5
+        },
+        {
+          "label": "1 tbsp",
+          "grams": 15
+        }
+      ]
+    },
+    {
+      "slug": "papad_roasted",
+      "name": "Papad (urad), roasted",
+      "kcal": 328,
+      "protein_g": 22,
+      "carbs_g": 57,
+      "fat_g": 3.3,
+      "fibre_g": 9,
+      "sodium_mg": 1700,
+      "sat_fat_g": 0.6,
+      "default_serving_g": 12,
+      "variant_of": null,
+      "variant_label": null,
+      "servings": [
+        {
+          "label": "1 papad",
+          "grams": 12
+        }
+      ]
+    },
+    {
+      "slug": "papad_fried",
+      "name": "Papad (urad), fried",
+      "kcal": 442,
+      "protein_g": 17.6,
+      "carbs_g": 45.6,
+      "fat_g": 22.6,
+      "fibre_g": 7.2,
+      "sodium_mg": 1360,
+      "sat_fat_g": 3.08,
+      "default_serving_g": 15,
+      "variant_of": "papad_roasted",
+      "variant_label": "fried",
+      "servings": [
+        {
+          "label": "1 papad",
+          "grams": 15
+        }
+      ]
+    }
+  ]
+}
