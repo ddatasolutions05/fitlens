@@ -44,8 +44,8 @@ test.describe('manual food log', () => {
     await page.getByTestId('done').click();
 
     await expect(page.getByTestId('today-screen')).toBeVisible();
-    const eatenAfter = (await page.locator('[aria-label^="Calories:"]').first().getAttribute('aria-label')) ?? '';
-    expect(eatenAfter).not.toBe(eatenBefore);
+    expect(eatenBefore).not.toContain('200');
+    await expect(page.locator('[aria-label^="Calories:"]').first()).toHaveAttribute('aria-label', /Calories: 200/);
     const mealRow = page.locator('[data-testid^="meal-"]').filter({ hasText: 'E2E test bar' }).first();
     await expect(mealRow).toContainText('200 kcal');
 

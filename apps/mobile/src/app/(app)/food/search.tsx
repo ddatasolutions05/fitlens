@@ -39,7 +39,7 @@ export default function FoodSearch() {
       items.forEach(addItem);
     }
     setPicked(null);
-    router.push('/meal/edit');
+    router.replace('/meal/edit');
   }
 
   return (

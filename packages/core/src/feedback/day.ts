@@ -20,14 +20,14 @@ export interface DayInsight {
 
 /** One short, neutral observation for the Today screen, computed from logged data only. */
 export function dayInsight(i: DayInsightInput): DayInsight {
-  if (!i.targets) {
-    return { kind: 'targets', text: 'Set your targets in Profile to see how today compares.' };
-  }
   if (!i.logged) {
     return {
       kind: 'not_logged',
       text: i.isToday ? 'Nothing logged yet today. Scan a meal or add food when you are ready.' : 'Nothing was logged on this day.',
     };
+  }
+  if (!i.targets) {
+    return { kind: 'targets', text: 'Set your targets in Profile to see how today compares.' };
   }
   const t = i.totals;
   const protein = t?.protein_g ?? null;

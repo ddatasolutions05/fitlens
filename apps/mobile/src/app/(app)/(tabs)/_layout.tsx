@@ -9,10 +9,6 @@ import { Text, layout, radius, space, touch, useTheme } from '@/ui';
 
 interface BottomTabBarProps {
   state: { index: number; routes: { key: string; name: string }[] };
-  navigation: {
-    emit: (e: { type: 'tabPress'; target: string; canPreventDefault: true }) => { defaultPrevented: boolean };
-    navigate: (name: string) => void;
-  };
 }
 type RawTabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>>[0];
 type TabName = 'today' | 'diary' | 'progress' | 'coach' | 'profile';
@@ -31,7 +27,7 @@ const TAB_GLYPHS: Record<TabName, string> = {
   profile: '◯',
 };
 
-function TabBar({ state, navigation }: BottomTabBarProps) {
+function TabBar({ state }: BottomTabBarProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const current = state.routes[state.index]?.name;
@@ -47,9 +43,8 @@ function TabBar({ state, navigation }: BottomTabBarProps) {
         accessibilityLabel={TAB_LABELS[name]}
         testID={`tab-${name}`}
         onPress={() => {
-          if (!route) return;
-          const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
-          if (!focused && !event.defaultPrevented) navigation.navigate(name);
+          if (!route || focused) return;
+          router.navigate(`/${name}`);
         }}
         style={styles.tab}
       >

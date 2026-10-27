@@ -142,8 +142,9 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
     setError(null);
     try {
       await save.mutateAsync({ draft, status: 'draft' });
+      setSelectedDate(draft.localDate);
       setDraft(null);
-      router.back();
+      router.dismissTo('/today');
     } catch (err) {
       setError(errorMessage(err));
     }
@@ -155,7 +156,7 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
     try {
       if (draft.mealId) await del.mutateAsync({ mealId: draft.mealId, localDate: draft.localDate });
       setDraft(null);
-      router.replace('/today');
+      router.dismissTo('/today');
     } catch (err) {
       setError(errorMessage(err));
     }
@@ -163,7 +164,7 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
 
   function finish() {
     setDraft(null);
-    router.replace('/today');
+    router.dismissTo('/today');
   }
 
   if (confirmedId) {

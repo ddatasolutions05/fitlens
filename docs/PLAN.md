@@ -104,11 +104,21 @@ lost precision in `numeric(4,3)`; onboarding marked itself complete before
 its writes finished; log modals swallowed errors; saved meals were promised
 but not surfaced (now listed under Add food).
 
-Verified live in this environment: the web build (Metro bundle compiles), the
-setup guide at 375 px with no horizontal scroll, route guards (Playwright:
-2 passed, 7 skipped with reasons), and that `/today`, `/scan`, `/meal/edit`
-and `/profile/targets` return 200 (not 500) when a Supabase URL is configured
-but no session exists.
+Verified live (2026-10-27, project `apoollhmgfocnkjvfocq`): migrations applied
+through the Management API, six functions deployed (the `features` function
+answers with the real "Not configured" state for vision), food database
+uploaded (8,262 USDA, 5,690 CNF, 86 Indian, 34,242 servings), and the
+Playwright suite against the deployed project at 375 px: **6 passed, 3
+skipped** (two setup-guide specs only apply without credentials; the photo
+spec waits for `ANTHROPIC_API_KEY`). Live runs found and fixed three more
+defects: `useAnimatedValue` is not exported by react-native-web, the custom
+tab bar relied on a `navigation` prop Expo Router does not pass, and
+post-save navigation stacked a second Today screen.
+
+Milestones 3, 4, 5 (search, manual log, recents), 7, 8 (feedback) and the
+targets, tracking-only, Today and Progress screens are therefore
+`verified live`. Milestone 6 (photo) and 9 (export, delete) remain `built`
+until a key is deployed and the screens are exercised.
 
 ## 5. Open risks
 

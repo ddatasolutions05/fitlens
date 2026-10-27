@@ -1,12 +1,12 @@
-import { useEffect } from 'react';
-import { Animated, StyleSheet, View, useAnimatedValue, type ViewStyle } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Animated, StyleSheet, View, type ViewStyle } from 'react-native';
 
 import { useTheme } from './theme';
 import { radius, space } from './tokens';
 
 export function Skeleton({ width = '100%', height = 16, round, style }: { width?: number | `${number}%`; height?: number; round?: boolean; style?: ViewStyle }) {
   const { colors, reducedMotion } = useTheme();
-  const opacity = useAnimatedValue(0.6);
+  const [opacity] = useState(() => new Animated.Value(0.6));
   useEffect(() => {
     if (reducedMotion) return;
     const loop = Animated.loop(

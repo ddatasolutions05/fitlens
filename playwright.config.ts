@@ -5,6 +5,7 @@ const baseURL = process.env.E2E_BASE_URL ?? 'http://localhost:8081';
 
 export default defineConfig({
   testDir: 'e2e',
+  globalSetup: './e2e/global-setup.ts',
   timeout: 90_000,
   expect: { timeout: 15_000 },
   retries: 0,

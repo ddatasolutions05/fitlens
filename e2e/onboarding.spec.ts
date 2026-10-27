@@ -13,7 +13,7 @@ test.describe('onboarding to Today', () => {
     await page.getByText('What is the difference?').click();
     await expect(page.getByTestId('tdee-explainer')).toBeVisible();
     await expect(page.getByText('Resting energy (REE)')).toBeVisible();
-    await expect(page.getByText(/× 1\.55/)).toBeVisible();
+    await expect(page.getByText(/× 1\.55/).first()).toBeVisible();
   });
 
   test('tracking-only mode never shows a deficit target', async ({ page }) => {
@@ -24,7 +24,7 @@ test.describe('onboarding to Today', () => {
     await page.getByTestId('save-profile').click();
     await page.goto('/profile/targets');
     await expect(page.getByText('Tracking-only mode')).toBeVisible();
-    await expect(page.getByText('No calorie target')).toBeVisible();
+    await expect(page.getByText('No calorie target', { exact: true })).toBeVisible();
     await page.getByTestId('save-targets').click();
     await page.goto('/today');
     await expect(page.getByTestId('calorie-target')).toContainText('Not set');

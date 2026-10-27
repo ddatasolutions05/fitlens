@@ -16,8 +16,9 @@ const base: DayInsightInput = {
 };
 
 describe('dayInsight', () => {
-  it('asks for targets first', () => {
+  it('asks for targets when something is logged but no goal exists', () => {
     expect(dayInsight({ ...base, targets: null }).kind).toBe('targets');
+    expect(dayInsight({ ...base, targets: null, logged: false, totals: null }).kind).toBe('not_logged');
   });
 
   it('says not logged, never zero', () => {
