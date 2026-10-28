@@ -45,7 +45,7 @@ const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const clientErrors = await sql(`
   select scope, message, platform, app_version, count(*)::int as n, max(created_at) as last_seen, count(distinct user_id)::int as users
   from public.client_events
-  where created_at > now() - interval '${requestedHours} hours'
+  where kind = 'error' and created_at > now() - interval '${requestedHours} hours'
   group by scope, message, platform, app_version
   order by last_seen desc
   limit 100`);
