@@ -18,6 +18,7 @@ import { MealPhotoThumb } from '@/features/photo/MealPhotoThumb';
 import { usePreferences, useProfile } from '@/features/profile/hooks';
 import { config } from '@/lib/config';
 import { errorMessage } from '@/lib/net';
+import { reportError } from '@/lib/telemetry';
 import { Button, Card, Icon, Input, NumberField, Segmented, Text, radius, space, touch, useTheme } from '@/ui';
 
 import { removeItem, setDraft, updateDraft, updateItem, useDraft } from './draft-store';
@@ -120,6 +121,7 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
         });
       }, 1000);
     } catch (err) {
+      reportError('meal.editor', err);
       setError(errorMessage(err));
     }
   }
@@ -134,6 +136,7 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
       setConfirmedId(null);
       setFeedback(null);
     } catch (err) {
+      reportError('meal.editor', err);
       setError(errorMessage(err));
     }
   }
@@ -147,6 +150,7 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
       setDraft(null);
       router.dismissTo('/today');
     } catch (err) {
+      reportError('meal.editor', err);
       setError(errorMessage(err));
     }
   }
@@ -159,6 +163,7 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
       setDraft(null);
       router.dismissTo('/today');
     } catch (err) {
+      reportError('meal.editor', err);
       setError(errorMessage(err));
     }
   }

@@ -33,6 +33,20 @@ export type Database = {
                   Relationships: [
                     
                   ]
+                },"client_events": {
+                  Row: {
+                    "app_version": string | null,"created_at": string,"extra": Json | null,"id": string,"kind": string,"message": string,"platform": string | null,"route": string | null,"scope": string,"stack": string | null,"user_agent": string | null,"user_id": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "app_version"?: string | null,"created_at"?: string,"extra"?: Json | null,"id"?: string,"kind"?: string,"message": string,"platform"?: string | null,"route"?: string | null,"scope": string,"stack"?: string | null,"user_agent"?: string | null,"user_id"?: string | null
+                  }
+                  Update: {
+                    "app_version"?: string | null,"created_at"?: string,"extra"?: Json | null,"id"?: string,"kind"?: string,"message"?: string,"platform"?: string | null,"route"?: string | null,"scope"?: string,"stack"?: string | null,"user_agent"?: string | null,"user_id"?: string | null
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"day_status": {
                   Row: {
                     "local_date": string,"status": string,"updated_at": string,"user_id": string

@@ -8,6 +8,7 @@ import { useAuthProviders } from '@/features/auth/providers';
 import { useSession } from '@/features/auth/session';
 import { config } from '@/lib/config';
 import { errorMessage } from '@/lib/net';
+import { reportError } from '@/lib/telemetry';
 import { getSupabase } from '@/lib/supabase';
 import { BrandMark, Button, Input, Screen, Text, radius, space, touch, useTheme } from '@/ui';
 
@@ -46,6 +47,7 @@ export default function SignIn() {
     try {
       await fn();
     } catch (err) {
+      if (!/invalid login|already registered|rate limit|not confirmed/i.test(errorMessage(err))) reportError('auth', err);
       setError(friendly(errorMessage(err)));
     } finally {
       setBusy(null);

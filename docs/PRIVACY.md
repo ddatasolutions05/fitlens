@@ -19,8 +19,9 @@ accuracy, safeguards, openness, individual access, challenging compliance).
 | Meal photos | Review and AI analysis | Private Storage bucket `meal-photos`, served by signed URLs that expire after 5 minutes |
 | Weight, activity, water, day status | Trends and adaptive estimates | `weight_logs`, `activity_records`, `water_logs`, `day_status` |
 | AI usage counters and analysis metadata | Rate limiting and cost tracking | `ai_usage`, `photo_analyses` (validated JSON only, never the raw image) |
+| Error reports (what failed, the error text, device and app version, the screen) | Fixing bugs users hit | `client_events` (own rows only; purged after 30 days) |
 
-Analytics and telemetry are off. There is no third-party SDK in the client.
+Usage analytics are off and there is no third-party SDK in the client. The only telemetry is the error report above, sent to the owner's own project when something fails; it never carries food, photos or messages.
 
 ## Consent for AI photo analysis
 

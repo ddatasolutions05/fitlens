@@ -129,6 +129,7 @@ until a key is deployed and the screens are exercised.
 | 12 | Stats: KPI grid (days logged, streak, avg calories vs target, days on target, avg protein and fibre, weight change and weekly rate, avg steps, workouts, avg water) on top of the charts, plus a water chart | built, verified live | `packages/core/src/stats.test.ts` (7 tests); `e2e/coach.spec.ts` asserts the grid |
 | 13 | Coach: `coach` edge function grounded on a 14 day summary, JSON reply with confirmable actions, device-only conversation | built; live answer needs the Anthropic workspace id | Deno check 7/7; `e2e/coach.spec.ts` passes in the not-configured and consent states |
 | 14 | Polish pass: shared page header, brand config, onboarding redesign, meal editor and scan restyle, log screens, range summary on Stats, empty states, light theme and reduced-motion checks | built, verified live | screenshots of 30 screens in both themes reviewed; `summary.test.ts` (5 tests); Playwright suite green |
+| 15 | Web photo resize under the browser canvas cap; first-party error telemetry (`client_events`, `reportError`, global handlers, `AppErrorBoundary`), `scripts/telemetry.mjs` | built, verified live | `photo-resize.spec.ts` (6000 px image comes out at 1,600 px JPEG); RLS test for `client_events`; hosted smoke green |
 
 ## 5. Open risks
 

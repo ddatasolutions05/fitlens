@@ -13,6 +13,7 @@ import { MealPhotoThumb } from '@/features/photo/MealPhotoThumb';
 import { usePreferences } from '@/features/profile/hooks';
 import { useFeatures } from '@/features/sync/useFeatures';
 import { errorMessage } from '@/lib/net';
+import { reportError } from '@/lib/telemetry';
 import { Button, Card, Icon, NotConfigured, PageHeader, Screen, Segmented, Skeleton, Text, radius, space, useTheme } from '@/ui';
 
 type Stage = 'idle' | 'uploading' | 'analyzing' | 'clarify' | 'mapping' | 'failed';
@@ -45,6 +46,7 @@ export default function ScanScreen() {
     try {
       picked = await pickPhoto(source);
     } catch (err) {
+      if (!(err instanceof CaptureFailure) || err.reason === 'failed') reportError('scan.pick', err, { source });
       if (err instanceof CaptureFailure) {
         if (err.reason === 'cancelled') return;
         setError(
@@ -73,6 +75,7 @@ export default function ScanScreen() {
       setStage('idle');
     } catch (err) {
       setStage('failed');
+      reportError('scan.upload', err);
       setError(`Upload failed: ${errorMessage(err)}. The photo was not saved.`);
     }
   }
@@ -92,6 +95,7 @@ export default function ScanScreen() {
       else await finishMapping(result, []);
     } catch (err) {
       setStage('failed');
+      if (!(err instanceof AnalyzeError) || !['consent_required', 'rate_limited', 'not_configured'].includes(err.code)) reportError('scan.analyze', err);
       if (err instanceof AnalyzeError) {
         setError(
           err.code === 'consent_required'
@@ -122,6 +126,7 @@ export default function ScanScreen() {
       setQuestions([]);
     } catch (err) {
       setStage('failed');
+      reportError('scan.map', err);
       setError(`Could not build the estimate: ${errorMessage(err)}.`);
     }
   }

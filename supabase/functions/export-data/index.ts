@@ -28,6 +28,7 @@ const TABLES = [
   'target_suggestions',
   'integration_connections',
   'ai_usage',
+  'client_events',
 ] as const;
 
 function toCsv(rows: Record<string, unknown>[]): string {

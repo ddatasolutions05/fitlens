@@ -9,9 +9,11 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { SessionProvider } from '@/features/auth/session';
 import { QueryProvider } from '@/lib/query';
-import { ThemeProvider, useTheme } from '@/ui';
+import { installGlobalErrorHandlers } from '@/lib/telemetry';
+import { AppErrorBoundary, ThemeProvider, useTheme } from '@/ui';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
+installGlobalErrorHandlers();
 
 function Navigator({ fontsReady }: { fontsReady: boolean }) {
   const { colors, scheme } = useTheme();
@@ -37,7 +39,9 @@ export default function RootLayout() {
         <ThemeProvider>
           <QueryProvider>
             <SessionProvider>
-              <Navigator fontsReady={fontsReady} />
+              <AppErrorBoundary>
+                <Navigator fontsReady={fontsReady} />
+              </AppErrorBoundary>
             </SessionProvider>
           </QueryProvider>
         </ThemeProvider>

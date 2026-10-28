@@ -4,11 +4,12 @@ import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { CoachAction } from '@fitlens/schemas';
 
-import { askCoach, coachErrorMessage } from '@/features/coach/api';
+import { askCoach, CoachError, coachErrorMessage } from '@/features/coach/api';
 import { appendMessage, clearConversation, loadConversation, useConversation, type CoachMessage } from '@/features/coach/store';
 import { useSelectedDate } from '@/features/day/selected-date';
 import { usePreferences } from '@/features/profile/hooks';
 import { useFeatures } from '@/features/sync/useFeatures';
+import { reportError } from '@/lib/telemetry';
 import { Button, Card, Icon, NotConfigured, Text, fonts, layout, radius, space, touch, useTheme } from '@/ui';
 
 const SUGGESTIONS = ['What should I eat for dinner?', 'How do I reach my protein today?', 'How consistent was this week?', 'Is my weight trend on track?'];
@@ -51,6 +52,7 @@ export default function CoachScreen() {
       appendMessage({ role: 'coach', text: res.reply.answer, actions: res.reply.actions, groundedOn: res.reply.grounded_on });
       setUsage({ used: res.usage.coach_calls_today, limit: res.usage.daily_limit });
     } catch (err) {
+      if (!(err instanceof CoachError) || !['consent_required', 'rate_limited', 'not_configured'].includes(err.code)) reportError('coach.ask', err);
       setError(coachErrorMessage(err));
     } finally {
       setBusy(false);

@@ -22,6 +22,7 @@ import { useAddGoalVersion, useUpsertPreferences, useUpsertProfile } from '@/fea
 import { planGoal } from '@/features/profile/targets';
 import { config } from '@/lib/config';
 import { errorMessage } from '@/lib/net';
+import { reportError } from '@/lib/telemetry';
 import { BrandMark, Button, Card, Chips, Input, Note, NumberField, Screen, Segmented, Stat, Text, radius, space, useTheme } from '@/ui';
 
 interface Answers {
@@ -205,6 +206,7 @@ export function OnboardingFlow() {
       await upsertProfile.mutateAsync({ onboarding_completed_at: new Date().toISOString() });
       router.replace('/today');
     } catch (err) {
+      reportError('onboarding.save', err);
       setError(errorMessage(err));
     } finally {
       setSaving(false);

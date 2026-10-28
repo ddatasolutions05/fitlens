@@ -1,3 +1,4 @@
+export { AppErrorBoundary } from './AppErrorBoundary';
 export { Bar } from './Bar';
 export { BrandMark } from './BrandMark';
 export { Button } from './Button';

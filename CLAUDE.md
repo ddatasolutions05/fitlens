@@ -21,6 +21,7 @@ status in `docs/PLAN.md`, decisions in `docs/DECISIONS.md`.
 | Deploy edge functions | `npx supabase functions deploy` |
 | Typecheck edge functions | `npm run functions:check` (uses `~/tools/deno/deno.exe`, `DENO_BIN`, or `deno` on PATH; passes `--node-modules-dir=none` so npm specifiers come from Deno's cache) |
 | Import food data | `npm run seed -- --source usda|cnf|indian|all` |
+| Error reports and function logs | `node scripts/telemetry.mjs [--hours 24] [--purge]` (needs `SUPABASE_ACCESS_TOKEN` and `SUPABASE_PROJECT_REF`) |
 | Regenerate DB types | `npx supabase gen types typescript --db-url "$DATABASE_URL?sslmode=disable" --schema public > apps/mobile/src/lib/database.types.ts` |
 
 E2E notes: `npm run test:e2e` starts the web server itself; set `E2E_NO_SERVER=1`
@@ -86,6 +87,8 @@ browser keeps the old bundle and e2e results lie.
 - Writes carry an idempotency key where duplicates are possible (meals). Buttons disable while a mutation is in flight.
 - Copy: calm, neutral. No "good/bad/junk/cheat", no shaming, no compensatory exercise. Tone rules are tested in `packages/core/src/feedback/tone.test.ts`.
 - Secrets only in Edge Function env. The client reads `EXPO_PUBLIC_*` only.
+- Caught errors that are not expected conditions go through `reportError(scope, err)` from `lib/telemetry.ts`; read them with `node scripts/telemetry.mjs`.
+- Photo resizing on web must never draw the full photo into a canvas (iOS Safari caps canvas pixels); see `features/photo/capture.ts`.
 - Commits: conventional commits (`feat:`, `fix:`, `chore:`, `docs:`, `test:`).
 - A milestone is done when typecheck, lint and tests pass, the flow works in the running app, `docs/PLAN.md` is updated and a commit exists.
 

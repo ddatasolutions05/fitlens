@@ -359,3 +359,25 @@ describe('storage objects', () => {
     expect(seenByA.rowCount).toBe(1);
   });
 });
+
+describe('client_events', () => {
+  it('a user can insert and read their own reports and nothing else', async () => {
+    await as(userA, (c) => c.query(`insert into client_events (user_id, scope, message) values ($1, 'test', 'boom')`, [userA.id]));
+    const own = await as(userA, (c) => c.query('select message from client_events where user_id = $1', [userA.id]));
+    expect(own.rowCount).toBe(1);
+    const other = await as(userB, (c) => c.query('select message from client_events where user_id = $1', [userA.id]));
+    expect(other.rowCount).toBe(0);
+    const forged = await expectDenied(
+      as(userB, (c) => c.query(`insert into client_events (user_id, scope, message) values ($1, 'test', 'forged')`, [userA.id])),
+    );
+    expect(forged).toMatch(/row-level security/i);
+    const update = await expectDenied(as(userA, (c) => c.query(`update client_events set message = 'x' where user_id = $1`, [userA.id])));
+    expect(update).toMatch(/permission denied/i);
+    const tooLong = await expectDenied(
+      as(userA, (c) => c.query(`insert into client_events (user_id, scope, message) values ($1, 'test', repeat('x', 501))`, [userA.id])),
+    );
+    expect(tooLong).toMatch(/check constraint/i);
+    const purged = await admin((c) => c.query('select fitlens.purge_client_events(0) as n'));
+    expect(purged.rows[0].n).toBe(1);
+  });
+});
