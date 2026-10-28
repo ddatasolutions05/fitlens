@@ -343,6 +343,34 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"trainer_codes": {
+                  Row: {
+                    "code": string,"created_at": string,"expires_at": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "code": string,"created_at"?: string,"expires_at"?: string,"user_id": string
+                  }
+                  Update: {
+                    "code"?: string,"created_at"?: string,"expires_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"trainer_links": {
+                  Row: {
+                    "created_at": string,"id": string,"member_user_id": string,"status": string,"trainer_name": string | null,"trainer_user_id": string,"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"id"?: string,"member_user_id": string,"status"?: string,"trainer_name"?: string | null,"trainer_user_id": string,"updated_at"?: string
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"member_user_id"?: string,"status"?: string,"trainer_name"?: string | null,"trainer_user_id"?: string,"updated_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"user_food_usage": {
                   Row: {
                     "favourite": boolean,"food_id": string,"last_used_at": string | null,"use_count": number,"user_id": string,"usual_grams": number | null
@@ -423,6 +451,30 @@ isOneToOne: false
           Functions: {
             "add_ai_cost":
 { Args: { "p_cost": number,"p_local_date": string,"p_user": string }; Returns: undefined
+                           },
+"link_trainer":
+{ Args: { "p_code": string }; Returns: string
+                           },
+"make_trainer_code":
+{ Args: Record<PropertyKey, never>; Returns: string
+                           },
+"trainer_members":
+{ Args: { "p_days"?: number }; Returns: {
+              "member_user_id": string,
+"display_name": string,
+"linked_at": string,
+"days_logged": number,
+"meals": number,
+"avg_kcal": number | null,
+"avg_protein_g": number | null,
+"calorie_target": number | null,
+"protein_target_g": number | null,
+"workouts": number,
+"workout_minutes": number,
+"weight_first": number | null,
+"weight_last": number | null,
+"last_log_date": string | null
+            }[]
                            },
 "goal_for_date":
 { Args: { "p_date": string }; Returns: {

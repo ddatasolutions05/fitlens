@@ -8,16 +8,15 @@ import { useDay } from '@/features/day/hooks';
 import { Avatar, initialsFor } from '@/features/profile/Avatar';
 import { useProfile } from '@/features/profile/hooks';
 import { useWeekSessions, useWeeklyPlan } from '@/features/workouts/hooks';
-import { config } from '@/lib/config';
-import { Button, Card, Icon, Screen, SkeletonCard, Stat, Text, radius, space, useTheme, type IconName } from '@/ui';
+import { Button, Card, Icon, Screen, SkeletonCard, Text, radius, space, touch, useTheme, type IconName } from '@/ui';
 
-const SECTIONS: { href: string; icon: IconName; title: string; blurb: string; testID: string }[] = [
-  { href: '/today', icon: 'today', title: 'Today', blurb: 'Calories, macros and what you logged', testID: 'nav-today' },
-  { href: '/diary', icon: 'diary', title: 'Diary', blurb: 'Meals, weight and activity by day', testID: 'nav-diary' },
-  { href: '/train', icon: 'dumbbell', title: 'Workouts', blurb: 'Your plan for the week', testID: 'nav-train' },
-  { href: '/progress', icon: 'progress', title: 'Stats', blurb: 'Streaks, averages and the trend', testID: 'nav-progress' },
-  { href: '/coach', icon: 'coach', title: 'Coach', blurb: 'Ask anything about your own logs', testID: 'nav-coach' },
-  { href: '/profile', icon: 'profile', title: 'Profile', blurb: 'Targets, display and privacy', testID: 'nav-profile' },
+const SECTIONS: { href: string; icon: IconName; title: string; testID: string }[] = [
+  { href: '/today', icon: 'today', title: 'Today', testID: 'nav-today' },
+  { href: '/diary', icon: 'diary', title: 'Diary', testID: 'nav-diary' },
+  { href: '/train', icon: 'dumbbell', title: 'Workouts', testID: 'nav-train' },
+  { href: '/progress', icon: 'progress', title: 'Stats', testID: 'nav-progress' },
+  { href: '/coach', icon: 'coach', title: 'Coach', testID: 'nav-coach' },
+  { href: '/profile', icon: 'profile', title: 'Profile', testID: 'nav-profile' },
 ];
 
 export default function HomeScreen() {
@@ -28,7 +27,7 @@ export default function HomeScreen() {
   const day = useDay(today);
   const { plan, settings, configured } = useWeeklyPlan();
   const sessions = useWeekSessions(today);
-  const suggestion = useMemo(() => (configured ? suggestionsForDay({ plan, localDate: today, settings })[0] ?? null : null), [configured, plan, settings, today]);
+  const suggestion = useMemo(() => (configured ? (suggestionsForDay({ plan, localDate: today, settings })[0] ?? null) : null), [configured, plan, settings, today]);
   const doneToday = (sessions.data ?? []).some((s) => s.localDate === today && s.workoutId === suggestion?.workout.id);
 
   const name = profile.data?.display_name?.trim() || null;
@@ -36,11 +35,14 @@ export default function HomeScreen() {
   const totals = day.data?.totals?.totals ?? null;
   const target = profile.data?.mode === 'tracking_only' ? null : (day.data?.goal?.calorie_target ?? null);
   const kcal = totals?.kcal != null ? Math.round(totals.kcal / 10) * 10 : null;
+  const mealCount = day.data?.meals.length ?? 0;
+  const eaten = hideNumbers ? (mealCount ? `${mealCount} meal${mealCount === 1 ? '' : 's'}` : null) : kcal != null ? `${kcal.toLocaleString()} kcal` : null;
+  const protein = totals?.protein_g != null ? `${Math.round(totals.protein_g)} g` : null;
 
   return (
     <Screen testID="home-screen">
       <View style={styles.header}>
-        <View style={{ flex: 1, gap: 2 }}>
+        <View style={{ flex: 1, gap: space.xs }}>
           <Text variant="label" color="textMuted">
             {formatLocalDate(today, 'long')}
           </Text>
@@ -52,11 +54,11 @@ export default function HomeScreen() {
         <Avatar path={profile.data?.avatar_path ?? null} initials={initialsFor(name, session?.user.email)} size={56} onPress={() => router.push('/profile')} testID="home-avatar" />
       </View>
 
-      <Card tone="inverse" style={{ gap: space.sm }} testID="quote">
+      <Card tone="inverse" style={{ gap: space.md, paddingVertical: space.xl }} testID="quote">
         <Text variant="label" style={{ color: colors.onInverse, opacity: 0.6 }}>
           Today&apos;s line
         </Text>
-        <Text variant="heading" style={{ color: colors.onInverse, fontSize: 22, lineHeight: 29 }}>
+        <Text variant="heading" style={{ color: colors.onInverse, fontSize: 22, lineHeight: 30 }}>
           {quoteForDate(today)}
         </Text>
       </Card>
@@ -64,28 +66,22 @@ export default function HomeScreen() {
       {day.isLoading ? (
         <SkeletonCard lines={2} />
       ) : (
-        <View style={styles.grid}>
-          <Tile
-            label="Eaten"
-            value={hideNumbers ? (day.data?.meals.length ? `${day.data.meals.length} meals` : null) : kcal != null ? `${kcal.toLocaleString()} kcal` : null}
-            note={!hideNumbers && target ? `of ${target.toLocaleString()}` : undefined}
-            empty="Tap to log a meal"
-            onPress={() => router.push({ pathname: '/food/search', params: { date: today, fresh: '1' } })}
-            testID="home-kcal"
-          />
-          <Tile label="Protein" value={totals?.protein_g != null ? `${Math.round(totals.protein_g)} g` : null} note={day.data?.goal?.protein_g ? `of ${day.data.goal.protein_g} g` : undefined} empty="Comes from your meals" onPress={() => router.push('/today')} testID="home-protein" />
-          <Tile label="Water" value={day.data?.waterMl ? `${day.data.waterMl.toLocaleString()} ml` : null} note={day.data?.goal?.water_ml ? `of ${day.data.goal.water_ml.toLocaleString()} ml` : undefined} empty="Tap to add a glass" onPress={() => router.push({ pathname: '/log/water', params: { date: today } })} testID="home-water" />
-          <Tile label="Steps" value={day.data?.steps != null ? day.data.steps.toLocaleString() : null} note={day.data?.goal?.step_goal ? `of ${day.data.goal.step_goal.toLocaleString()}` : undefined} empty="Tap to log today's steps" onPress={() => router.push({ pathname: '/log/activity', params: { date: today } })} testID="home-steps" />
+        <View style={{ gap: space.md }}>
+          <View style={styles.row}>
+            <BigTile label="Eaten" value={eaten} note={eaten && !hideNumbers && target ? `of ${target.toLocaleString()} kcal` : eaten ? undefined : 'Tap to log a meal'} onPress={() => router.push({ pathname: '/food/search', params: { date: today, fresh: '1' } })} testID="home-kcal" />
+            <BigTile label="Protein" value={protein} note={protein && day.data?.goal?.protein_g ? `of ${day.data.goal.protein_g} g` : protein ? undefined : 'From your meals'} onPress={() => router.push('/today')} testID="home-protein" />
+          </View>
+          <View style={styles.row}>
+            <SmallTile icon="water" label={day.data?.waterMl ? `${day.data.waterMl.toLocaleString()} ml water` : 'Add water'} onPress={() => router.push({ pathname: '/log/water', params: { date: today } })} testID="home-water" />
+            <SmallTile icon="activity" label={day.data?.steps != null ? `${day.data.steps.toLocaleString()} steps` : 'Log steps'} onPress={() => router.push({ pathname: '/log/activity', params: { date: today } })} testID="home-steps" />
+          </View>
         </View>
       )}
 
       <Card style={{ gap: space.md }} testID="home-workout">
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
-          <Icon name="dumbbell" size={20} />
-          <Text variant="label" color="textMuted">
-            {suggestion ? (suggestion.planned ? "Today's workout" : 'Rest day, optional') : 'Workouts'}
-          </Text>
-        </View>
+        <Text variant="label" color="textMuted">
+          {suggestion ? (suggestion.planned ? "Today's workout" : 'Rest day, optional') : 'Workouts'}
+        </Text>
         {suggestion ? (
           <>
             <Text variant="heading">{suggestion.workout.name}</Text>
@@ -96,54 +92,60 @@ export default function HomeScreen() {
           </>
         ) : (
           <>
-            <Text color="textMuted">A weekly plan built from your days, kit and goal. Suggested sessions show up here every day.</Text>
+            <Text color="textMuted">A weekly plan from your days, kit and goal. The day&apos;s session shows up here.</Text>
             <Button label="Build my plan" onPress={() => router.push('/workouts/plan')} testID="home-build-plan" />
           </>
         )}
       </Card>
 
-      <View style={{ gap: space.sm }}>
-        <Text variant="label" color="textMuted">
-          Go to
-        </Text>
-        <View style={styles.grid}>
-          {SECTIONS.map((s) => (
-            <Pressable
-              key={s.href}
-              accessibilityRole="button"
-              accessibilityLabel={s.title}
-              onPress={() => router.push(s.href as never)}
-              testID={s.testID}
-              style={({ pressed }) => [styles.nav, { backgroundColor: colors.surface, borderColor: colors.border, opacity: pressed ? 0.85 : 1 }]}
-            >
-              <Icon name={s.icon} size={24} />
-              <Text variant="bodyStrong">{s.title}</Text>
-              <Text variant="caption" color="textMuted" numberOfLines={2}>
-                {s.blurb}
-              </Text>
-            </Pressable>
-          ))}
-        </View>
+      <View style={styles.navGrid}>
+        {SECTIONS.map((s) => (
+          <Pressable key={s.href} accessibilityRole="button" accessibilityLabel={s.title} onPress={() => router.push(s.href as never)} testID={s.testID} style={({ pressed }) => [styles.nav, { backgroundColor: colors.surface, borderColor: colors.border, opacity: pressed ? 0.85 : 1 }]}>
+            <Icon name={s.icon} size={24} />
+            <Text variant="small">{s.title}</Text>
+          </Pressable>
+        ))}
       </View>
-
-      <Text variant="caption" color="textFaint" align="center">
-        {config.brandName}. {config.brandTagline}.
-      </Text>
     </Screen>
   );
 }
 
-function Tile({ label, value, note, empty, onPress, testID }: { label: string; value: string | null; note?: string; empty: string; onPress: () => void; testID: string }) {
+function BigTile({ label, value, note, onPress, testID }: { label: string; value: string | null; note?: string; onPress: () => void; testID: string }) {
+  const { colors } = useTheme();
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={`${label}: ${value ?? empty}`} onPress={onPress} testID={testID} style={({ pressed }) => [styles.tile, { opacity: pressed ? 0.85 : 1 }]}>
-      <Stat label={label} value={value ?? 'Not yet'} note={value ? note : empty} style={{ minWidth: 0 }} />
+    <Pressable accessibilityRole="button" accessibilityLabel={`${label}: ${value ?? note ?? ''}`} onPress={onPress} testID={testID} style={({ pressed }) => [styles.big, { backgroundColor: colors.surface, borderColor: colors.border, opacity: pressed ? 0.85 : 1 }]}>
+      <Text variant="label" color="textMuted">
+        {label}
+      </Text>
+      <Text variant="title" tabular numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={{ fontSize: 26, lineHeight: 32 }}>
+        {value ?? 'Not yet'}
+      </Text>
+      {note ? (
+        <Text variant="caption" color="textMuted" numberOfLines={1}>
+          {note}
+        </Text>
+      ) : null}
+    </Pressable>
+  );
+}
+
+function SmallTile({ icon, label, onPress, testID }: { icon: IconName; label: string; onPress: () => void; testID: string }) {
+  const { colors } = useTheme();
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} testID={testID} style={({ pressed }) => [styles.small, { borderColor: colors.border, opacity: pressed ? 0.85 : 1 }]}>
+      <Icon name={icon} size={18} color={colors.textMuted} />
+      <Text variant="small" numberOfLines={1} style={{ flexShrink: 1 }}>
+        {label}
+      </Text>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', gap: space.md, marginTop: space.sm },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: space.sm },
-  tile: { flexBasis: '47%', flexGrow: 1, minWidth: 0 },
-  nav: { flexBasis: '47%', flexGrow: 1, minWidth: 0, borderWidth: 1, borderRadius: radius.lg, padding: space.lg, gap: space.xs, minHeight: 112 },
+  row: { flexDirection: 'row', gap: space.md },
+  big: { flex: 1, minWidth: 0, borderWidth: 1, borderRadius: radius.lg, padding: space.lg, gap: space.xs, minHeight: 104, justifyContent: 'center' },
+  small: { flex: 1, minWidth: 0, minHeight: touch.min, borderWidth: 1, borderRadius: radius.md, paddingHorizontal: space.md, flexDirection: 'row', alignItems: 'center', gap: space.sm },
+  navGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: space.md },
+  nav: { flexBasis: '30%', flexGrow: 1, minWidth: 0, borderWidth: 1, borderRadius: radius.lg, paddingVertical: space.lg, alignItems: 'center', gap: space.sm },
 });

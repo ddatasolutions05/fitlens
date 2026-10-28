@@ -381,3 +381,36 @@ describe('client_events', () => {
     expect(purged.rows[0].n).toBe(1);
   });
 });
+
+describe('trainer access', () => {
+  it('a member links with a code, the trainer sees a summary, and either side can revoke', async () => {
+    const code = await as(userB, (c) => c.query('select public.make_trainer_code() as code'));
+    expect(code.rows[0].code).toMatch(/^[A-Z0-9]{6}$/);
+    const own = await expectDenied(as(userB, (c) => c.query('select public.link_trainer($1)', [code.rows[0].code])));
+    expect(own).toMatch(/own_code/);
+    const bad = await expectDenied(as(userA, (c) => c.query(`select public.link_trainer('ZZZZZZ')`)));
+    expect(bad).toMatch(/code_not_found/);
+    await as(userA, (c) => c.query('select public.link_trainer($1)', [code.rows[0].code]));
+    const meal = await as(userA, (c) =>
+      c.query(`insert into meals (user_id, idempotency_key, local_date, tz, source, status) values ($1, $2, current_date, 'UTC', 'manual', 'confirmed') returning id`, [userA.id, uuid()]),
+    );
+    await as(userA, (c) =>
+      c.query(`insert into meal_items (user_id, meal_id, name_snapshot, grams, kcal, provenance) values ($1, $2, 'Egg', 50, 72, 'database')`, [userA.id, meal.rows[0].id]),
+    );
+    const summary = await as(userB, (c) => c.query('select * from public.trainer_members(7)'));
+    expect(summary.rowCount).toBe(1);
+    expect(summary.rows[0].member_user_id).toBe(userA.id);
+    expect(Number(summary.rows[0].meals)).toBeGreaterThanOrEqual(1);
+    const none = await as(userA, (c) => c.query('select * from public.trainer_members(7)'));
+    expect(none.rowCount).toBe(0);
+    const forged = await expectDenied(
+      as(userB, (c) => c.query(`insert into trainer_links (member_user_id, trainer_user_id) values ($1, $2)`, [userA.id, userB.id])),
+    );
+    expect(forged).toMatch(/permission denied|row-level security/i);
+    await as(userA, (c) => c.query(`update trainer_links set status = 'revoked' where member_user_id = $1`, [userA.id]));
+    const after = await as(userB, (c) => c.query('select * from public.trainer_members(7)'));
+    expect(after.rowCount).toBe(0);
+    const reactivate = await expectDenied(as(userB, (c) => c.query(`update trainer_links set status = 'active' where trainer_user_id = $1`, [userB.id])));
+    expect(reactivate).toMatch(/row-level security/i);
+  });
+});

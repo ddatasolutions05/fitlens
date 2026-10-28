@@ -27,12 +27,17 @@ export default async function globalSetup(): Promise<void> {
     'user_food_usage',
     'target_suggestions',
     'integration_connections',
+    'trainer_codes',
     'preferences',
     'profiles',
   ];
   for (const table of tables) {
     const res = await fetch(`${url}/rest/v1/${table}?user_id=eq.${user.id}`, { method: 'DELETE', headers: { ...headers, Prefer: 'return=minimal' } });
     if (!res.ok && res.status !== 404) throw new Error(`Reset of ${table} failed: ${res.status} ${await res.text()}`);
+  }
+  for (const col of ['member_user_id', 'trainer_user_id']) {
+    const res = await fetch(`${url}/rest/v1/trainer_links?${col}=eq.${user.id}`, { method: 'DELETE', headers: { ...headers, Prefer: 'return=minimal' } });
+    if (!res.ok && res.status !== 404) throw new Error(`Reset of trainer_links failed: ${res.status}`);
   }
   const foods = await fetch(`${url}/rest/v1/foods?owner_user_id=eq.${user.id}`, { method: 'DELETE', headers: { ...headers, Prefer: 'return=minimal' } });
   if (!foods.ok) throw new Error(`Reset of foods failed: ${foods.status}`);

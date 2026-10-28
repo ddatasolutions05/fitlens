@@ -142,6 +142,8 @@ once a working Anthropic key was set. Milestone 9 (export, delete) remains
 | 24 | Home tiles tap through to logging with a hint when empty; "Log it again" on search from the last fourteen days of confirmed meals | built, verified live | `home.spec.ts`; `manual-log.spec.ts` |
 | 25 | Barcode screen: browser reader where available, typed number elsewhere, `lookup-barcode` function, add a serving | built, verified live | `e2e/barcode.spec.ts` |
 | 26 | Native build config (`eas.json` preview APK and production profiles) | built; first build needs an Expo account login | not run |
+| 27 | Trainer access: codes, links, weekly member summaries through security definer functions; Profile Coaching card, `/trainer` and `/profile/trainer` screens | built, verified live | `rls.test.ts` trainer case; `e2e/trainer.spec.ts` |
+| 28 | Lighter Home and wider section spacing everywhere | built, verified live | screenshots reviewed |
 
 ## 5. Open risks
 

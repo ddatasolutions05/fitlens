@@ -44,5 +44,5 @@ export function Screen({ scroll = true, padded = true, bottomInset = true, child
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
-  column: { width: '100%', maxWidth: layout.maxWidth, alignSelf: 'center', gap: space.lg },
+  column: { width: '100%', maxWidth: layout.maxWidth, alignSelf: 'center', gap: space.xl },
 });

@@ -11,7 +11,8 @@ test.describe('workouts', () => {
     await page.goto('/train');
     await expect(page.getByTestId('train-screen')).toBeVisible();
 
-    // A fresh account has no plan yet (global setup wipes preferences).
+    // A fresh account has no plan yet (global setup wipes preferences). Wait for either state to render.
+    await Promise.race([page.getByTestId('build-plan').waitFor({ timeout: 30_000 }), page.getByTestId('change-plan').waitFor({ timeout: 30_000 })]);
     if (await page.getByTestId('build-plan').isVisible().catch(() => false)) {
       await page.getByTestId('build-plan').click();
     } else {
