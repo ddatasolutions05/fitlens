@@ -19,7 +19,7 @@ import { usePreferences, useProfile } from '@/features/profile/hooks';
 import { config } from '@/lib/config';
 import { errorMessage } from '@/lib/net';
 import { reportError } from '@/lib/telemetry';
-import { Button, Card, Icon, Input, NumberField, Segmented, Text, radius, space, touch, useTheme } from '@/ui';
+import { Button, Card, DateField, Icon, Input, NumberField, Segmented, Text, radius, space, touch, useTheme } from '@/ui';
 
 import { removeItem, setDraft, updateDraft, updateItem, useDraft } from './draft-store';
 import { useDeleteMeal, useSaveMeal } from './hooks';
@@ -214,15 +214,15 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
         />
         <View style={styles.row}>
           <View style={{ flex: 1 }}>
-            <Input
+            <DateField
               label="Date"
               value={draft.localDate}
-              onChangeText={(v) => {
+              onChange={(v) => {
                 if (/^\d{4}-\d{2}-\d{2}$/.test(v) && !Number.isNaN(Date.parse(v))) {
                   updateDraft((d) => ({ ...d, localDate: v, eatenAt: localDateTimeToIso(v, timeInZone(d.eatenAt, d.tz), d.tz), eatenAtSource: 'manual' }));
                 }
               }}
-              placeholder="YYYY-MM-DD"
+              testID="meal-date"
             />
           </View>
           <View style={{ flex: 1 }}>

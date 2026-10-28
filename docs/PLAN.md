@@ -133,6 +133,7 @@ once a working Anthropic key was set. Milestone 9 (export, delete) remains
 | 15 | Web photo resize under the browser canvas cap; first-party error telemetry (`client_events`, `reportError`, global handlers, `AppErrorBoundary`), `scripts/telemetry.mjs` | built, verified live | `photo-resize.spec.ts` (6000 px image comes out at 1,600 px JPEG); RLS test for `client_events`; hosted smoke green |
 | 16 | Meal time from the photo: EXIF capture time on gallery picks, capture moment for the camera, editor note, `exif.ts` parser | built, verified live | `exif.test.ts` (7 tests); `photo-resize.spec.ts` capture-time case |
 | 17 | Packaged products: `lookup-product` function (Open Food Facts by name) plus the model's typical values, shown as suggestions the person approves before anything is logged | built, verified live | live calls return branded matches; `e2e/packaged.spec.ts`; `photo.spec.ts` against the real model |
+| 18 | Calendar date fields: `ui/DateField` (browser date input on web, OS picker on native via `@react-native-community/datetimepicker`) for date of birth and the meal date | built, verified live | onboarding, photo-resize and photo specs drive the field by value; screenshots reviewed |
 
 ## 5. Open risks
 

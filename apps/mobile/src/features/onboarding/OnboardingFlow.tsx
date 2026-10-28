@@ -23,7 +23,7 @@ import { planGoal } from '@/features/profile/targets';
 import { config } from '@/lib/config';
 import { errorMessage } from '@/lib/net';
 import { reportError } from '@/lib/telemetry';
-import { BrandMark, Button, Card, Chips, Input, Note, NumberField, Screen, Segmented, Stat, Text, radius, space, useTheme } from '@/ui';
+import { BrandMark, Button, Card, Chips, DateField, Input, Note, NumberField, Screen, Segmented, Stat, Text, radius, space, useTheme } from '@/ui';
 
 interface Answers {
   unitSystem: UnitSystem;
@@ -255,7 +255,7 @@ export function OnboardingFlow() {
 
       {step === 1 ? (
         <View style={styles.fields}>
-          <Input label="Date of birth" value={a.birthDate} onChangeText={(v) => set('birthDate', v)} placeholder="YYYY-MM-DD" inputMode="numeric" hint={age != null ? `That makes you ${age}.` : undefined} testID="birth-date" />
+          <DateField label="Date of birth" value={a.birthDate} onChange={(v) => set('birthDate', v)} min="1900-01-01" max={today} hint={age != null ? `That makes you ${age}.` : 'Opens a calendar; pick the year first.'} testID="birth-date" />
           <Segmented<SexForEquation>
             label="Sex for the metabolic equation"
             value={a.sex}

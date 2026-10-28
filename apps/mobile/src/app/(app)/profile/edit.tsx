@@ -5,7 +5,7 @@ import { cmToFtIn, ftInToCm, kgToLb, lbToKg, type SexForEquation, type UnitSyste
 import { goBack } from '@/lib/nav';
 import { useProfile, useUpsertProfile, type ProfileRow } from '@/features/profile/hooks';
 import { errorMessage } from '@/lib/net';
-import { Button, Card, Input, NumberField, PageHeader, Screen, Segmented, SkeletonCard, space, Text } from '@/ui';
+import { Button, Card, DateField, Input, NumberField, PageHeader, Screen, Segmented, SkeletonCard, Text, space } from '@/ui';
 
 export default function EditProfile() {
   const profile = useProfile();
@@ -70,7 +70,7 @@ function EditForm({ p }: { p: ProfileRow | null }) {
     <>
       <Card style={{ gap: space.lg }}>
         <Input label="Name" value={displayName} onChangeText={setDisplayName} />
-        <Input label="Date of birth" value={birthDate} onChangeText={setBirthDate} placeholder="YYYY-MM-DD" />
+        <DateField label="Date of birth" value={birthDate} onChange={setBirthDate} min="1900-01-01" max={new Date().toLocaleDateString('en-CA')} testID="birth-date" />
         <Segmented<SexForEquation>
           label="Sex for the metabolic equation"
           wrap

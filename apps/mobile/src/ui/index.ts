@@ -4,6 +4,7 @@ export { BrandMark } from './BrandMark';
 export { Button } from './Button';
 export { Card } from './Card';
 export { Chips } from './Chips';
+export { DateField } from './DateField';
 export { Icon, type IconName } from './Icon';
 export { Input, NumberField } from './Input';
 export { Note } from './Note';
