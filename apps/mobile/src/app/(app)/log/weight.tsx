@@ -8,7 +8,7 @@ import { newIdempotencyKey } from '@/features/meals/model';
 import { useLatestWeight, useProfile } from '@/features/profile/hooks';
 import { goBack } from '@/lib/nav';
 import { errorMessage } from '@/lib/net';
-import { Button, Input, Note, NumberField, PageHeader, Screen, Stat, Text, space } from '@/ui';
+import { Button, Input, Note, NumberField, PageHeader, Screen, Stat, Text, space, toast } from '@/ui';
 
 export default function LogWeight() {
   const params = useLocalSearchParams<{ date?: string }>();
@@ -48,6 +48,7 @@ export default function LogWeight() {
         tz,
         note: note.trim() || null,
       });
+      toast('Weight saved');
       goBack('/today');
     } catch (err) {
       setError(errorMessage(err));

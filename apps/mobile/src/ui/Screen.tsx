@@ -1,4 +1,5 @@
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View, type ScrollViewProps } from 'react-native';
+import { useState } from 'react';
+import { KeyboardAvoidingView, Platform, RefreshControl, ScrollView, StyleSheet, View, type ScrollViewProps } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useTheme } from './theme';
@@ -8,14 +9,29 @@ export interface ScreenProps extends ScrollViewProps {
   scroll?: boolean;
   padded?: boolean;
   bottomInset?: boolean;
+  /** Pull down to run this; the spinner stays until it settles. */
+  onRefresh?: () => Promise<unknown>;
   children: React.ReactNode;
 }
 
 /** Full-height screen with safe-area padding and a centred column on wide viewports. */
-export function Screen({ scroll = true, padded = true, bottomInset = true, children, contentContainerStyle, style, ...rest }: ScreenProps) {
+export function Screen({ scroll = true, padded = true, bottomInset = true, onRefresh, children, contentContainerStyle, style, ...rest }: ScreenProps) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
+  const [refreshing, setRefreshing] = useState(false);
   const paddingBottom = bottomInset ? Math.max(insets.bottom, space.lg) + space.xl : 0;
+  const refreshControl = onRefresh ? (
+    <RefreshControl
+      refreshing={refreshing}
+      tintColor={colors.text}
+      colors={[colors.text]}
+      progressBackgroundColor={colors.surface}
+      onRefresh={() => {
+        setRefreshing(true);
+        void Promise.resolve(onRefresh()).finally(() => setRefreshing(false));
+      }}
+    />
+  ) : undefined;
 
   const column = (
     <View style={[styles.column, padded ? { paddingHorizontal: layout.gutter } : null]}>{children}</View>
@@ -32,6 +48,7 @@ export function Screen({ scroll = true, padded = true, bottomInset = true, child
     <KeyboardAvoidingView style={[styles.root, { backgroundColor: colors.bg }]} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <ScrollView
         keyboardShouldPersistTaps="handled"
+        refreshControl={refreshControl}
         {...rest}
         style={[styles.root, style]}
         contentContainerStyle={[{ paddingTop: insets.top + space.sm, paddingBottom }, contentContainerStyle]}

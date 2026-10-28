@@ -10,7 +10,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { SessionProvider } from '@/features/auth/session';
 import { QueryProvider } from '@/lib/query';
 import { installGlobalErrorHandlers } from '@/lib/telemetry';
-import { AppErrorBoundary, ThemeProvider, useTheme } from '@/ui';
+import { AppErrorBoundary, ThemeProvider, ToastHost, useTheme } from '@/ui';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 installGlobalErrorHandlers();
@@ -25,6 +25,7 @@ function Navigator({ fontsReady }: { fontsReady: boolean }) {
     <>
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg }, animation: 'fade' }} />
+      <ToastHost />
     </>
   );
 }

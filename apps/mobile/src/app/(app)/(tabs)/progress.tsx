@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -24,6 +25,7 @@ function signed(n: number, digits = 0): string {
 }
 
 export default function ProgressScreen() {
+  const qc = useQueryClient();
   const { colors } = useTheme();
   const [range, setRange] = useState<Range>(7);
   const progress = useProgress(range);
@@ -33,7 +35,7 @@ export default function ProgressScreen() {
   const unitSystem = (profile.data?.unit_system ?? 'metric') as UnitSystem;
 
   return (
-    <Screen testID="progress-screen">
+    <Screen testID="progress-screen" onRefresh={() => qc.invalidateQueries()}>
       <View style={{ marginTop: space.md, gap: space.md }}>
         <View>
           <Text variant="title">Stats</Text>

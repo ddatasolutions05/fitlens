@@ -2,6 +2,11 @@
 
 Newest first. Each entry: context, decision, consequences.
 
+## D-026 Feel and finish: toasts, pull to refresh, motion (2026-10-28)
+Context: the owner asked for more polish after the layout work. The remaining gap was feedback: a quick log returned to Today with nothing acknowledging it, bars snapped to their values, and buttons only dimmed.
+Decision: a one-line toast (`toast()` from `ui/toast.tsx`, hosted once in the root layout) confirms water, weight, steps, workouts, plan saves, trainer links and picture updates, then leaves on its own. Progress bars and the calorie track ease to their values through `AnimatedFill`; primary buttons scale down a touch on press. Every tab screen supports pull to refresh, which invalidates the query cache. All motion is skipped when the person has reduced motion on.
+Consequences: `e2e/toast.spec.ts` checks a confirmation appears and clears. Animated values are created with lazy state, not refs, to satisfy the React compiler lint.
+
 ## D-025 Trainer access by code, and a lighter Home (2026-10-28)
 Context: selling to a gym needs a coach's view of their members; the owner also found the first Home layout too crowded.
 Decision: a trainer makes a six-character code (`make_trainer_code`), a member enters it (`link_trainer`), and from then on `trainer_members(p_days)` returns one summary row per linked member: days logged, meals, average calories and protein against targets, workouts and minutes, first and last weight, last log date. All three are security definer functions; the only table a trainer can read directly is `trainer_links`, and only the member or the trainer on a link can flip it to revoked. No raw meals, photos or notes ever cross accounts. Either side can be any account; there is no role flag, access is granted per member. Home now shows two headline tiles (eaten, protein), a slim water and steps row, the day's workout and icon-only section tiles, and every screen's section gap grew from 16 to 24 px.

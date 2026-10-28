@@ -4,7 +4,7 @@ import { View } from 'react-native';
 
 import { TrainerCodeError, useLinkTrainer, useMyTrainers, useRevokeTrainer } from '@/features/trainer/hooks';
 import { errorMessage } from '@/lib/net';
-import { Button, Card, Input, Note, PageHeader, Row, Screen, SkeletonCard, Text, space } from '@/ui';
+import { Button, Card, Input, Note, PageHeader, Row, Screen, SkeletonCard, Text, space, toast } from '@/ui';
 
 export default function YourTrainerScreen() {
   const trainers = useMyTrainers();
@@ -22,6 +22,7 @@ export default function YourTrainerScreen() {
       const name = await link.mutateAsync(code);
       setLinkedTo(name);
       setCode('');
+      toast(`Sharing with ${name}`);
     } catch (err) {
       setError(err instanceof TrainerCodeError ? err.message : errorMessage(err));
     }

@@ -1,4 +1,5 @@
-import { StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Animated, StyleSheet, View } from 'react-native';
 
 import { Text } from './Text';
 import { useTheme } from './theme';
@@ -13,6 +14,24 @@ export interface BarProps {
   color: string;
   unknownCount?: number;
   compact?: boolean;
+}
+
+/** A track whose fill eases to its ratio; it jumps when reduced motion is on. */
+export function AnimatedFill({ ratio, color, height = 6, track }: { ratio: number; color: string; height?: number; track: string }) {
+  const { reducedMotion } = useTheme();
+  const [width] = useState(() => new Animated.Value(reducedMotion ? ratio : 0));
+  useEffect(() => {
+    if (reducedMotion) {
+      width.setValue(ratio);
+      return;
+    }
+    Animated.timing(width, { toValue: ratio, duration: 500, useNativeDriver: false }).start();
+  }, [ratio, reducedMotion, width]);
+  return (
+    <View style={[styles.track, { backgroundColor: track, height }]}>
+      <Animated.View style={[styles.fill, { backgroundColor: color, width: width.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }) }]} />
+    </View>
+  );
 }
 
 export function Bar({ label, value, target, unit, color, unknownCount = 0, compact }: BarProps) {
@@ -42,9 +61,7 @@ export function Bar({ label, value, target, unit, color, unknownCount = 0, compa
           ) : null}
         </Text>
       </View>
-      <View style={[styles.track, { backgroundColor: colors.surfaceAlt, height: compact ? 4 : 6 }]}>
-        <View style={[styles.fill, { width: `${ratio * 100}%`, backgroundColor: color }]} />
-      </View>
+      <AnimatedFill ratio={ratio} color={color} height={compact ? 4 : 6} track={colors.surfaceAlt} />
       {unknownCount > 0 ? (
         <Text variant="caption" color="textFaint">
           {unknownCount} item{unknownCount === 1 ? '' : 's'} with unknown {label.toLowerCase()} not counted

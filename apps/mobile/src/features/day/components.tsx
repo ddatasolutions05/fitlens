@@ -5,7 +5,7 @@ import { addDays, formatLocalDate, formatWeight, roundKcal, todayLocal, type Uni
 import type { MealWithItems } from '@/features/meals/api';
 import { displayKcal } from '@/features/meals/model';
 import { MealPhotoThumb } from '@/features/photo/MealPhotoThumb';
-import { Bar, Card, Icon, Text, radius, space, touch, useTheme, type IconName } from '@/ui';
+import { AnimatedFill, Bar, Card, Icon, Text, radius, space, touch, type IconName, useTheme } from '@/ui';
 
 import type { DaySummary } from './hooks';
 
@@ -97,9 +97,7 @@ export function CalorieCard({ day, hideNumbers, trackingOnly, tdeeEstimate }: { 
           kcal
         </Text>
       </View>
-      <View style={[styles.plateTrack, { backgroundColor: colors.inverseLine }]}>
-        <View style={[styles.plateFill, { width: `${ratio * 100}%`, backgroundColor: fg }]} />
-      </View>
+      <AnimatedFill ratio={ratio} color={fg} track={colors.inverseLine} height={6} />
       <Text variant="small" style={{ color: fg }}>
         {headline}
       </Text>
@@ -371,8 +369,6 @@ const styles = StyleSheet.create({
   dateBtn: { width: touch.min, height: touch.min, alignItems: 'center', justifyContent: 'center' },
   dateLabel: { flex: 1, alignItems: 'center', minHeight: touch.min, justifyContent: 'center' },
   plateHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  plateTrack: { height: 6, borderRadius: radius.pill, overflow: 'hidden' },
-  plateFill: { height: '100%', borderRadius: radius.pill },
   plateStats: { flexDirection: 'row', borderTopWidth: 1, paddingTop: space.md, marginTop: space.xs },
   plateStat: { flex: 1, gap: 2 },
   plateDivider: { width: 1, marginHorizontal: space.md },

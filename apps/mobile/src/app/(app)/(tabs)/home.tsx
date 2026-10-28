@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
@@ -20,6 +21,7 @@ const SECTIONS: { href: string; icon: IconName; title: string; testID: string }[
 ];
 
 export default function HomeScreen() {
+  const qc = useQueryClient();
   const { colors } = useTheme();
   const { session } = useSession();
   const profile = useProfile();
@@ -40,7 +42,7 @@ export default function HomeScreen() {
   const protein = totals?.protein_g != null ? `${Math.round(totals.protein_g)} g` : null;
 
   return (
-    <Screen testID="home-screen">
+    <Screen testID="home-screen" onRefresh={() => qc.invalidateQueries()}>
       <View style={styles.header}>
         <View style={{ flex: 1, gap: space.xs }}>
           <Text variant="label" color="textMuted">

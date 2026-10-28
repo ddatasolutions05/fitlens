@@ -5,7 +5,7 @@ import { EQUIPMENT, FOCUS_OPTIONS, LEVELS, WEEKDAYS, buildWeeklyPlan, planMinute
 import { usePlanSettings, useSavePlanSettings } from '@/features/workouts/hooks';
 import { goBack } from '@/lib/nav';
 import { errorMessage } from '@/lib/net';
-import { Button, Card, Chips, Note, NumberField, PageHeader, Screen, Segmented, Text, space, useTheme } from '@/ui';
+import { Button, Card, Chips, Note, NumberField, PageHeader, Screen, Segmented, Text, space, toast, useTheme } from '@/ui';
 
 const DAY_OPTIONS = ['1', '2', '3', '4', '5', '6', '7'].map((n) => ({ value: n, label: n }));
 
@@ -33,6 +33,7 @@ export default function PlanScreen() {
     setError(null);
     try {
       await save.save({ daysPerWeek: days, minutes, level, focus, equipment, seed });
+      toast('Plan saved');
       goBack('/train');
     } catch (err) {
       setError(errorMessage(err));

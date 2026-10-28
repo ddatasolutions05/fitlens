@@ -1,5 +1,5 @@
 export { AppErrorBoundary } from './AppErrorBoundary';
-export { Bar } from './Bar';
+export { AnimatedFill, Bar } from './Bar';
 export { BrandMark } from './BrandMark';
 export { Button } from './Button';
 export { Card } from './Card';
@@ -18,4 +18,5 @@ export { Stat } from './Stat';
 export { ComingSoon, EmptyState, ErrorState, NotConfigured, OfflineBanner } from './states';
 export { Text } from './Text';
 export { ThemeProvider, useTheme, type ThemePreference } from './theme';
+export { ToastHost, toast } from './toast';
 export { fonts, layout, palette, radius, space, touch, type } from './tokens';

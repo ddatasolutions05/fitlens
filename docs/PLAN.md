@@ -144,6 +144,7 @@ once a working Anthropic key was set. Milestone 9 (export, delete) remains
 | 26 | Native build config (`eas.json` preview APK and production profiles) | built; first build needs an Expo account login | not run |
 | 27 | Trainer access: codes, links, weekly member summaries through security definer functions; Profile Coaching card, `/trainer` and `/profile/trainer` screens | built, verified live | `rls.test.ts` trainer case; `e2e/trainer.spec.ts` |
 | 28 | Lighter Home and wider section spacing everywhere | built, verified live | screenshots reviewed |
+| 29 | Feel and finish: toasts after quick logs, animated bars and calorie track, button press scale, pull to refresh on tabs; white theme walk clean | built, verified live | `e2e/toast.spec.ts`; white-theme sweep 0 findings |
 
 ## 5. Open risks
 

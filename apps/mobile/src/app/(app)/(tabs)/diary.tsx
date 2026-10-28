@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { View } from 'react-native';
 import { formatWeight, timeInZone, type UnitSystem } from '@fitlens/core';
@@ -11,6 +12,7 @@ import { useProfile } from '@/features/profile/hooks';
 import { Button, Card, ErrorState, Row, Screen, SkeletonCard, Text, space } from '@/ui';
 
 export default function DiaryScreen() {
+  const qc = useQueryClient();
   const [localDate, setLocalDate] = useSelectedDate();
   const day = useDay(localDate);
   const logs = useLogsForDate(localDate);
@@ -22,7 +24,7 @@ export default function DiaryScreen() {
   const hideNumbers = profile.data?.hide_numbers ?? false;
 
   return (
-    <Screen testID="diary-screen">
+    <Screen testID="diary-screen" onRefresh={() => qc.invalidateQueries()}>
       <DateSwitcher localDate={localDate} onChange={setLocalDate} />
       {day.isLoading || logs.isLoading ? (
         <SkeletonCard lines={4} />

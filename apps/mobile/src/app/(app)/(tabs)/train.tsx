@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
@@ -7,6 +8,7 @@ import { useWeekSessions, useWeeklyPlan, weekRange } from '@/features/workouts/h
 import { Button, Card, Icon, Screen, SkeletonCard, Text, radius, space, useTheme } from '@/ui';
 
 export default function TrainScreen() {
+  const qc = useQueryClient();
   const { colors } = useTheme();
   const today = todayLocal();
   const { plan, settings, configured, isLoading } = useWeeklyPlan();
@@ -20,7 +22,7 @@ export default function TrainScreen() {
   const open = (w: Workout) => router.push({ pathname: '/workouts/[id]', params: { id: w.id } });
 
   return (
-    <Screen testID="train-screen">
+    <Screen testID="train-screen" onRefresh={() => qc.invalidateQueries()}>
       <View style={{ gap: 2, marginTop: space.sm }}>
         <Text variant="title">Train</Text>
         <Text color="textMuted">

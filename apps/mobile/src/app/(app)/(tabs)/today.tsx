@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { View } from 'react-native';
 import { daysBetween, dayInsight, todayLocal, type UnitSystem } from '@fitlens/core';
@@ -13,6 +14,7 @@ import { retryParked } from '@/lib/offline-queue';
 import { ErrorState, OfflineBanner, Screen, SkeletonCard, space } from '@/ui';
 
 export default function TodayScreen() {
+  const qc = useQueryClient();
   const [localDate, setLocalDate] = useSelectedDate();
   const day = useDay(localDate);
   const profile = useProfile();
@@ -53,7 +55,7 @@ export default function TodayScreen() {
   const unitSystem = (profile.data?.unit_system ?? 'metric') as UnitSystem;
 
   return (
-    <Screen testID="today-screen">
+    <Screen testID="today-screen" onRefresh={() => qc.invalidateQueries()}>
       <DateSwitcher localDate={localDate} onChange={setLocalDate} />
       <OfflineBanner pending={queue.pending} parked={queue.parked} syncing={queue.syncing} onRetry={() => void retryParked()} />
       {day.isLoading || profile.isLoading ? (

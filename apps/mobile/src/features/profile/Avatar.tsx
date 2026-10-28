@@ -9,7 +9,7 @@ import { useUserId } from '@/features/auth/session';
 import { resizeToJpeg } from '@/features/photo/capture';
 import { config } from '@/lib/config';
 import { supabase } from '@/lib/supabase';
-import { Icon, Text, fonts, radius, useTheme } from '@/ui';
+import { Icon, Text, fonts, radius, toast, useTheme } from '@/ui';
 
 import { useUpsertProfile } from './hooks';
 
@@ -54,6 +54,7 @@ export function useUploadAvatar() {
       return path;
     },
     onSuccess: (path) => {
+      toast('Picture updated');
       void qc.invalidateQueries({ queryKey: ['avatar-url', path] });
     },
   });

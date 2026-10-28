@@ -8,7 +8,7 @@ import { useLogWater } from '@/features/logs/hooks';
 import { newIdempotencyKey } from '@/features/meals/model';
 import { goBack } from '@/lib/nav';
 import { errorMessage } from '@/lib/net';
-import { Bar, Button, Icon, NumberField, PageHeader, Screen, Text, radius, space, useTheme } from '@/ui';
+import { Bar, Button, Icon, NumberField, PageHeader, Screen, Text, radius, space, toast, useTheme } from '@/ui';
 
 const QUICK = [250, 500, 750];
 
@@ -33,6 +33,7 @@ export default function LogWater() {
         localDate,
         tz,
       });
+      toast(`${Math.round(ml)} ml of water added`);
       goBack('/today');
     } catch (err) {
       setError(errorMessage(err));

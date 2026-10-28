@@ -8,7 +8,7 @@ import { newIdempotencyKey } from '@/features/meals/model';
 import { useLatestWeight } from '@/features/profile/hooks';
 import { goBack } from '@/lib/nav';
 import { errorMessage } from '@/lib/net';
-import { Button, Input, Note, NumberField, PageHeader, Screen, Segmented, Text, space } from '@/ui';
+import { Button, Input, Note, NumberField, PageHeader, Screen, Segmented, Text, space, toast } from '@/ui';
 
 type Kind = 'steps' | 'workout';
 
@@ -49,6 +49,7 @@ export default function LogActivity() {
         }
         await logWorkout.mutateAsync({ id: newIdempotencyKey(), type, intensity, minutes, localDate, tz, startAt, kg, note: note.trim() || null });
       }
+      toast(kind === 'steps' ? 'Steps saved' : 'Workout saved');
       goBack('/today');
     } catch (err) {
       setError(errorMessage(err));
