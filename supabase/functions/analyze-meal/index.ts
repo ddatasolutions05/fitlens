@@ -89,7 +89,7 @@ Deno.serve(
       try {
         res = await provider.complete({ system: ANALYZE_SYSTEM, userText: text, images, maxTokens: 4000 });
       } catch (err) {
-        if (err instanceof VisionProviderError) return fail('provider_error', err.message, err.status >= 500 ? 502 : err.status, err.retryable);
+        if (err instanceof VisionProviderError) return fail(err.code, err.message, err.code === 'not_configured' ? 503 : err.status >= 500 ? 502 : err.status, err.retryable);
         return fail('provider_error', err instanceof Error ? err.message : 'provider failed', 502, true);
       }
       totalIn += res.inputTokens;

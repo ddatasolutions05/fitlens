@@ -80,8 +80,13 @@ export class AnthropicVisionProvider implements VisionProvider {
     } catch (err) {
       if (err instanceof VisionProviderError) throw err;
       if (err instanceof Anthropic.RateLimitError) throw new VisionProviderError(429, 'Provider rate limit', true);
-      if (err instanceof Anthropic.AuthenticationError) throw new VisionProviderError(500, 'Provider credentials rejected', false);
-      if (err instanceof Anthropic.BadRequestError) throw new VisionProviderError(400, err.message, false);
+      if (err instanceof Anthropic.AuthenticationError) throw new VisionProviderError(503, 'The AI provider rejected ANTHROPIC_API_KEY. Set a valid key on the edge functions.', false, 'not_configured');
+      if (err instanceof Anthropic.BadRequestError) {
+        if (/workspace/i.test(err.message)) {
+          throw new VisionProviderError(503, 'ANTHROPIC_API_KEY is not scoped to a workspace. Set ANTHROPIC_WORKSPACE_ID on the edge functions, or use a key created inside a workspace.', false, 'not_configured');
+        }
+        throw new VisionProviderError(400, err.message, false);
+      }
       if (err instanceof Anthropic.APIError) throw new VisionProviderError(502, `Provider error ${err.status ?? ''}`.trim(), true);
       throw new VisionProviderError(502, err instanceof Error ? err.message : 'Provider unreachable', true);
     }

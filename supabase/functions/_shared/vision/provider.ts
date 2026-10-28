@@ -26,11 +26,15 @@ export interface VisionProvider {
   complete(req: VisionRequest): Promise<VisionResponse>;
 }
 
+export type VisionErrorCode = 'provider_error' | 'not_configured';
+
 export class VisionProviderError extends Error {
   constructor(
     public readonly status: number,
     message: string,
     public readonly retryable: boolean,
+    /** not_configured means the operator has to act; the user cannot fix it. */
+    public readonly code: VisionErrorCode = 'provider_error',
   ) {
     super(message);
   }

@@ -150,7 +150,7 @@ Deno.serve(
       try {
         res = await provider.complete({ system: COACH_SYSTEM, userText: text, images: [], maxTokens: 1200 });
       } catch (err) {
-        if (err instanceof VisionProviderError) throw new HttpError(err.status >= 500 ? 502 : err.status, 'provider_error', err.message, err.retryable);
+        if (err instanceof VisionProviderError) throw new HttpError(err.code === 'not_configured' ? 503 : err.status >= 500 ? 502 : err.status, err.code, err.message, err.retryable);
         throw new HttpError(502, 'provider_error', err instanceof Error ? err.message : 'provider failed', true);
       }
       totalCost += res.estCostUsd;
