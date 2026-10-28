@@ -1,10 +1,13 @@
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { formatHeight, formatWeight, type UnitSystem } from '@fitlens/core';
 
 import { useSession } from '@/features/auth/session';
 import { SectionLabel } from '@/features/day/components';
+import { Avatar, AvatarCancelled, initialsFor, useUploadAvatar } from '@/features/profile/Avatar';
 import { useLatestWeight, usePreferences, useProfile, useUpsertProfile } from '@/features/profile/hooks';
+import { errorMessage } from '@/lib/net';
 import { Button, Card, ErrorState, Row, Screen, Segmented, SkeletonCard, Stat, Text, space, useTheme, type ThemePreference } from '@/ui';
 
 export default function ProfileScreen() {
@@ -14,6 +17,8 @@ export default function ProfileScreen() {
   const prefs = usePreferences();
   const weight = useLatestWeight();
   const upsert = useUpsertProfile();
+  const upload = useUploadAvatar();
+  const [avatarError, setAvatarError] = useState<string | null>(null);
 
   if (profile.isLoading) {
     return (
@@ -34,11 +39,26 @@ export default function ProfileScreen() {
 
   return (
     <Screen testID="profile-screen">
-      <View style={{ marginTop: space.md, gap: space.xs }}>
-        <Text variant="title">{p.display_name ?? 'Profile'}</Text>
-        <Text color="textMuted" variant="small">
-          {session?.user.email}
-        </Text>
+      <View style={{ marginTop: space.md, flexDirection: 'row', alignItems: 'center', gap: space.md }}>
+        <Avatar
+          path={p.avatar_path ?? null}
+          initials={initialsFor(p.display_name, session?.user.email)}
+          size={64}
+          editable
+          onPress={() => void upload.mutateAsync().catch((err: unknown) => (err instanceof AvatarCancelled ? null : setAvatarError(errorMessage(err))))}
+          testID="profile-avatar"
+        />
+        <View style={{ flex: 1, gap: space.xs }}>
+          <Text variant="title">{p.display_name ?? 'Profile'}</Text>
+          <Text color="textMuted" variant="small">
+            {session?.user.email ?? session?.user.phone}
+          </Text>
+          {avatarError ? (
+            <Text color="danger" variant="caption">
+              {avatarError}
+            </Text>
+          ) : null}
+        </View>
       </View>
 
       <View style={{ flexDirection: 'row', gap: space.sm }}>

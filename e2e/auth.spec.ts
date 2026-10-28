@@ -3,12 +3,12 @@ import { expect, test } from '@playwright/test';
 import { e2eUser, requireSupabase } from './helpers';
 
 // Provider state comes from the project's public settings, same endpoint the app reads.
-async function googleEnabled(): Promise<boolean> {
+async function authSettings(): Promise<{ google: boolean; phone: boolean }> {
   const res = await fetch(`${process.env.EXPO_PUBLIC_SUPABASE_URL}/auth/v1/settings`, {
     headers: { apikey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? '' },
   });
-  const body = (await res.json()) as { external?: { google?: boolean } };
-  return body.external?.google === true;
+  const body = (await res.json()) as { external?: { google?: boolean; phone?: boolean } };
+  return { google: body.external?.google === true, phone: body.external?.phone === true };
 }
 
 test.describe('sign-in screen', () => {
@@ -21,7 +21,18 @@ test.describe('sign-in screen', () => {
     await expect(page.getByTestId('forgot-password')).toBeVisible();
     await expect(page.getByTestId('send-link')).toBeVisible();
     // Enabled providers get a button; disabled ones are hidden rather than shown as broken buttons.
-    await expect(page.getByTestId('oauth-google')).toHaveCount((await googleEnabled()) ? 1 : 0);
+    const settings = await authSettings();
+    await expect(page.getByTestId('oauth-google')).toHaveCount(settings.google ? 1 : 0);
+    // Phone sign-in appears only when the project has an SMS provider.
+    await expect(page.getByTestId('use-phone')).toHaveCount(settings.phone ? 1 : 0);
+    if (settings.phone) {
+      await page.getByTestId('use-phone').click();
+      await expect(page.getByTestId('phone-form')).toBeVisible();
+      await expect(page.getByTestId('send-code')).toBeDisabled();
+      await page.getByTestId('phone').fill('+1 416 555 0199');
+      await expect(page.getByTestId('send-code')).toBeEnabled();
+      await page.getByTestId('use-email').click();
+    }
     await expect(page.getByText(/not configured/)).toHaveCount(0);
     await page.getByRole('radio', { name: 'Create account' }).click();
     await expect(page.getByTestId('sign-up')).toBeDisabled();

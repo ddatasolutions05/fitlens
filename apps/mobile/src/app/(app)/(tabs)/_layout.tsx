@@ -13,13 +13,14 @@ interface BottomTabBarProps {
   state: { index: number; routes: { key: string; name: string }[] };
 }
 type RawTabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>>[0];
-type TabName = 'today' | 'diary' | 'progress' | 'coach' | 'profile';
+type TabName = 'home' | 'today' | 'train' | 'progress' | 'coach';
+// Diary and Profile live behind Home (and the avatar); five tabs is the most the bar holds.
 const TABS: { name: TabName; label: string; icon: IconName }[] = [
+  { name: 'home', label: 'Home', icon: 'home' },
   { name: 'today', label: 'Today', icon: 'today' },
-  { name: 'diary', label: 'Diary', icon: 'diary' },
+  { name: 'train', label: 'Train', icon: 'dumbbell' },
   { name: 'progress', label: 'Stats', icon: 'progress' },
   { name: 'coach', label: 'Coach', icon: 'coach' },
-  { name: 'profile', label: 'Profile', icon: 'profile' },
 ];
 
 function TabBar({ state }: BottomTabBarProps) {
@@ -83,10 +84,12 @@ export default function TabsLayout() {
   if (!loading && !session) return <Redirect href="/sign-in" />;
   return (
     <Tabs tabBar={(props: RawTabBarProps) => <TabBar {...(props as unknown as BottomTabBarProps)} />} screenOptions={{ headerShown: false, lazy: true }}>
+      <Tabs.Screen name="home" options={{ title: 'Home' }} />
       <Tabs.Screen name="today" options={{ title: 'Today' }} />
-      <Tabs.Screen name="diary" options={{ title: 'Diary' }} />
+      <Tabs.Screen name="train" options={{ title: 'Train' }} />
       <Tabs.Screen name="progress" options={{ title: 'Stats' }} />
       <Tabs.Screen name="coach" options={{ title: 'Coach' }} />
+      <Tabs.Screen name="diary" options={{ title: 'Diary' }} />
       <Tabs.Screen name="profile" options={{ title: 'Profile' }} />
     </Tabs>
   );

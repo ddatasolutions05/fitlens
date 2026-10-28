@@ -74,13 +74,13 @@ async function takenAtFor(asset: ImagePicker.ImagePickerAsset): Promise<string |
 
 type ResizedPhoto = Omit<CapturedPhoto, 'takenAt'>;
 
-export async function resizeToJpeg(uri: string, width: number, height: number): Promise<ResizedPhoto> {
-  if (Platform.OS === 'web') return resizeOnWeb(uri);
+export async function resizeToJpeg(uri: string, width: number, height: number, maxPx: number = config.photoMaxPx): Promise<ResizedPhoto> {
+  if (Platform.OS === 'web') return resizeOnWeb(uri, maxPx);
   const longest = Math.max(width || 0, height || 0);
   const context = ImageManipulator.ImageManipulator.manipulate(uri);
-  if (longest > config.photoMaxPx) {
-    if (width >= height) context.resize({ width: config.photoMaxPx, height: null });
-    else context.resize({ width: null, height: config.photoMaxPx });
+  if (longest > maxPx) {
+    if (width >= height) context.resize({ width: maxPx, height: null });
+    else context.resize({ width: null, height: maxPx });
   }
   const rendered = await context.renderAsync();
   const saved = await rendered.saveAsync({ format: ImageManipulator.SaveFormat.JPEG, compress: 0.85 });
@@ -90,12 +90,12 @@ export async function resizeToJpeg(uri: string, width: number, height: number): 
 // Browsers cap canvas size (iOS Safari: about 16.7 million pixels), and a phone
 // camera photo is larger than that. Drawing the picture straight into a canvas
 // no bigger than the target size stays under the cap on every browser.
-async function resizeOnWeb(uri: string): Promise<ResizedPhoto> {
+async function resizeOnWeb(uri: string, maxPx: number): Promise<ResizedPhoto> {
   const image = await loadImage(uri);
   const sourceWidth = image.naturalWidth;
   const sourceHeight = image.naturalHeight;
   if (!sourceWidth || !sourceHeight) throw new CaptureFailure('failed', 'Could not read the image size');
-  const scale = Math.min(1, config.photoMaxPx / Math.max(sourceWidth, sourceHeight));
+  const scale = Math.min(1, maxPx / Math.max(sourceWidth, sourceHeight));
   const width = Math.max(1, Math.round(sourceWidth * scale));
   const height = Math.max(1, Math.round(sourceHeight * scale));
   const canvas = document.createElement('canvas');

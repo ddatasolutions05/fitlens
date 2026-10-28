@@ -39,7 +39,7 @@ if (process.env.E2E_USER_EMAIL && process.env.E2E_USER_PASSWORD) {
   await page.getByTestId('email').fill(process.env.E2E_USER_EMAIL);
   await page.getByTestId('password').fill(process.env.E2E_USER_PASSWORD);
   await page.getByTestId('sign-in').click();
-  await page.waitForURL(/today|onboarding/, { timeout: 60_000 });
+  await page.waitForURL(/home|today|onboarding/, { timeout: 60_000 });
   if (/onboarding/.test(page.url())) {
     await shot('onboarding-0');
     await page.getByTestId('continue').click();

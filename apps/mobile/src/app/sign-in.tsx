@@ -16,6 +16,13 @@ WebBrowser.maybeCompleteAuthSession();
 
 type Mode = 'signin' | 'signup';
 type Sent = { kind: 'magic' | 'confirm' | 'reset'; email: string } | null;
+type Method = 'email' | 'phone';
+
+/** E.164: a plus sign and 8 to 15 digits. Spaces, dashes and brackets are dropped. */
+export function normalizePhone(raw: string): string | null {
+  const digits = raw.replace(/[\s\-().]/g, '');
+  return /^\+\d{8,15}$/.test(digits) ? digits : null;
+}
 
 function redirectTo(path = ''): string {
   if (Platform.OS === 'web' && typeof window !== 'undefined') return `${window.location.origin}${config.basePath}/${path}`;
@@ -33,6 +40,10 @@ export default function SignIn() {
   const [busy, setBusy] = useState<string | null>(null);
   const [sent, setSent] = useState<Sent>(null);
   const [error, setError] = useState<string | null>(null);
+  const [method, setMethod] = useState<Method>('email');
+  const [phone, setPhone] = useState('');
+  const [otp, setOtp] = useState('');
+  const [codeSentTo, setCodeSentTo] = useState<string | null>(null);
 
   if (!config.supabaseConfigured) return <Redirect href="/setup" />;
   if (session) return <Redirect href="/" />;
@@ -86,6 +97,28 @@ export default function SignIn() {
       const { error: err } = await getSupabase().auth.resetPasswordForEmail(email.trim(), { redirectTo: redirectTo('reset-password') });
       if (err) throw err;
       setSent({ kind: 'reset', email: email.trim() });
+    });
+
+  const phoneValid = normalizePhone(phone) != null;
+
+  const sendCode = () =>
+    run('code', async () => {
+      const normalized = normalizePhone(phone);
+      if (!normalized) throw new Error('Enter the number with the country code, like +1 416 555 0199.');
+      const { error: err } = await getSupabase().auth.signInWithOtp({
+        phone: normalized,
+        options: { shouldCreateUser: mode === 'signup', data: displayName.trim() ? { display_name: displayName.trim() } : undefined },
+      });
+      if (err) throw err;
+      setCodeSentTo(normalized);
+      setOtp('');
+    });
+
+  const verifyCode = () =>
+    run('verify', async () => {
+      if (!codeSentTo) return;
+      const { error: err } = await getSupabase().auth.verifyOtp({ phone: codeSentTo, token: otp.trim(), type: 'sms' });
+      if (err) throw err;
     });
 
   const oauth = (provider: 'google' | 'apple') =>
@@ -167,6 +200,59 @@ export default function SignIn() {
             </Text>
             <Button label="Back" variant="ghost" size="sm" onPress={() => setSent(null)} />
           </View>
+        ) : method === 'phone' ? (
+          <View style={{ gap: space.md }} testID="phone-form">
+            {mode === 'signup' ? <Input label="Name (optional)" value={displayName} onChangeText={setDisplayName} placeholder="What should we call you?" autoComplete="name" /> : null}
+            <Input
+              label="Mobile number"
+              keyboardType="phone-pad"
+              inputMode="tel"
+              autoComplete="tel"
+              textContentType="telephoneNumber"
+              value={phone}
+              onChangeText={setPhone}
+              placeholder="+1 416 555 0199"
+              hint="Include the country code. A 6-digit code arrives by text; message rates may apply."
+              testID="phone"
+              editable={!codeSentTo}
+            />
+            {codeSentTo ? (
+              <Input label="Code from the text" keyboardType="number-pad" inputMode="numeric" autoComplete="one-time-code" textContentType="oneTimeCode" value={otp} onChangeText={setOtp} placeholder="123456" testID="otp" />
+            ) : null}
+            {error ? (
+              <View style={[styles.notice, { backgroundColor: colors.surfaceAlt }]}>
+                <Text color="danger" variant="small" testID="auth-error">
+                  {error}
+                </Text>
+              </View>
+            ) : null}
+            {codeSentTo ? (
+              <>
+                <Button label={mode === 'signup' ? 'Verify and create account' : 'Verify and sign in'} size="lg" onPress={verifyCode} loading={busy === 'verify'} disabled={otp.trim().length < 6 || busy != null} testID="verify-code" />
+                <Pressable accessibilityRole="button" onPress={sendCode} disabled={busy != null} style={[styles.link, { alignSelf: 'center' }]} testID="resend-code">
+                  <Text variant="small" style={{ color: colors.text, textDecorationLine: 'underline' }}>
+                    {busy === 'code' ? 'Sending' : 'Send a new code'}
+                  </Text>
+                </Pressable>
+              </>
+            ) : (
+              <Button label="Send code" size="lg" onPress={sendCode} loading={busy === 'code'} disabled={!phoneValid || busy != null || (mode === 'signup' && providers.data?.signupDisabled)} testID="send-code" />
+            )}
+            <Pressable
+              accessibilityRole="button"
+              onPress={() => {
+                setMethod('email');
+                setCodeSentTo(null);
+                setError(null);
+              }}
+              style={[styles.link, { alignSelf: 'center' }]}
+              testID="use-email"
+            >
+              <Text variant="small" style={{ color: colors.text, textDecorationLine: 'underline' }}>
+                Use email instead
+              </Text>
+            </Pressable>
+          </View>
         ) : (
           <View style={{ gap: space.md }}>
             {anyOAuth ? (
@@ -224,6 +310,21 @@ export default function SignIn() {
                   {busy === 'magic' ? 'Sending' : 'Email me a link instead'}
                 </Text>
               </Pressable>
+              {providers.data?.phone ? (
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => {
+                    setMethod('phone');
+                    setError(null);
+                  }}
+                  style={styles.link}
+                  testID="use-phone"
+                >
+                  <Text variant="small" style={{ color: colors.text, textDecorationLine: 'underline' }}>
+                    Use a phone number
+                  </Text>
+                </Pressable>
+              ) : null}
               {mode === 'signin' ? (
                 <Pressable accessibilityRole="button" onPress={sendReset} disabled={!emailValid || busy != null} style={styles.link} testID="forgot-password">
                   <Text variant="small" style={{ color: emailValid ? colors.text : colors.textFaint, textDecorationLine: 'underline' }}>
@@ -323,6 +424,8 @@ function friendly(message: string): string {
   if (/rate limit|too many/i.test(message)) return 'Too many emails sent recently. Wait a few minutes and try again.';
   if (/already registered|already exists/i.test(message)) return 'An account with this email already exists. Sign in instead.';
   if (/password should be at least/i.test(message)) return 'Password must be at least 8 characters.';
+  if (/token has expired|invalid.*otp|otp.*invalid/i.test(message)) return 'That code is wrong or has expired. Send a new one.';
+  if (/sms|phone provider|unsupported phone/i.test(message)) return 'Text messages are not set up on this app yet. Use email for now.';
   return message;
 }
 

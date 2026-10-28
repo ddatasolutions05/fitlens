@@ -211,28 +211,28 @@ isOneToOne: false
                   ]
                 },"preferences": {
                   Row: {
-                    "ai_consent_version": string | null,"ai_photo_consent_at": string | null,"allergies": (string)[],"avoid_foods": (string)[],"created_at": string,"cuisines": (string)[],"diet_pattern": string | null,"reduced_motion": boolean,"updated_at": string,"user_id": string
+                    "ai_consent_version": string | null,"ai_photo_consent_at": string | null,"allergies": (string)[],"avoid_foods": (string)[],"created_at": string,"cuisines": (string)[],"diet_pattern": string | null,"reduced_motion": boolean,"updated_at": string,"user_id": string,"workout_days_per_week": number | null,"workout_minutes": number | null,"workout_level": string | null,"workout_focus": string | null,"workout_equipment": string[],"workout_plan_seed": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "ai_consent_version"?: string | null,"ai_photo_consent_at"?: string | null,"allergies"?: (string)[],"avoid_foods"?: (string)[],"created_at"?: string,"cuisines"?: (string)[],"diet_pattern"?: string | null,"reduced_motion"?: boolean,"updated_at"?: string,"user_id": string
+                    "ai_consent_version"?: string | null,"ai_photo_consent_at"?: string | null,"allergies"?: (string)[],"avoid_foods"?: (string)[],"created_at"?: string,"cuisines"?: (string)[],"diet_pattern"?: string | null,"reduced_motion"?: boolean,"updated_at"?: string,"user_id": string,"workout_days_per_week"?: number | null,"workout_minutes"?: number | null,"workout_level"?: string | null,"workout_focus"?: string | null,"workout_equipment"?: string[],"workout_plan_seed"?: number
                   }
                   Update: {
-                    "ai_consent_version"?: string | null,"ai_photo_consent_at"?: string | null,"allergies"?: (string)[],"avoid_foods"?: (string)[],"created_at"?: string,"cuisines"?: (string)[],"diet_pattern"?: string | null,"reduced_motion"?: boolean,"updated_at"?: string,"user_id"?: string
+                    "ai_consent_version"?: string | null,"ai_photo_consent_at"?: string | null,"allergies"?: (string)[],"avoid_foods"?: (string)[],"created_at"?: string,"cuisines"?: (string)[],"diet_pattern"?: string | null,"reduced_motion"?: boolean,"updated_at"?: string,"user_id"?: string,"workout_days_per_week"?: number | null,"workout_minutes"?: number | null,"workout_level"?: string | null,"workout_focus"?: string | null,"workout_equipment"?: string[],"workout_plan_seed"?: number
                   }
                   Relationships: [
                     
                   ]
                 },"profiles": {
                   Row: {
-                    "birth_date": string | null,"created_at": string,"display_name": string | null,"goal_weight_kg": number | null,"height_cm": number | null,"hide_numbers": boolean,"mode": string,"onboarding_completed_at": string | null,"sex_for_equation": string,"timezone": string,"tracking_only_reasons": (string)[],"training_days_per_week": number | null,"training_minutes": number | null,"training_type": string | null,"typical_steps": number | null,"unit_system": string,"updated_at": string,"user_id": string
+                    "birth_date": string | null,"created_at": string,"display_name": string | null,"goal_weight_kg": number | null,"height_cm": number | null,"hide_numbers": boolean,"mode": string,"onboarding_completed_at": string | null,"sex_for_equation": string,"timezone": string,"tracking_only_reasons": (string)[],"training_days_per_week": number | null,"training_minutes": number | null,"training_type": string | null,"typical_steps": number | null,"unit_system": string,"updated_at": string,"user_id": string,"avatar_path": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "birth_date"?: string | null,"created_at"?: string,"display_name"?: string | null,"goal_weight_kg"?: number | null,"height_cm"?: number | null,"hide_numbers"?: boolean,"mode"?: string,"onboarding_completed_at"?: string | null,"sex_for_equation"?: string,"timezone"?: string,"tracking_only_reasons"?: (string)[],"training_days_per_week"?: number | null,"training_minutes"?: number | null,"training_type"?: string | null,"typical_steps"?: number | null,"unit_system"?: string,"updated_at"?: string,"user_id": string
+                    "birth_date"?: string | null,"created_at"?: string,"display_name"?: string | null,"goal_weight_kg"?: number | null,"height_cm"?: number | null,"hide_numbers"?: boolean,"mode"?: string,"onboarding_completed_at"?: string | null,"sex_for_equation"?: string,"timezone"?: string,"tracking_only_reasons"?: (string)[],"training_days_per_week"?: number | null,"training_minutes"?: number | null,"training_type"?: string | null,"typical_steps"?: number | null,"unit_system"?: string,"updated_at"?: string,"user_id": string,"avatar_path"?: string | null
                   }
                   Update: {
-                    "birth_date"?: string | null,"created_at"?: string,"display_name"?: string | null,"goal_weight_kg"?: number | null,"height_cm"?: number | null,"hide_numbers"?: boolean,"mode"?: string,"onboarding_completed_at"?: string | null,"sex_for_equation"?: string,"timezone"?: string,"tracking_only_reasons"?: (string)[],"training_days_per_week"?: number | null,"training_minutes"?: number | null,"training_type"?: string | null,"typical_steps"?: number | null,"unit_system"?: string,"updated_at"?: string,"user_id"?: string
+                    "birth_date"?: string | null,"created_at"?: string,"display_name"?: string | null,"goal_weight_kg"?: number | null,"height_cm"?: number | null,"hide_numbers"?: boolean,"mode"?: string,"onboarding_completed_at"?: string | null,"sex_for_equation"?: string,"timezone"?: string,"tracking_only_reasons"?: (string)[],"training_days_per_week"?: number | null,"training_minutes"?: number | null,"training_type"?: string | null,"typical_steps"?: number | null,"unit_system"?: string,"updated_at"?: string,"user_id"?: string,"avatar_path"?: string | null
                   }
                   Relationships: [
                     

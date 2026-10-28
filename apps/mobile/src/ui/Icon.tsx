@@ -3,6 +3,8 @@ import Svg, { Circle, Line, Path, Polyline, Rect } from 'react-native-svg';
 import { useTheme } from './theme';
 
 export type IconName =
+  | 'home'
+  | 'dumbbell'
   | 'today'
   | 'diary'
   | 'progress'
@@ -40,7 +42,23 @@ export function Icon({ name, size = 22, color, strokeWidth = 1.8 }: IconProps) {
   const common = { stroke, strokeWidth, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, fill: 'none' as const };
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24">
-      {name === 'today' ? (
+      {name === 'home' ? (
+        <>
+          <Path d="M4 11l8-7 8 7" {...common} />
+          <Path d="M6 10v10h12V10" {...common} />
+          <Rect x={10} y={14} width={4} height={6} {...common} />
+        </>
+      ) : name === 'dumbbell' ? (
+        <>
+          <Line x1={9} y1={12} x2={15} y2={12} {...common} />
+          <Rect x={5} y={8} width={3} height={8} rx={1} {...common} />
+          <Rect x={16} y={8} width={3} height={8} rx={1} {...common} />
+          <Line x1={2} y1={10} x2={2} y2={14} {...common} />
+          <Line x1={22} y1={10} x2={22} y2={14} {...common} />
+          <Line x1={3.5} y1={12} x2={5} y2={12} {...common} />
+          <Line x1={19} y1={12} x2={20.5} y2={12} {...common} />
+        </>
+      ) : name === 'today' ? (
         <>
           <Circle cx={12} cy={12} r={9} {...common} />
           <Circle cx={12} cy={12} r={4} {...common} />

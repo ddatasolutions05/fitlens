@@ -99,7 +99,7 @@ await inspect('sign-in');
 await page.getByTestId('email').fill(email);
 await page.getByTestId('password').fill(password);
 await page.getByTestId('sign-in').click();
-await page.waitForURL(/today|onboarding/, { timeout: 60_000 });
+await page.waitForURL(/home|today|onboarding/, { timeout: 60_000 });
 if (/onboarding/.test(page.url())) {
   await step('onboarding', async () => {
     await inspect('onboarding-0');
@@ -185,6 +185,27 @@ await step('manual', async () => {
   await page.locator('[data-testid^="meal-"]').first().click();
   await page.getByTestId('meal-editor').waitFor({ timeout: 30_000 });
   await inspect('meal-reopen');
+});
+await step('train', async () => {
+  await go('train', 'train-screen');
+  await inspect('train');
+  if (await page.getByTestId('build-plan').isVisible().catch(() => false)) {
+    await page.getByTestId('build-plan').click();
+    await page.getByTestId('plan-screen').waitFor({ timeout: 30_000 });
+    await page.getByRole('radio', { name: '4', exact: true }).click();
+    await page.getByText('Dumbbells', { exact: true }).click();
+    await inspect('plan');
+    await page.getByTestId('plan-save').click();
+    await page.getByTestId('train-screen').waitFor({ timeout: 30_000 });
+    await inspect('train-planned');
+  }
+  await page.locator('[data-testid^="suggestion-"]').first().click();
+  await page.getByTestId('workout-screen').waitFor({ timeout: 30_000 });
+  await inspect('workout');
+});
+await step('home', async () => {
+  await go('home', 'home-screen');
+  await inspect('home');
 });
 await step('scan', async () => {
   await go('scan', 'scan-screen');

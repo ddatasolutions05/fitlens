@@ -134,6 +134,9 @@ once a working Anthropic key was set. Milestone 9 (export, delete) remains
 | 16 | Meal time from the photo: EXIF capture time on gallery picks, capture moment for the camera, editor note, `exif.ts` parser | built, verified live | `exif.test.ts` (7 tests); `photo-resize.spec.ts` capture-time case |
 | 17 | Packaged products: `lookup-product` function (Open Food Facts by name) plus the model's typical values, shown as suggestions the person approves before anything is logged | built, verified live | live calls return branded matches; `e2e/packaged.spec.ts`; `photo.spec.ts` against the real model |
 | 18 | Calendar date fields: `ui/DateField` (browser date input on web, OS picker on native via `@react-native-community/datetimepicker`) for date of birth and the meal date | built, verified live | onboarding, photo-resize and photo specs drive the field by value; screenshots reviewed |
+| 19 | Home tab: avatar upload, greeting, line of the day, today snapshot, day's workout, section cards; tab bar Home, Today, Train, Stats, Coach | built, verified live | `quotes.test.ts`; `e2e/home.spec.ts` |
+| 20 | Workouts: 16-session library, rules-based weekly plan from days, minutes, level, focus and equipment, suggestions for today, one-tap logging as activity | built, verified live | `workouts/plan.test.ts` (8 tests); `e2e/train.spec.ts` |
+| 21 | Phone sign-in and sign-up with SMS codes, shown only when the project has an SMS provider | built; needs Twilio credentials to switch on | `auth.spec.ts` checks the option against `/auth/v1/settings` |
 
 ## 5. Open risks
 

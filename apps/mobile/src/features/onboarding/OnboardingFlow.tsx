@@ -275,6 +275,15 @@ export function OnboardingFlow() {
 
       {step === 2 ? (
         <View style={styles.fields}>
+          <Segmented<UnitSystem>
+            label="Units"
+            value={a.unitSystem}
+            onChange={(v) => set('unitSystem', v)}
+            options={[
+              { value: 'metric', label: 'Metric', hint: 'kg, cm' },
+              { value: 'imperial', label: 'Imperial', hint: 'lb, ft and in' },
+            ]}
+          />
           {a.unitSystem === 'imperial' ? (
             <View style={styles.row}>
               <View style={{ flex: 1 }}>

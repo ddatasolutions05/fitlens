@@ -20,7 +20,7 @@ export async function signIn(page: Page): Promise<void> {
 
 export async function completeOnboardingIfNeeded(page: Page): Promise<void> {
   await page.goto('/');
-  await page.waitForURL(/onboarding|today/, { timeout: 30_000 });
+  await page.waitForURL(/onboarding|today|home/, { timeout: 30_000 });
   if (!page.url().includes('onboarding')) return;
   // Step 0: welcome
   await page.getByTestId('continue').click();

@@ -8,6 +8,8 @@ test.describe('onboarding to Today', () => {
   test('signs in, completes onboarding and lands on Today with a TDEE explanation', async ({ page }) => {
     await signIn(page);
     await completeOnboardingIfNeeded(page);
+    // Sign-in lands on Home; the calorie plate lives on Today.
+    await page.goto('/today');
     await expect(page.getByTestId('today-screen')).toBeVisible();
     await expect(page.getByTestId('calorie-target')).toContainText('kcal');
     await page.getByTestId('tdee-link').click();

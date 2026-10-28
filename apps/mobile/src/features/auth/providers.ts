@@ -6,6 +6,8 @@ export interface AuthProviders {
   email: boolean;
   google: boolean;
   apple: boolean;
+  /** SMS one-time codes; needs an SMS provider configured on the project. */
+  phone: boolean;
   signupDisabled: boolean;
   /** True when sign-ups do not need an email confirmation click. */
   autoconfirm: boolean;
@@ -23,6 +25,7 @@ export function useAuthProviders() {
         email: data.external?.email ?? true,
         google: data.external?.google ?? false,
         apple: data.external?.apple ?? false,
+        phone: data.external?.phone ?? false,
         signupDisabled: data.disable_signup ?? false,
         autoconfirm: data.mailer_autoconfirm ?? false,
       };
