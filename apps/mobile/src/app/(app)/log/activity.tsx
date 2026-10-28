@@ -1,8 +1,9 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { WORKOUT_TYPES, deviceTimeZone, localDateTimeToIso, todayLocal, workoutEstimate, type Intensity, type WorkoutType } from '@fitlens/core';
 
+import { goBack } from '@/lib/nav';
 import { useLogSteps, useLogWorkout } from '@/features/logs/hooks';
 import { newIdempotencyKey } from '@/features/meals/model';
 import { errorMessage } from '@/lib/net';
@@ -48,7 +49,7 @@ export default function LogActivity() {
       }
       await logWorkout.mutateAsync({ id: newIdempotencyKey(), type, intensity, minutes, localDate, tz, startAt, kg, note: note.trim() || null });
     }
-    router.back();
+    goBack('/today');
     } catch (err) {
       setError(errorMessage(err));
     }
@@ -101,7 +102,7 @@ export default function LogActivity() {
           </Text>
         ) : null}
         <Button label="Save" size="lg" onPress={() => void save()} loading={logSteps.isPending || logWorkout.isPending} testID="save-activity" />
-        <Button label="Cancel" variant="ghost" onPress={() => router.back()} />
+        <Button label="Cancel" variant="ghost" onPress={() => goBack('/today')} />
       </Card>
     </Screen>
   );

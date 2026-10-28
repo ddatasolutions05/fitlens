@@ -1,6 +1,6 @@
-import { router } from 'expo-router';
 import { useState } from 'react';
 
+import { goBack } from '@/lib/nav';
 import { useSession } from '@/features/auth/session';
 import { errorMessage } from '@/lib/net';
 import { getSupabase } from '@/lib/supabase';
@@ -89,7 +89,7 @@ export default function Security() {
           {error}
         </Text>
       ) : null}
-      <Button label="Back" variant="ghost" onPress={() => router.back()} />
+      <Button label="Back" variant="ghost" onPress={() => goBack('/profile')} />
     </Screen>
   );
 }

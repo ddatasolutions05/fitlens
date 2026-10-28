@@ -12,6 +12,7 @@ import {
   type SexForEquation,
 } from '@fitlens/core';
 
+import { goBack } from '@/lib/nav';
 import { useAddGoalVersion, useGoalForDate, useGoalHistory, useLatestWeight, useProfile, type GoalVersionRow, type ProfileRow } from '@/features/profile/hooks';
 import { planGoal } from '@/features/profile/targets';
 import { errorMessage } from '@/lib/net';
@@ -52,7 +53,7 @@ export default function TargetsScreen() {
           ))}
         </Card>
       ) : null}
-      <Button label="Back" variant="ghost" onPress={() => router.back()} />
+      <Button label="Back" variant="ghost" onPress={() => goBack('/profile')} />
     </Screen>
   );
 }
@@ -110,7 +111,7 @@ function TargetsForm({ p, current, kg, today }: { p: ProfileRow; current: GoalVe
       } else {
         await addGoal.mutateAsync(plan.row);
       }
-      router.back();
+      goBack('/profile');
     } catch (err) {
       setError(errorMessage(err));
     }

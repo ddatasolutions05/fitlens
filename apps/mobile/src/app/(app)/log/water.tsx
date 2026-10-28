@@ -1,8 +1,9 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { deviceTimeZone, localDateTimeToIso, todayLocal } from '@fitlens/core';
 
+import { goBack } from '@/lib/nav';
 import { useLogWater } from '@/features/logs/hooks';
 import { newIdempotencyKey } from '@/features/meals/model';
 import { errorMessage } from '@/lib/net';
@@ -27,7 +28,7 @@ export default function LogWater() {
       localDate,
       tz,
     });
-    router.back();
+    goBack('/today');
     } catch (err) {
       setError(errorMessage(err));
     }
@@ -51,7 +52,7 @@ export default function LogWater() {
           </Text>
         ) : null}
         <Button label="Add custom" variant="secondary" disabled={!custom || custom <= 0 || custom > 5000} onPress={() => custom && void add(custom)} loading={log.isPending} />
-        <Button label="Cancel" variant="ghost" onPress={() => router.back()} />
+        <Button label="Cancel" variant="ghost" onPress={() => goBack('/today')} />
       </Card>
     </Screen>
   );

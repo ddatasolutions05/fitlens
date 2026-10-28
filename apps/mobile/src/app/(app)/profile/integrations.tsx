@@ -1,6 +1,6 @@
-import { router } from 'expo-router';
 import { Platform } from 'react-native';
 
+import { goBack } from '@/lib/nav';
 import { Button, Card, NotConfigured, Screen, Text, space } from '@/ui';
 
 export default function Integrations() {
@@ -21,7 +21,7 @@ export default function Integrations() {
       <Text variant="small" color="textMuted">
         Manual steps, workouts and weight stay fully usable. When a connection is added, steps for a day come from one preferred source only, workouts are deduplicated by id and overlapping time, and each record shows its source and last sync time.
       </Text>
-      <Button label="Back" variant="ghost" onPress={() => router.back()} />
+      <Button label="Back" variant="ghost" onPress={() => goBack('/profile')} />
     </Screen>
   );
 }

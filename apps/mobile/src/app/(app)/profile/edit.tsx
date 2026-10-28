@@ -1,8 +1,8 @@
-import { router } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { cmToFtIn, ftInToCm, kgToLb, lbToKg, type SexForEquation, type UnitSystem } from '@fitlens/core';
 
+import { goBack } from '@/lib/nav';
 import { useProfile, useUpsertProfile, type ProfileRow } from '@/features/profile/hooks';
 import { errorMessage } from '@/lib/net';
 import { Button, Card, Input, NumberField, Screen, Segmented, SkeletonCard, Text, space } from '@/ui';
@@ -15,7 +15,7 @@ export default function EditProfile() {
         Edit profile
       </Text>
       {profile.isLoading ? <SkeletonCard lines={6} /> : profile.data ? <EditForm key={profile.data.updated_at} p={profile.data} /> : <EditForm p={null} />}
-      <Button label="Cancel" variant="ghost" onPress={() => router.back()} />
+      <Button label="Cancel" variant="ghost" onPress={() => goBack('/profile')} />
     </Screen>
   );
 }
@@ -62,7 +62,7 @@ function EditForm({ p }: { p: ProfileRow | null }) {
         mode: finalMode,
         tracking_only_reasons: reasons,
       });
-      router.back();
+      goBack('/profile');
     } catch (err) {
       setError(errorMessage(err));
     }

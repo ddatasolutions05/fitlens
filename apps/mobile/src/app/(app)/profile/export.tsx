@@ -1,8 +1,8 @@
-import { router } from 'expo-router';
 import { useState } from 'react';
 import { Linking, Platform } from 'react-native';
 import { exportDataResultSchema, functionErrorSchema, type ExportDataResult } from '@fitlens/schemas';
 
+import { goBack } from '@/lib/nav';
 import { errorMessage } from '@/lib/net';
 import { supabase } from '@/lib/supabase';
 import { Button, Card, Screen, Text, space } from '@/ui';
@@ -62,7 +62,7 @@ export default function ExportScreen() {
           </Text>
         ) : null}
       </Card>
-      <Button label="Back" variant="ghost" onPress={() => router.back()} />
+      <Button label="Back" variant="ghost" onPress={() => goBack('/profile')} />
     </Screen>
   );
 }

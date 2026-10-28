@@ -1,8 +1,9 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 import { deviceTimeZone, kgToLb, lbToKg, localDateTimeToIso, timeInZone, todayLocal, type UnitSystem } from '@fitlens/core';
 
+import { goBack } from '@/lib/nav';
 import { useLogWeight } from '@/features/logs/hooks';
 import { useLatestWeight, useProfile } from '@/features/profile/hooks';
 import { newIdempotencyKey } from '@/features/meals/model';
@@ -45,7 +46,7 @@ export default function LogWeight() {
       tz,
       note: note.trim() || null,
     });
-    router.back();
+    goBack('/today');
     } catch (err) {
       setError(errorMessage(err));
     }
@@ -76,7 +77,7 @@ export default function LogWeight() {
           </Text>
         ) : null}
         <Button label="Save weight" size="lg" onPress={() => void save()} loading={log.isPending} disabled={value == null} testID="save-weight" />
-        <Button label="Cancel" variant="ghost" onPress={() => router.back()} />
+        <Button label="Cancel" variant="ghost" onPress={() => goBack('/today')} />
       </Card>
       <Text variant="caption" color="textFaint">
         Daily swings are mostly water and food in transit, not fat. The trend line on Progress smooths them out.

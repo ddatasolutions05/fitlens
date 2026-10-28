@@ -1,7 +1,7 @@
-import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
+import { goBack } from '@/lib/nav';
 import { usePreferences, useUpsertPreferences, type PreferencesRow } from '@/features/profile/hooks';
 import { config } from '@/lib/config';
 import { errorMessage } from '@/lib/net';
@@ -33,7 +33,7 @@ export default function PrivacyAndDiet() {
           <DietForm key={prefs.data?.updated_at ?? 'new'} p={prefs.data ?? null} />
         </>
       )}
-      <Button label="Back" variant="ghost" onPress={() => router.back()} />
+      <Button label="Back" variant="ghost" onPress={() => goBack('/profile')} />
     </Screen>
   );
 }
@@ -96,7 +96,7 @@ function DietForm({ p }: { p: PreferencesRow | null }) {
     setError(null);
     try {
       await upsert.mutateAsync({ diet_pattern: diet, allergies: split(allergies), cuisines, avoid_foods: split(avoid) });
-      router.back();
+      goBack('/profile');
     } catch (err) {
       setError(errorMessage(err));
     }

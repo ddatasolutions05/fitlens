@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import { ACTIVITY_LEVEL_LABELS, ACTIVITY_MULTIPLIERS, roundKcal, todayLocal, type ActivityLevel } from '@fitlens/core';
 
+import { goBack } from '@/lib/nav';
 import { useDay } from '@/features/day/hooks';
 import { useProfile } from '@/features/profile/hooks';
 import { energyEstimateFor } from '@/features/profile/tdee';
@@ -75,7 +76,7 @@ export default function TdeeExplainer() {
           <Button label="Change goal or activity mode" variant="secondary" onPress={() => router.push('/profile/targets')} />
         </>
       )}
-      <Button label="Close" variant="ghost" onPress={() => router.back()} />
+      <Button label="Close" variant="ghost" onPress={() => goBack('/profile')} />
     </Screen>
   );
 }

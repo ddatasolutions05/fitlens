@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { View } from 'react-native';
 import { todayLocal } from '@fitlens/core';
 
+import { goBack } from '@/lib/nav';
 import { useCreateUserFood } from '@/features/food/hooks';
 import { addItem, ensureDraft, setDraft, updateItem } from '@/features/meals/draft-store';
 import { newItem } from '@/features/meals/model';
@@ -136,7 +137,7 @@ export default function ManualFood() {
           </Text>
         ) : null}
         <Button label="Add to meal" size="lg" onPress={() => void add()} loading={create.isPending} testID="manual-add" />
-        <Button label="Cancel" variant="ghost" onPress={() => router.back()} />
+        <Button label="Cancel" variant="ghost" onPress={() => goBack('/today')} />
       </Card>
     </Screen>
   );

@@ -1,6 +1,7 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect } from 'react';
 
+import { goBack } from '@/lib/nav';
 import { draftFromMeal } from '@/features/meals/api';
 import { getDraft, setDraft } from '@/features/meals/draft-store';
 import { useMeal } from '@/features/meals/hooks';
@@ -29,7 +30,7 @@ export default function MealDetail() {
       ) : (
         <MealEditor mode="existing" />
       )}
-      <Button label="Back" variant="ghost" onPress={() => router.back()} />
+      <Button label="Back" variant="ghost" onPress={() => goBack('/today')} />
     </Screen>
   );
 }

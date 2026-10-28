@@ -4,6 +4,7 @@ import { View } from 'react-native';
 import { todayLocal } from '@fitlens/core';
 import type { AnalyzeMealResult, ClarifyingQuestion } from '@fitlens/schemas';
 
+import { goBack } from '@/lib/nav';
 import { useUserId } from '@/features/auth/session';
 import { addPhoto, ensureDraft, getDraft, setDraft, updateDraft } from '@/features/meals/draft-store';
 import { saveMeal } from '@/features/meals/api';
@@ -240,7 +241,7 @@ export default function ScanScreen() {
         </View>
       ) : null}
 
-      <Button label="Close" variant="ghost" onPress={() => router.back()} />
+      <Button label="Close" variant="ghost" onPress={() => goBack('/today')} />
     </Screen>
   );
 }

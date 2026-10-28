@@ -1,5 +1,5 @@
-import { router } from 'expo-router';
 
+import { goBack } from '@/lib/nav';
 import { MealEditor } from '@/features/meals/MealEditor';
 import { Button, Screen, Text, space } from '@/ui';
 
@@ -10,7 +10,7 @@ export default function EditDraft() {
         Review meal
       </Text>
       <MealEditor mode="new" />
-      <Button label="Back" variant="ghost" onPress={() => router.back()} />
+      <Button label="Back" variant="ghost" onPress={() => goBack('/today')} />
     </Screen>
   );
 }

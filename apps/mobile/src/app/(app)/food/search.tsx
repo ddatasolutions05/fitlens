@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { formatNutrient, todayLocal } from '@fitlens/core';
 
+import { goBack } from '@/lib/nav';
 import { AddFoodSheet, pickedFromFood, pickedFromSearch, type PickedFood } from '@/features/food/AddFoodSheet';
 import { useRecentFoods, useSearchFoods, useToggleFavourite } from '@/features/food/hooks';
 import { draftItemsFromSaved, touchSavedMeal, useSavedMeals } from '@/features/food/saved-meals';
@@ -159,7 +160,7 @@ export default function FoodSearch() {
         </>
       )}
 
-      <Button label="Back" variant="ghost" onPress={() => router.back()} />
+      <Button label="Back" variant="ghost" onPress={() => goBack('/today')} />
 
       <AddFoodSheet food={picked} onClose={() => setPicked(null)} onAdd={(item) => commit([item])} />
     </Screen>

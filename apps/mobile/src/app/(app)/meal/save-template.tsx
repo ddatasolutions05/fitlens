@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { router } from 'expo-router';
 import { useState } from 'react';
 
+import { goBack } from '@/lib/nav';
 import { useUserId } from '@/features/auth/session';
 import { useDraft } from '@/features/meals/draft-store';
 import { errorMessage } from '@/lib/net';
@@ -50,7 +50,7 @@ export default function SaveTemplate() {
     },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ['saved-meals', userId] });
-      router.back();
+      goBack('/today');
     },
     onError: (err) => setError(errorMessage(err)),
   });
@@ -71,7 +71,7 @@ export default function SaveTemplate() {
           </Text>
         ) : null}
         <Button label="Save" size="lg" disabled={!draft || !name.trim() || draft.items.length === 0} loading={save.isPending} onPress={() => save.mutate()} />
-        <Button label="Cancel" variant="ghost" onPress={() => router.back()} />
+        <Button label="Cancel" variant="ghost" onPress={() => goBack('/today')} />
       </Card>
       <Text variant="caption" color="textFaint">
         Saved meals appear under Add food so a repeat meal is three taps: Add food, pick the saved meal, confirm.
