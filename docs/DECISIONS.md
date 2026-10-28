@@ -2,6 +2,11 @@
 
 Newest first. Each entry: context, decision, consequences.
 
+## D-031 Describe a meal in words; read a label from a photo (2026-10-28)
+Context: two more ways to log that suit people who will not search or photograph a plate.
+Decision: a `describe-meal` function turns a typed or dictated description into the same JSON contract as photo analysis (same consent gate, same daily cap, no image), so the existing database mapping applies and the result lands in the editor like a scan. The screen uses the browser's speech recogniser where one exists and falls back to typing. The `read-label` function, deployed since Phase 1, now has a screen: photograph the nutrition panel, confirm the serving weight and the number of servings, and the product is saved as a label-sourced food with per-100 g values derived from the printed serving.
+Consequences: `e2e/describe-label.spec.ts` drives both screens with fixed function replies while the real food database does the matching. Nine functions are deployed.
+
 ## D-030 Trainer notes and a swappable logo (2026-10-28)
 Context: the gym pitch needs the coach to stay in the loop without a chat product, and a white-label build needs the gym's own logo.
 Decision: `trainer_notes` holds one-line notes (up to 300 characters) from a trainer to a member. Only a trainer with an active link can insert, enforced by the row policy, so a revoked link stops notes immediately; the member sees the newest note on Home and clears it with one tap. `EXPO_PUBLIC_BRAND_LOGO_URL` swaps the built-in three-stroke mark for a square image wherever `BrandMark` renders, alongside the existing name and tagline variables.

@@ -152,6 +152,8 @@ once a working Anthropic key was set. Milestone 9 (export, delete) remains
 | 34 | Protein picks on Today from the person's own history | built, verified live | rendered in the manual-log flow |
 | 35 | Trainer notes: one line from a coach shown on the member's Home | built, verified live | `rls.test.ts` trainer notes case |
 | 36 | White-label logo via `EXPO_PUBLIC_BRAND_LOGO_URL` | built | config only |
+| 37 | Describe a meal (typed or spoken) through `describe-meal`, mapped like a photo | built, verified live | `e2e/describe-label.spec.ts` |
+| 38 | Read a nutrition label from a photo through `read-label`, saved as a label-sourced food | built, verified live | `e2e/describe-label.spec.ts` |
 
 ## 5. Open risks
 

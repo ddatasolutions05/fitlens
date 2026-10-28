@@ -21,6 +21,16 @@ export const analyzeMealResultSchema = z.object({
 });
 export type AnalyzeMealResult = z.infer<typeof analyzeMealResultSchema>;
 
+// describe-meal: a written or dictated description, same result shape as a photo
+export const describeMealRequestSchema = z.object({ text: z.string().min(2).max(600) });
+export const describeMealResultSchema = z.object({
+  prompt_version: z.string(),
+  model: z.string(),
+  result: analyzeMealResponseSchema,
+  usage: z.object({ analyses_today: z.number(), daily_limit: z.number() }),
+});
+export type DescribeMealResult = z.infer<typeof describeMealResultSchema>;
+
 // read-label
 export const readLabelRequestSchema = z.object({
   storage_path: z.string().min(1),

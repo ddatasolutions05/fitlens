@@ -67,6 +67,12 @@ export default function FoodSearch() {
           {!replaceId ? <Button label="Barcode" variant="secondary" size="sm" style={{ flex: 1 }} onPress={() => router.push({ pathname: '/food/barcode', params: { date: localDate } })} testID="barcode-entry" /> : null}
           {!replaceId ? <Button label="Scan meal" variant="secondary" size="sm" style={{ flex: 1 }} onPress={() => router.push({ pathname: '/scan', params: { date: localDate } })} /> : null}
         </View>
+        {!replaceId ? (
+          <View style={{ flexDirection: 'row', gap: space.sm }}>
+            <Button label="Describe it" variant="secondary" size="sm" style={{ flex: 1 }} onPress={() => router.push({ pathname: '/food/describe', params: { date: localDate } })} testID="describe-entry" />
+            <Button label="Read a label" variant="secondary" size="sm" style={{ flex: 1 }} onPress={() => router.push({ pathname: '/food/label', params: { date: localDate } })} testID="label-entry" />
+          </View>
+        ) : null}
       </View>
 
       {q.length >= 2 ? (
