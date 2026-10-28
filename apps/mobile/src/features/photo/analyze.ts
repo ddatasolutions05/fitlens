@@ -15,6 +15,7 @@ import { supabase } from '@/lib/supabase';
 
 import type { SearchFoodRow } from '../food/hooks';
 import { pickedFromSearch, draftItemFromPicked } from '../food/AddFoodSheet';
+import type { PackagedSuggestion } from './products';
 
 export class AnalyzeError extends Error {
   constructor(
@@ -100,7 +101,7 @@ function fatItemFor(answer: string): DraftItem | null {
 
 export interface MappedAnalysis {
   items: DraftItem[];
-  packaged: { name: string; reason: string }[];
+  packaged: PackagedSuggestion[];
   unmatched: string[];
 }
 
@@ -204,38 +205,14 @@ export async function mapAnalysisToItems(result: AnalyzeMealResult, answers: Ans
     unmatched.push(ai.name);
   }
 
-  // Packaged products the model could read get their typical label values as an
-  // estimate so the meal is not empty; the ones it could not read stay on the list.
-  const packaged: MappedAnalysis['packaged'] = [];
-  for (const p of result.result.packaged_items) {
+  // Packaged products are never added on their own: the scan screen looks them
+  // up and the person approves a suggestion. The model's typical values ride
+  // along as one of the choices when it could read the product name.
+  const packaged: PackagedSuggestion[] = result.result.packaged_items.map((p) => {
     const n = p.nutrients_per100_estimate;
-    if (!n || n.kcal == null || !p.serving_g_estimate) {
-      packaged.push({ name: p.name, reason: p.reason });
-      continue;
-    }
-    const per100: Per100 = { kcal: n.kcal, protein_g: n.protein_g, carbs_g: n.carbs_g, fat_g: n.fat_g, fibre_g: n.fibre_g, sodium_mg: null, sat_fat_g: null };
-    const { data: food, error } = await supabase
-      .from('foods')
-      .insert({ owner_user_id: userId, source: 'ai_estimate', name: p.name, kcal: per100.kcal, protein_g: per100.protein_g, carbs_g: per100.carbs_g, fat_g: per100.fat_g, fibre_g: per100.fibre_g, default_serving_g: p.serving_g_estimate, attribution: `AI estimate from the product name (${result.model})` })
-      .select('id')
-      .single();
-    if (error) throw error;
-    items.push(
-      newItem({
-        foodId: food.id,
-        name: p.name,
-        grams: Math.round(p.serving_g_estimate),
-        gramsRange: [p.serving_g_estimate * 0.9, p.serving_g_estimate * 1.1],
-        servingLabel: p.household_unit_estimate || null,
-        fractionEaten: 1,
-        per100,
-        provenance: 'ai_estimate',
-        sourceName: result.model,
-        confidence: p.confidence,
-        assumptions: ['Packaged product: typical label values recalled from the name. Check them against the pack.', p.reason],
-      }),
-    );
-  }
+    const estimate = n && n.kcal != null && p.serving_g_estimate ? { per100: n, servingG: p.serving_g_estimate, unit: p.household_unit_estimate, confidence: p.confidence } : null;
+    return { name: p.name, reason: p.reason, estimate };
+  });
 
   for (const a of answers) {
     if (a.question.affects === 'fat') {

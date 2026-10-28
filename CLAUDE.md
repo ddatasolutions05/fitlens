@@ -45,7 +45,7 @@ browser keeps the old bundle and e2e results lie.
 - Without the database password, migrations go through the Management API:
   `SUPABASE_ACCESS_TOKEN=... SUPABASE_PROJECT_REF=... npx tsx scripts/db/push-remote.ts`.
   With the password, `npx supabase db push` works too.
-- Functions: `npx supabase functions deploy --project-ref <ref>`; secrets with
+- Eight functions are deployed (analyze-meal, read-label, lookup-barcode, lookup-product, features, export-data, delete-account, coach). Functions: `npx supabase functions deploy --project-ref <ref>`; secrets with
   `npx supabase secrets set`. `ANTHROPIC_API_KEY` is a user key from the owner's Console (set 2026-10-28); photo analysis and the coach answer live. A key that is not scoped to a workspace needs `ANTHROPIC_WORKSPACE_ID` as well, otherwise the functions report `not_configured`.
 - Food data was loaded once by exporting the local import to CSV and
   inserting through the Management API. With the database password the

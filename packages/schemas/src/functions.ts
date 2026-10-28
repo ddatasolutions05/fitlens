@@ -33,6 +33,17 @@ export const readLabelResultSchema = z.object({
 });
 export type ReadLabelResult = z.infer<typeof readLabelResultSchema>;
 
+// Open Food Facts product, shared by the barcode and name lookups
+export const offPer100Schema = z.object({
+  kcal: z.number().nullable(),
+  protein_g: z.number().nullable(),
+  carbs_g: z.number().nullable(),
+  fat_g: z.number().nullable(),
+  fibre_g: z.number().nullable(),
+  sodium_mg: z.number().nullable(),
+  sat_fat_g: z.number().nullable(),
+});
+
 // lookup-barcode
 export const lookupBarcodeRequestSchema = z.object({ barcode: z.string().regex(/^\d{6,14}$/) });
 export const lookupBarcodeResultSchema = z.object({
@@ -43,21 +54,34 @@ export const lookupBarcodeResultSchema = z.object({
       barcode: z.string(),
       name: z.string(),
       brand: z.string().nullable(),
-      per100: z.object({
-        kcal: z.number().nullable(),
-        protein_g: z.number().nullable(),
-        carbs_g: z.number().nullable(),
-        fat_g: z.number().nullable(),
-        fibre_g: z.number().nullable(),
-        sodium_mg: z.number().nullable(),
-        sat_fat_g: z.number().nullable(),
-      }),
+      per100: offPer100Schema,
       serving_g: z.number().nullable(),
       attribution: z.string(),
     })
     .nullable(),
 });
 export type LookupBarcodeResult = z.infer<typeof lookupBarcodeResultSchema>;
+
+// lookup-product: name search for a packaged item seen in a photo
+export const lookupProductRequestSchema = z.object({ query: z.string().min(2).max(120), limit: z.number().int().min(1).max(5).default(3) });
+export const lookupProductResultSchema = z.object({
+  source: z.literal('off'),
+  query: z.string(),
+  products: z
+    .array(
+      z.object({
+        barcode: z.string().nullable(),
+        name: z.string(),
+        brand: z.string().nullable(),
+        per100: offPer100Schema,
+        serving_g: z.number().nullable(),
+        attribution: z.string(),
+        url: z.string().nullable(),
+      }),
+    )
+    .max(5),
+});
+export type LookupProductResult = z.infer<typeof lookupProductResultSchema>;
 
 // features (which optional services are configured)
 export const featuresResultSchema = z.object({

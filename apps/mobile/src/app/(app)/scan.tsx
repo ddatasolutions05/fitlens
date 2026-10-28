@@ -5,11 +5,12 @@ import { formatLocalDate, todayLocal } from '@fitlens/core';
 import type { AnalyzeMealResult, ClarifyingQuestion } from '@fitlens/schemas';
 
 import { useUserId } from '@/features/auth/session';
-import { addPhoto, adoptPhotoTime, ensureDraft, getDraft, setDraft, updateDraft } from '@/features/meals/draft-store';
+import { addItem, addPhoto, adoptPhotoTime, ensureDraft, getDraft, setDraft, updateDraft } from '@/features/meals/draft-store';
 import { saveMeal } from '@/features/meals/api';
 import { AnalyzeError, analyzeMeal, mapAnalysisToItems, questionsFor, type Answer } from '@/features/photo/analyze';
 import { CaptureFailure, pickPhoto, uploadPhoto } from '@/features/photo/capture';
 import { MealPhotoThumb } from '@/features/photo/MealPhotoThumb';
+import { itemFromEstimate, itemFromProduct, lookupProduct, type PackagedSuggestion, type Product } from '@/features/photo/products';
 import { usePreferences } from '@/features/profile/hooks';
 import { useFeatures } from '@/features/sync/useFeatures';
 import { errorMessage } from '@/lib/net';
@@ -34,7 +35,10 @@ export default function ScanScreen() {
   const [analysis, setAnalysis] = useState<AnalyzeMealResult | null>(null);
   const [questions, setQuestions] = useState<ClarifyingQuestion[]>([]);
   const [answers, setAnswers] = useState<Record<number, string>>({});
-  const [packaged, setPackaged] = useState<{ name: string; reason: string }[]>([]);
+  const [packaged, setPackaged] = useState<PackagedSuggestion[]>([]);
+  const [products, setProducts] = useState<Record<string, Product[] | 'loading' | 'failed'>>({});
+  const [model, setModel] = useState('');
+  const [approving, setApproving] = useState<string | null>(null);
   const [unmatched, setUnmatched] = useState<string[]>([]);
 
   const consent = Boolean(prefs.data?.ai_photo_consent_at);
@@ -92,7 +96,6 @@ export default function ScanScreen() {
       setAnalysis(result);
       const qs = questionsFor(result);
       setQuestions(qs);
-      setPackaged(result.result.packaged_items);
       if (qs.length > 0) setStage('clarify');
       else await finishMapping(result, []);
     } catch (err) {
@@ -119,6 +122,8 @@ export default function ScanScreen() {
       updateDraft((d) => ({ ...d, items: [...d.items, ...mapped.items] }));
       setUnmatched(mapped.unmatched);
       setPackaged(mapped.packaged);
+      setModel(result.model);
+      for (const p of mapped.packaged) void findProducts(p.name);
       if (mapped.packaged.length === 0 && mapped.unmatched.length === 0) {
         router.replace('/meal/edit');
         return;
@@ -137,6 +142,37 @@ export default function ScanScreen() {
     if (!analysis) return;
     const given: Answer[] = questions.map((q, i) => ({ question: q, answer: answers[i] ?? q.quick_options[0] ?? '' })).filter((a) => a.answer);
     void finishMapping(analysis, given);
+  }
+
+  async function findProducts(name: string) {
+    setProducts((m) => ({ ...m, [name]: 'loading' }));
+    try {
+      const found = await lookupProduct(name);
+      setProducts((m) => ({ ...m, [name]: found }));
+    } catch {
+      setProducts((m) => ({ ...m, [name]: 'failed' }));
+    }
+  }
+
+  function settle(name: string) {
+    const left = packaged.filter((p) => p.name !== name);
+    setPackaged(left);
+    if (left.length === 0 && unmatched.length === 0) router.replace('/meal/edit');
+  }
+
+  async function approve(p: PackagedSuggestion, choice: { product: Product } | { estimate: true }) {
+    setApproving(p.name);
+    setError(null);
+    try {
+      const item = 'product' in choice ? await itemFromProduct(choice.product, choice.product.serving_g ?? p.estimate?.servingG ?? 100, userId) : await itemFromEstimate(p, userId, model);
+      addItem(item);
+      settle(p.name);
+    } catch (err) {
+      reportError('scan.approve', err);
+      setError(`Could not add ${p.name}: ${errorMessage(err)}.`);
+    } finally {
+      setApproving(null);
+    }
   }
 
   function manualInstead() {
@@ -216,17 +252,19 @@ export default function ScanScreen() {
         </Card>
       ) : null}
 
-      {packaged.length > 0 ? (
-        <Card tone="alt" style={{ gap: space.sm }}>
-          <Text variant="bodyStrong">Packaged items</Text>
-          {packaged.map((p) => (
-            <Text key={p.name} variant="small" color="textMuted">
-              {p.name}: {sentence(p.reason)} Use the values from the label or barcode rather than a visual guess.
-            </Text>
-          ))}
-          <Button label="Enter from the label" variant="secondary" size="sm" onPress={() => router.push({ pathname: '/food/manual', params: { date: localDate } })} testID="packaged-manual" />
-        </Card>
-      ) : null}
+      {packaged.map((p, i) => (
+        <PackagedCard
+          key={p.name}
+          index={i}
+          suggestion={p}
+          products={products[p.name] ?? 'loading'}
+          busy={approving === p.name}
+          onProduct={(product) => void approve(p, { product })}
+          onEstimate={() => void approve(p, { estimate: true })}
+          onLabel={() => router.push({ pathname: '/food/manual', params: { date: localDate } })}
+          onSkip={() => settle(p.name)}
+        />
+      ))}
       {unmatched.length > 0 ? (
         <Card tone="alt">
           <Text variant="small" color="textMuted">
@@ -257,6 +295,81 @@ export default function ScanScreen() {
         </View>
       ) : null}
     </Screen>
+  );
+}
+
+function PackagedCard({
+  index,
+  suggestion,
+  products,
+  busy,
+  onProduct,
+  onEstimate,
+  onLabel,
+  onSkip,
+}: {
+  index: number;
+  suggestion: PackagedSuggestion;
+  products: Product[] | 'loading' | 'failed';
+  busy: boolean;
+  onProduct: (p: Product) => void;
+  onEstimate: () => void;
+  onLabel: () => void;
+  onSkip: () => void;
+}) {
+  const { colors } = useTheme();
+  const grams = (p: Product) => p.serving_g ?? suggestion.estimate?.servingG ?? 100;
+  const kcalFor = (per100: number | null, g: number) => (per100 == null ? 'unknown' : `${Math.round((per100 * g) / 100 / 10) * 10} kcal`);
+  return (
+    <Card style={{ gap: space.md }} testID={`packaged-${index}`}>
+      <View style={{ gap: 2 }}>
+        <Text variant="label" color="textFaint">
+          Packaged item
+        </Text>
+        <Text variant="heading">{suggestion.name}</Text>
+        <Text variant="small" color="textMuted">
+          {sentence(suggestion.reason)} Pick the match to log it, or skip.
+        </Text>
+      </View>
+      {products === 'loading' ? (
+        <Skeleton width="80%" />
+      ) : products === 'failed' ? (
+        <Text variant="small" color="textMuted">
+          The product search is not reachable right now.
+        </Text>
+      ) : products.length === 0 ? (
+        <Text variant="small" color="textMuted">
+          No match on Open Food Facts.
+        </Text>
+      ) : (
+        products.map((p, j) => (
+          <View key={`${p.barcode ?? p.name}-${j}`} style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.border, paddingTop: space.sm }}>
+            <View style={{ flex: 1, gap: 2 }}>
+              <Text variant="bodyStrong">{p.brand ? `${p.name} (${p.brand})` : p.name}</Text>
+              <Text variant="small" color="textMuted">
+                {kcalFor(p.per100.kcal, grams(p))} for {Math.round(grams(p))} g. Open Food Facts.
+              </Text>
+            </View>
+            <Button label="Add" size="sm" onPress={() => onProduct(p)} disabled={busy} testID={`packaged-add-product-${index}-${j}`} />
+          </View>
+        ))
+      )}
+      {suggestion.estimate ? (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: colors.border, paddingTop: space.sm }}>
+          <View style={{ flex: 1, gap: 2 }}>
+            <Text variant="bodyStrong">Typical values for this product</Text>
+            <Text variant="small" color="textMuted">
+              {kcalFor(suggestion.estimate.per100.kcal, suggestion.estimate.servingG)} for {suggestion.estimate.unit || `${Math.round(suggestion.estimate.servingG)} g`}. AI estimate, check the pack.
+            </Text>
+          </View>
+          <Button label="Add" size="sm" variant="secondary" onPress={onEstimate} disabled={busy} testID={`packaged-add-estimate-${index}`} />
+        </View>
+      ) : null}
+      <View style={{ flexDirection: 'row', gap: space.sm }}>
+        <Button label="Enter from the label" variant="secondary" size="sm" style={{ flex: 1 }} onPress={onLabel} testID={`packaged-manual-${index}`} />
+        <Button label="Skip" variant="ghost" size="sm" onPress={onSkip} disabled={busy} testID={`packaged-skip-${index}`} />
+      </View>
+    </Card>
   );
 }
 

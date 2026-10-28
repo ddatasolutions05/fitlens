@@ -57,6 +57,7 @@ export const analyzeMealResponseSchema = z.object({
   questions: z.array(clarifyingQuestionSchema).max(4),
 });
 
+export type NutrientsPer100Estimate = NonNullable<z.infer<typeof nutrientsPer100EstimateSchema>>;
 export type AnalyzedItem = z.infer<typeof analyzedItemSchema>;
 export type PackagedItem = z.infer<typeof packagedItemSchema>;
 export type ClarifyingQuestion = z.infer<typeof clarifyingQuestionSchema>;
