@@ -118,6 +118,8 @@ if (/onboarding/.test(page.url())) {
     await page.getByTestId('ree-value').waitFor({ timeout: 30_000 });
     await inspect('onboarding-3');
     await page.getByTestId('finish').click();
+    await page.getByTestId('first-skip').waitFor({ timeout: 60_000 });
+    await page.getByTestId('first-skip').click();
     await page.waitForURL(/home/, { timeout: 60_000 });
   });
 }

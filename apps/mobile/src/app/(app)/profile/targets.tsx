@@ -237,6 +237,7 @@ function TargetsForm({ p, current, kg, today }: { p: ProfileRow; current: GoalVe
         </Text>
       ) : null}
       <Button label="Save as new version from today" size="lg" onPress={() => void save()} loading={addGoal.isPending} testID="save-targets" />
+      <Button label="Target check from your logs" variant="secondary" onPress={() => router.push('/profile/adaptive')} testID="open-adaptive" />
       <Text variant="caption" color="textFaint">
         Past days keep the targets that were in force then. Saving creates a new version effective from today.
       </Text>

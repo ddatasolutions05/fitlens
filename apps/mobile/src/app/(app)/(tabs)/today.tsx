@@ -1,22 +1,26 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { View } from 'react-native';
-import { daysBetween, dayInsight, todayLocal, type UnitSystem } from '@fitlens/core';
+import { addDays, daysBetween, dayInsight, todayLocal, type UnitSystem } from '@fitlens/core';
 
 import { ActivityCard, CalorieCard, DateSwitcher, DayCompleteToggle, InsightCard, MacroCard, MealTimeline, QuickActions, SectionLabel } from '@/features/day/components';
 import { useDay } from '@/features/day/hooks';
+import { ProteinPicks } from '@/features/day/ProteinPicks';
+import { useCopyMealsAsDrafts } from '@/features/meals/copy';
 import { useSelectedDate } from '@/features/day/selected-date';
 import { useSetDayStatus } from '@/features/logs/hooks';
 import { useProfile } from '@/features/profile/hooks';
 import { energyEstimateFor } from '@/features/profile/tdee';
 import { useQueueStatus } from '@/features/sync/useQueueStatus';
 import { retryParked } from '@/lib/offline-queue';
-import { ErrorState, OfflineBanner, Screen, SkeletonCard, space } from '@/ui';
+import { Button, Card, ErrorState, OfflineBanner, Screen, SkeletonCard, Text, space, toast } from '@/ui';
 
 export default function TodayScreen() {
   const qc = useQueryClient();
   const [localDate, setLocalDate] = useSelectedDate();
   const day = useDay(localDate);
+  const yesterday = useDay(addDays(localDate, -1));
+  const copy = useCopyMealsAsDrafts();
   const profile = useProfile();
   const setStatus = useSetDayStatus();
   const queue = useQueueStatus();
@@ -71,9 +75,30 @@ export default function TodayScreen() {
           <CalorieCard day={day.data} hideNumbers={hideNumbers} trackingOnly={profile.data?.mode === 'tracking_only'} tdeeEstimate={estimate?.tdee.tdee ?? null} />
           <QuickActions localDate={localDate} />
           {insight ? <InsightCard text={insight.text} /> : null}
+          {!hideNumbers && day.data.goal?.protein_g != null && day.data.totals?.totals.protein_g != null && day.data.goal.protein_g - day.data.totals.totals.protein_g >= 20 && localDate === todayLocal() ? (
+            <ProteinPicks remainingG={day.data.goal.protein_g - day.data.totals.totals.protein_g} localDate={localDate} />
+          ) : null}
           {hideNumbers ? null : <MacroCard day={day.data} />}
           <View style={{ gap: space.sm }}>
             <SectionLabel>Meals</SectionLabel>
+            {day.data.meals.length === 0 && day.data.drafts.length === 0 && (yesterday.data?.meals.length ?? 0) > 0 ? (
+              <Card style={{ gap: space.sm }} testID="same-as-yesterday">
+                <Text variant="bodyStrong">Same as yesterday?</Text>
+                <Text variant="small" color="textMuted">
+                  {yesterday.data!.meals.length} meal{yesterday.data!.meals.length === 1 ? '' : 's'} logged yesterday. Copy them here as drafts and confirm the ones you actually had.
+                </Text>
+                <Button
+                  label="Copy yesterday's meals"
+                  variant="secondary"
+                  size="sm"
+                  loading={copy.isPending}
+                  onPress={() =>
+                    void copy.mutateAsync({ meals: yesterday.data!.meals, toDate: localDate }).then((n) => toast(`${n} meal${n === 1 ? '' : 's'} copied as drafts`))
+                  }
+                  testID="copy-yesterday"
+                />
+              </Card>
+            ) : null}
             <MealTimeline meals={day.data.meals} drafts={day.data.drafts} hideNumbers={hideNumbers} />
           </View>
           <ActivityCard day={day.data} unitSystem={unitSystem} />

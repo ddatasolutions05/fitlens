@@ -50,6 +50,8 @@ function n(v: number | string | null | undefined): number | null {
   return Number.isFinite(x) ? x : null;
 }
 
+const GRAM_PRESETS = [50, 100, 150, 200, 250];
+
 export function draftItemFromPicked(food: PickedFood, grams: number, servingLabel: string | null): DraftItem {
   return newItem({
     foodId: food.id,
@@ -107,7 +109,14 @@ export function AddFoodSheet({ food, onAdd, onClose, busy }: { food: PickedFood 
               options={[0.5, 1, 1.5, 2, 3].map((c) => ({ value: String(c), label: String(c) }))}
             />
           ) : (
-            <NumberField label="Grams" value={grams} onChangeNumber={setGrams} decimals={0} testID="portion-grams" />
+            <View style={{ gap: space.sm }}>
+              <NumberField label="Grams" value={grams} onChangeNumber={setGrams} decimals={0} testID="portion-grams" />
+              <Segmented<string>
+                value={grams != null && GRAM_PRESETS.includes(grams) ? String(grams) : null}
+                onChange={(v) => setGrams(Number(v))}
+                options={GRAM_PRESETS.map((g) => ({ value: String(g), label: `${g} g` }))}
+              />
+            </View>
           )}
           {preview ? (
             <Text variant="small" color="textMuted" tabular>

@@ -2,6 +2,16 @@
 
 Newest first. Each entry: context, decision, consequences.
 
+## D-029 Week in review, target check, protein picks (2026-10-28)
+Context: the next two ideas on the list were a reason to come back on day seven and a target that learns from the person's own data.
+Decision: `/review` reads the last seven days against the seven before through `weeklyReview` in `packages/core/src/review.ts`: a headline on logged days, wins for every dimension hit on at least 60% of eligible days, the weakest dimension as the one thing to change, and a comparison line. Rules only, tone-tested. `/profile/adaptive` runs the existing adaptive maths over thirty days: the gate explains what is still missing (21 days, 80% complete, 8 weigh-ins), and when unlocked it shows the observed burn and a suggested target capped at 150 kcal; applying it writes a `goal_versions` row with source `adaptive_accepted` and an accepted `target_suggestions` row, never without the tap. Today shows three protein-rich foods from the person's own history when the day is 20 g or more short of the protein target. Home links to the review; Profile and Targets link to the check.
+Consequences: `review.test.ts` covers wins, the change, hidden numbers and the empty week. `e2e/review.spec.ts` covers both screens for a fresh account.
+
+## D-028 First meal in setup, same as yesterday, streak, icons (2026-10-28)
+Context: the funnel showed people finishing setup and stopping. The app icon on phones was still the Expo template.
+Decision: setup now ends on the search screen framed as "Your first meal", with a skip link to Home. When a day has no meals and yesterday had some, Today offers "Copy yesterday's meals" as drafts (same times, fresh ids) and the Home tile says "Same as yesterday?". Home shows "N days in a row" under the greeting from two days up, counting any log and not breaking until a day is over. The add-food sheet has gram presets (50 to 250 g). The icon set (web, iPhone home screen, Android adaptive, splash, favicon) is the three-stroke mark in white on black, generated from the same geometry as `BrandMark`.
+Consequences: test helpers and walkers skip the first-meal screen after setup. `streak.test.ts` covers the counting rules. People who already added the app to a home screen need to remove and re-add it to see the new icon.
+
 ## D-027 Start here: the first minute after setup (2026-10-28)
 Context: ten real sign-ups, six finished setup, one logged a meal. Everyone else stopped on an empty Home.
 Decision: for the first two weeks after setup, Home opens with a "Start here" plate: log your first meal, build your workout plan, ask the Coach one thing. Each line is ticked from real data (a confirmed meal, saved plan settings, a coach call in `ai_usage`) and the plate leaves on its own once all three are done. The daily line steps down to a plain card while the plate is up, keeping one plate per screen. Calorie figures on Today and Home count up to their value when a log lands.

@@ -13,7 +13,8 @@ import { Button, Card, EmptyState, ErrorState, Icon, Input, PageHeader, Row, Scr
 
 export default function FoodSearch() {
   const { colors } = useTheme();
-  const params = useLocalSearchParams<{ date?: string; fresh?: string; replace?: string; q?: string }>();
+  const params = useLocalSearchParams<{ date?: string; fresh?: string; replace?: string; q?: string; first?: string }>();
+  const first = params.first === '1';
   const localDate = params.date ?? todayLocal();
   const replaceId = params.replace ?? null;
   const [query, setQuery] = useState(params.q ?? '');
@@ -46,7 +47,12 @@ export default function FoodSearch() {
 
   return (
     <Screen testID="food-search">
-      <PageHeader title={replaceId ? 'Change food' : 'Add food'} subtitle="Search three databases, pick a saved meal, or type the food in yourself." backTo="/today" />
+      <PageHeader
+        title={first ? 'Your first meal' : replaceId ? 'Change food' : 'Add food'}
+        subtitle={first ? 'Start with what you last ate. Searching, typing or a photo all work; skip if you would rather look around first.' : 'Search three databases, pick a saved meal, or type the food in yourself.'}
+        backTo={first ? '/home' : '/today'}
+      />
+      {first ? <Button label="Skip for now" variant="ghost" size="sm" onPress={() => router.replace('/home')} testID="first-skip" /> : null}
       <View style={{ gap: space.sm }}>
         <Input value={query} onChangeText={setQuery} placeholder="Search foods, e.g. dal, roti, chicken breast" autoFocus autoCorrect={false} testID="food-query" returnKeyType="search" />
         <View style={{ flexDirection: 'row', gap: space.sm }}>

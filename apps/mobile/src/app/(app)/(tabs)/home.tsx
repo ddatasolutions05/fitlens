@@ -2,10 +2,11 @@ import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { formatLocalDate, greetingFor, quoteForDate, suggestionsForDay, todayLocal } from '@fitlens/core';
+import { addDays, formatLocalDate, greetingFor, quoteForDate, streakLabel, suggestionsForDay, todayLocal } from '@fitlens/core';
 
 import { useSession } from '@/features/auth/session';
 import { useDay } from '@/features/day/hooks';
+import { useLogDays } from '@/features/day/useLogDays';
 import { FirstSteps, useFirstSteps } from '@/features/home/FirstSteps';
 import { Avatar, initialsFor } from '@/features/profile/Avatar';
 import { useProfile } from '@/features/profile/hooks';
@@ -28,6 +29,9 @@ export default function HomeScreen() {
   const profile = useProfile();
   const today = todayLocal();
   const day = useDay(today);
+  const yesterday = useDay(addDays(today, -1));
+  const logDays = useLogDays();
+  const streak = streakLabel(logDays.data?.streak ?? 0);
   const { plan, settings, configured } = useWeeklyPlan();
   const sessions = useWeekSessions(today);
   const suggestion = useMemo(() => (configured ? (suggestionsForDay({ plan, localDate: today, settings })[0] ?? null) : null), [configured, plan, settings, today]);
@@ -55,6 +59,11 @@ export default function HomeScreen() {
             {greetingFor(new Date().getHours())}
             {name ? `, ${name.split(' ')[0]}` : ''}
           </Text>
+          {streak ? (
+            <Text variant="small" color="textMuted" testID="streak">
+              {streak}. Keep it going.
+            </Text>
+          ) : null}
         </View>
         <Avatar path={profile.data?.avatar_path ?? null} initials={initialsFor(name, session?.user.email)} size={56} onPress={() => router.push('/profile')} testID="home-avatar" />
       </View>
@@ -75,7 +84,7 @@ export default function HomeScreen() {
       ) : (
         <View style={{ gap: space.md }}>
           <View style={styles.row}>
-            <BigTile label="Eaten" value={eaten} note={eaten && !hideNumbers && target ? `of ${target.toLocaleString()} kcal` : eaten ? undefined : 'Tap to log a meal'} onPress={() => router.push({ pathname: '/food/search', params: { date: today, fresh: '1' } })} testID="home-kcal" />
+            <BigTile label="Eaten" value={eaten} note={eaten && !hideNumbers && target ? `of ${target.toLocaleString()} kcal` : eaten ? undefined : (yesterday.data?.meals.length ?? 0) > 0 ? 'Same as yesterday? Tap' : 'Tap to log a meal'} onPress={() => (!eaten && (yesterday.data?.meals.length ?? 0) > 0 ? router.push('/today') : router.push({ pathname: '/food/search', params: { date: today, fresh: '1' } }))} testID="home-kcal" />
             <BigTile label="Protein" value={protein} note={protein && day.data?.goal?.protein_g ? `of ${day.data.goal.protein_g} g` : protein ? undefined : 'From your meals'} onPress={() => router.push('/today')} testID="home-protein" />
           </View>
           <View style={styles.row}>
@@ -104,6 +113,17 @@ export default function HomeScreen() {
           </>
         )}
       </Card>
+
+      <Pressable accessibilityRole="button" accessibilityLabel="Your week in review" onPress={() => router.push('/review')} testID="home-review" style={({ pressed }) => [styles.reviewRow, { borderColor: colors.border, opacity: pressed ? 0.85 : 1 }]}>
+        <Icon name="trend" size={20} />
+        <View style={{ flex: 1 }}>
+          <Text variant="bodyStrong">Your week in review</Text>
+          <Text variant="caption" color="textMuted">
+            What went well and one thing to change
+          </Text>
+        </View>
+        <Icon name="chevronRight" size={18} color={colors.textFaint} />
+      </Pressable>
 
       <View style={styles.navGrid}>
         {SECTIONS.map((s) => (
@@ -154,5 +174,6 @@ const styles = StyleSheet.create({
   big: { flex: 1, minWidth: 0, borderWidth: 1, borderRadius: radius.lg, padding: space.lg, gap: space.xs, minHeight: 104, justifyContent: 'center' },
   small: { flex: 1, minWidth: 0, minHeight: touch.min, borderWidth: 1, borderRadius: radius.md, paddingHorizontal: space.md, flexDirection: 'row', alignItems: 'center', gap: space.sm },
   navGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: space.md },
+  reviewRow: { flexDirection: 'row', alignItems: 'center', gap: space.md, borderWidth: 1, borderRadius: radius.lg, padding: space.lg },
   nav: { flexBasis: '30%', flexGrow: 1, minWidth: 0, borderWidth: 1, borderRadius: radius.lg, paddingVertical: space.lg, alignItems: 'center', gap: space.sm },
 });

@@ -40,6 +40,9 @@ export async function completeOnboardingIfNeeded(page: Page): Promise<void> {
   await expect(page.getByTestId('tdee-value')).toContainText('kcal');
   await expect(page.getByTestId('target-value')).toContainText('kcal');
   await page.getByTestId('finish').click();
+  // Setup ends on the first-meal screen; skip it to land on Home.
+  await page.getByTestId('first-skip').waitFor({ timeout: 30_000 });
+  await page.getByTestId('first-skip').click();
   await page.waitForURL(/home/, { timeout: 30_000 });
 }
 

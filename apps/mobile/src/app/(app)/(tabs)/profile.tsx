@@ -71,6 +71,7 @@ export default function ProfileScreen() {
         <SectionLabel>Plan</SectionLabel>
         <Row title="Mode" right={<Text>{p.mode === 'tracking_only' ? 'Tracking only' : 'Standard'}</Text>} divider />
         <Row title="Targets and TDEE" subtitle="See the formula with your numbers, change goal, pace or activity mode" onPress={() => router.push('/profile/targets')} divider />
+        <Row title="Target check" subtitle="Compare the formula with thirty days of your own logs" onPress={() => router.push('/profile/adaptive')} divider />
         <Row title="How TDEE differs from the food target" onPress={() => router.push('/profile/tdee')} divider />
         <Row title="Edit profile" subtitle="Height, birth date, goal weight, training" onPress={() => router.push('/profile/edit')} accessibilityLabel="Edit profile" />
       </Card>

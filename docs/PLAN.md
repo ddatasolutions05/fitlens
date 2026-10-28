@@ -146,6 +146,10 @@ once a working Anthropic key was set. Milestone 9 (export, delete) remains
 | 28 | Lighter Home and wider section spacing everywhere | built, verified live | screenshots reviewed |
 | 29 | Feel and finish: toasts after quick logs, animated bars and calorie track, button press scale, pull to refresh on tabs; white theme walk clean | built, verified live | `e2e/toast.spec.ts`; white-theme sweep 0 findings |
 | 30 | Start here plate on Home for new accounts; count-up on calorie figures | built, verified live | `home.spec.ts` |
+| 31 | First meal in setup, copy yesterday's meals, streak on Home, gram presets, black icon set | built, verified live | `streak.test.ts`; walkers; suite green |
+| 32 | Week in review (`/review`): wins, one change, comparison, rules only | built, verified live | `review.test.ts`; `e2e/review.spec.ts` |
+| 33 | Target check (`/profile/adaptive`): gate reasons, observed burn, capped suggestion applied only on tap | built; the unlocked path needs 21 days of a real account's data to exercise live | `adaptive.test.ts` (core); locked state in `e2e/review.spec.ts` |
+| 34 | Protein picks on Today from the person's own history | built, verified live | rendered in the manual-log flow |
 
 ## 5. Open risks
 

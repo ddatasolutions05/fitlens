@@ -10,6 +10,8 @@ export * from './activity';
 export * from './dates';
 export * from './exif';
 export * from './quotes';
+export * from './streak';
+export * from './review';
 export * from './workouts/library';
 export * from './workouts/plan';
 export * from './day';

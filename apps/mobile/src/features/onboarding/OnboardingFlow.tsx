@@ -191,7 +191,7 @@ export function OnboardingFlow() {
       await addGoal.mutateAsync(plan.row);
       await upsertProfile.mutateAsync({ onboarding_completed_at: new Date().toISOString() });
       track('onboarding_finished', { tracking_only: trackingOnly, ai_consent: Boolean(a.aiConsent) });
-      router.replace('/home');
+      router.replace({ pathname: '/food/search', params: { fresh: '1', first: '1' } });
     } catch (err) {
       reportError('onboarding.save', err);
       setError(errorMessage(err));
