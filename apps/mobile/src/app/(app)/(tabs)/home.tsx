@@ -6,10 +6,11 @@ import { formatLocalDate, greetingFor, quoteForDate, suggestionsForDay, todayLoc
 
 import { useSession } from '@/features/auth/session';
 import { useDay } from '@/features/day/hooks';
+import { FirstSteps, useFirstSteps } from '@/features/home/FirstSteps';
 import { Avatar, initialsFor } from '@/features/profile/Avatar';
 import { useProfile } from '@/features/profile/hooks';
 import { useWeekSessions, useWeeklyPlan } from '@/features/workouts/hooks';
-import { Button, Card, Icon, Screen, SkeletonCard, Text, radius, space, touch, useTheme, type IconName } from '@/ui';
+import { Button, Card, Icon, Screen, SkeletonCard, Text, radius, space, touch, useCountUp, useTheme, type IconName } from '@/ui';
 
 const SECTIONS: { href: string; icon: IconName; title: string; testID: string }[] = [
   { href: '/today', icon: 'today', title: 'Today', testID: 'nav-today' },
@@ -36,7 +37,9 @@ export default function HomeScreen() {
   const hideNumbers = profile.data?.hide_numbers ?? false;
   const totals = day.data?.totals?.totals ?? null;
   const target = profile.data?.mode === 'tracking_only' ? null : (day.data?.goal?.calorie_target ?? null);
-  const kcal = totals?.kcal != null ? Math.round(totals.kcal / 10) * 10 : null;
+  const kcalRaw = totals?.kcal != null ? Math.round(totals.kcal / 10) * 10 : null;
+  const kcal = useCountUp(kcalRaw);
+  const first = useFirstSteps();
   const mealCount = day.data?.meals.length ?? 0;
   const eaten = hideNumbers ? (mealCount ? `${mealCount} meal${mealCount === 1 ? '' : 's'}` : null) : kcal != null ? `${kcal.toLocaleString()} kcal` : null;
   const protein = totals?.protein_g != null ? `${Math.round(totals.protein_g)} g` : null;
@@ -56,11 +59,13 @@ export default function HomeScreen() {
         <Avatar path={profile.data?.avatar_path ?? null} initials={initialsFor(name, session?.user.email)} size={56} onPress={() => router.push('/profile')} testID="home-avatar" />
       </View>
 
-      <Card tone="inverse" style={{ gap: space.md, paddingVertical: space.xl }} testID="quote">
-        <Text variant="label" style={{ color: colors.onInverse, opacity: 0.6 }}>
+      {first.show ? <FirstSteps steps={first.steps} done={first.done} /> : null}
+
+      <Card tone={first.show ? 'surface' : 'inverse'} style={{ gap: space.md, paddingVertical: space.xl }} testID="quote">
+        <Text variant="label" style={{ color: first.show ? colors.textMuted : colors.onInverse, opacity: first.show ? 1 : 0.6 }}>
           Today&apos;s line
         </Text>
-        <Text variant="heading" style={{ color: colors.onInverse, fontSize: 22, lineHeight: 30 }}>
+        <Text variant="heading" style={{ color: first.show ? colors.text : colors.onInverse, fontSize: 22, lineHeight: 30 }}>
           {quoteForDate(today)}
         </Text>
       </Card>

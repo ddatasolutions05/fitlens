@@ -19,4 +19,5 @@ export { ComingSoon, EmptyState, ErrorState, NotConfigured, OfflineBanner } from
 export { Text } from './Text';
 export { ThemeProvider, useTheme, type ThemePreference } from './theme';
 export { ToastHost, toast } from './toast';
+export { useCountUp } from './useCountUp';
 export { fonts, layout, palette, radius, space, touch, type } from './tokens';

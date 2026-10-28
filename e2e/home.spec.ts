@@ -14,6 +14,11 @@ test.describe('home', () => {
     await expect(page.getByTestId('quote')).toContainText(/\w+/);
     await expect(page.getByTestId('home-avatar')).toBeVisible();
     await expect(page.getByTestId('home-kcal')).toBeVisible();
+    // The test account never asks the Coach, so the start-here plate stays up with that step open.
+    await expect(page.getByTestId('first-steps')).toBeVisible();
+    await expect(page.getByTestId('first-steps')).toContainText('Ask the Coach one thing');
+    await page.getByTestId('first-step-meal').click();
+    await expect(page.getByTestId('food-search')).toBeVisible();
 
     for (const [nav, ready] of [
       ['nav-today', 'today-screen'],

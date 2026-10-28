@@ -5,7 +5,7 @@ import { addDays, formatLocalDate, formatWeight, roundKcal, todayLocal, type Uni
 import type { MealWithItems } from '@/features/meals/api';
 import { displayKcal } from '@/features/meals/model';
 import { MealPhotoThumb } from '@/features/photo/MealPhotoThumb';
-import { AnimatedFill, Bar, Card, Icon, Text, radius, space, touch, type IconName, useTheme } from '@/ui';
+import { AnimatedFill, Bar, Card, Icon, Text, radius, space, touch, type IconName, useCountUp, useTheme } from '@/ui';
 
 import type { DaySummary } from './hooks';
 
@@ -44,6 +44,7 @@ export function DateSwitcher({ localDate, onChange }: { localDate: string; onCha
 export function CalorieCard({ day, hideNumbers, trackingOnly, tdeeEstimate }: { day: DaySummary; hideNumbers: boolean; trackingOnly: boolean; tdeeEstimate: number | null }) {
   const { colors } = useTheme();
   const eaten = day.totals?.totals.kcal ?? null;
+  const shownKcal = useCountUp(eaten == null ? null : Math.round(eaten));
   const target = trackingOnly ? null : (day.goal?.calorie_target ?? null);
   const unknown = day.totals?.unknown.kcal ?? 0;
   const remaining = eaten != null && target != null ? target - eaten : null;
@@ -67,7 +68,7 @@ export function CalorieCard({ day, hideNumbers, trackingOnly, tdeeEstimate }: { 
     );
   }
 
-  const value = eaten == null ? (day.logged ? '0' : '0') : displayKcal(eaten);
+  const value = shownKcal == null ? '0' : displayKcal(shownKcal);
   const headline =
     target == null
       ? trackingOnly

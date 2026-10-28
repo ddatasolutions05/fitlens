@@ -2,6 +2,11 @@
 
 Newest first. Each entry: context, decision, consequences.
 
+## D-027 Start here: the first minute after setup (2026-10-28)
+Context: ten real sign-ups, six finished setup, one logged a meal. Everyone else stopped on an empty Home.
+Decision: for the first two weeks after setup, Home opens with a "Start here" plate: log your first meal, build your workout plan, ask the Coach one thing. Each line is ticked from real data (a confirmed meal, saved plan settings, a coach call in `ai_usage`) and the plate leaves on its own once all three are done. The daily line steps down to a plain card while the plate is up, keeping one plate per screen. Calorie figures on Today and Home count up to their value when a log lands.
+Consequences: `home.spec.ts` checks the plate and the first step's destination. The funnel script already reports first meals, so the effect of the plate is measurable.
+
 ## D-026 Feel and finish: toasts, pull to refresh, motion (2026-10-28)
 Context: the owner asked for more polish after the layout work. The remaining gap was feedback: a quick log returned to Today with nothing acknowledging it, bars snapped to their values, and buttons only dimmed.
 Decision: a one-line toast (`toast()` from `ui/toast.tsx`, hosted once in the root layout) confirms water, weight, steps, workouts, plan saves, trainer links and picture updates, then leaves on its own. Progress bars and the calorie track ease to their values through `AnimatedFill`; primary buttons scale down a touch on press. Every tab screen supports pull to refresh, which invalidates the query cache. All motion is skipped when the person has reduced motion on.

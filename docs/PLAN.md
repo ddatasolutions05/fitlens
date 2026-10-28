@@ -145,6 +145,7 @@ once a working Anthropic key was set. Milestone 9 (export, delete) remains
 | 27 | Trainer access: codes, links, weekly member summaries through security definer functions; Profile Coaching card, `/trainer` and `/profile/trainer` screens | built, verified live | `rls.test.ts` trainer case; `e2e/trainer.spec.ts` |
 | 28 | Lighter Home and wider section spacing everywhere | built, verified live | screenshots reviewed |
 | 29 | Feel and finish: toasts after quick logs, animated bars and calorie track, button press scale, pull to refresh on tabs; white theme walk clean | built, verified live | `e2e/toast.spec.ts`; white-theme sweep 0 findings |
+| 30 | Start here plate on Home for new accounts; count-up on calorie figures | built, verified live | `home.spec.ts` |
 
 ## 5. Open risks
 
