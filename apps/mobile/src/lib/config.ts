@@ -11,6 +11,8 @@ export const config = {
   /** Shown on sign-in, onboarding and the web title. Set EXPO_PUBLIC_BRAND_NAME to white-label a build. */
   brandName: process.env.EXPO_PUBLIC_BRAND_NAME?.trim() || 'FitLens',
   brandTagline: process.env.EXPO_PUBLIC_BRAND_TAGLINE?.trim() || 'Where eating meets evidence',
+  /** A square logo image for a white-label build; empty uses the built-in mark. */
+  brandLogoUrl: process.env.EXPO_PUBLIC_BRAND_LOGO_URL?.trim() || '',
   /** Sub-path the web build is served from, e.g. /fitlens on GitHub Pages. Empty locally. */
   basePath: (process.env.EXPO_PUBLIC_BASE_PATH ?? '').replace(/\/$/, ''),
   supabaseUrl,

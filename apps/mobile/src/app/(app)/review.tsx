@@ -56,7 +56,7 @@ export default function ReviewScreen() {
             <Stat label="Protein days" value={review.thisWeek.proteinEligible ? `${review.thisWeek.proteinHitDays} of ${review.thisWeek.proteinEligible}` : 'No target'} style={styles.tile} />
             <Stat
               label="Weight"
-              value={review.thisWeek.weightChangeKg != null && !hideNumbers ? `${review.thisWeek.weightChangeKg > 0 ? '+' : ''}${(unitSystem === 'imperial' ? review.thisWeek.weightChangeKg * 2.20462 : review.thisWeek.weightChangeKg).toFixed(1)} ${unitSystem === 'imperial' ? 'lb' : 'kg'}` : hideNumbers ? 'Hidden' : 'Needs weigh-ins'}
+              value={review.thisWeek.weightChangeKg != null && !hideNumbers ? `${review.thisWeek.weightChangeKg > 0 ? '+' : ''}${(unitSystem === 'imperial' ? review.thisWeek.weightChangeKg * 2.20462 : review.thisWeek.weightChangeKg).toFixed(1)} ${unitSystem === 'imperial' ? 'lb' : 'kg'}` : hideNumbers ? 'Hidden' : 'No weigh-ins'}
               note="trend over the week"
               style={styles.tile}
             />

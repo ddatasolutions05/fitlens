@@ -2,6 +2,11 @@
 
 Newest first. Each entry: context, decision, consequences.
 
+## D-030 Trainer notes and a swappable logo (2026-10-28)
+Context: the gym pitch needs the coach to stay in the loop without a chat product, and a white-label build needs the gym's own logo.
+Decision: `trainer_notes` holds one-line notes (up to 300 characters) from a trainer to a member. Only a trainer with an active link can insert, enforced by the row policy, so a revoked link stops notes immediately; the member sees the newest note on Home and clears it with one tap. `EXPO_PUBLIC_BRAND_LOGO_URL` swaps the built-in three-stroke mark for a square image wherever `BrandMark` renders, alongside the existing name and tagline variables.
+Consequences: `rls.test.ts` covers write, read, forge, revoke and clear. There is no reply channel on purpose; the Coach handles questions, the trainer handles encouragement.
+
 ## D-029 Week in review, target check, protein picks (2026-10-28)
 Context: the next two ideas on the list were a reason to come back on day seven and a target that learns from the person's own data.
 Decision: `/review` reads the last seven days against the seven before through `weeklyReview` in `packages/core/src/review.ts`: a headline on logged days, wins for every dimension hit on at least 60% of eligible days, the weakest dimension as the one thing to change, and a comparison line. Rules only, tone-tested. `/profile/adaptive` runs the existing adaptive maths over thirty days: the gate explains what is still missing (21 days, 80% complete, 8 weigh-ins), and when unlocked it shows the observed burn and a suggested target capped at 150 kcal; applying it writes a `goal_versions` row with source `adaptive_accepted` and an accepted `target_suggestions` row, never without the tap. Today shows three protein-rich foods from the person's own history when the day is 20 g or more short of the protein target. Home links to the review; Profile and Targets link to the check.

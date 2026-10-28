@@ -414,3 +414,20 @@ describe('trainer access', () => {
     expect(reactivate).toMatch(/row-level security/i);
   });
 });
+
+describe('trainer notes', () => {
+  it('only a linked trainer can write; the member reads and can clear it', async () => {
+    const code = await as(userB, (c) => c.query('select public.make_trainer_code() as code'));
+    await as(userA, (c) => c.query('select public.link_trainer($1)', [code.rows[0].code]));
+    await as(userB, (c) => c.query(`insert into trainer_notes (member_user_id, trainer_user_id, note) values ($1, $2, 'Great week. Keep the walks going.')`, [userA.id, userB.id]));
+    const seen = await as(userA, (c) => c.query('select note from trainer_notes where member_user_id = $1', [userA.id]));
+    expect(seen.rows[0].note).toContain('Great week');
+    const forged = await expectDenied(as(userA, (c) => c.query(`insert into trainer_notes (member_user_id, trainer_user_id, note) values ($1, $2, 'self')`, [userA.id, userB.id])));
+    expect(forged).toMatch(/row-level security/i);
+    await as(userA, (c) => c.query(`update trainer_links set status = 'revoked' where member_user_id = $1`, [userA.id]));
+    const afterRevoke = await expectDenied(as(userB, (c) => c.query(`insert into trainer_notes (member_user_id, trainer_user_id, note) values ($1, $2, 'still here?')`, [userA.id, userB.id])));
+    expect(afterRevoke).toMatch(/row-level security/i);
+    const cleared = await as(userA, (c) => c.query('delete from trainer_notes where member_user_id = $1', [userA.id]));
+    expect(cleared.rowCount).toBe(1);
+  });
+});

@@ -111,7 +111,7 @@ browser keeps the old bundle and e2e results lie.
 - Dates are picked, not typed: use `DateField` (web date input, native OS picker; `.native.tsx` split) and keep values as YYYY-MM-DD.
 - Confirm quick saves with `toast('...')` from `@/ui`; never block with an alert. Animated values are `useState(() => new Animated.Value())`, not refs, and every animation checks `reducedMotion`.
 - Pushed screens start with `PageHeader` (chevron falls back to the owning tab); no trailing Back buttons. Forms sit on the background; use `Note` for asides and `Chips` for multi-select.
-- Brand: `EXPO_PUBLIC_BRAND_NAME` and `EXPO_PUBLIC_BRAND_TAGLINE` white-label sign-in, onboarding, setup and the app name. Default FitLens.
+- Brand: `EXPO_PUBLIC_BRAND_NAME`, `EXPO_PUBLIC_BRAND_TAGLINE` and `EXPO_PUBLIC_BRAND_LOGO_URL` white-label sign-in, onboarding, setup and the app name. Default FitLens with the built-in mark; the icon files under `assets/images` and `public/icons` come from `BrandMark`'s geometry.
 - Visual review: `node scripts/screens.mjs http://localhost:8081/ <outDir> [black|white]` captures every screen (walks onboarding when the e2e user is fresh; reset it with any Playwright run).
 
 ## Feature flags

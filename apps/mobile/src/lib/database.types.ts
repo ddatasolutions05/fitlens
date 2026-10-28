@@ -371,6 +371,20 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"trainer_notes": {
+                  Row: {
+                    "created_at": string,"id": string,"member_user_id": string,"note": string,"trainer_user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"id"?: string,"member_user_id": string,"note": string,"trainer_user_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"id"?: string,"member_user_id"?: string,"note"?: string,"trainer_user_id"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"user_food_usage": {
                   Row: {
                     "favourite": boolean,"food_id": string,"last_used_at": string | null,"use_count": number,"user_id": string,"usual_grams": number | null

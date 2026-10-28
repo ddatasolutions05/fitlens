@@ -4,8 +4,9 @@ import { formatWeight, type UnitSystem } from '@fitlens/core';
 
 import { useProfile } from '@/features/profile/hooks';
 import { useMakeTrainerCode, useTrainerCode, useTrainerMembers } from '@/features/trainer/hooks';
+import { useSendTrainerNote } from '@/features/trainer/notes';
 import { errorMessage } from '@/lib/net';
-import { Button, Card, EmptyState, ErrorState, Note, PageHeader, Screen, Segmented, SkeletonCard, Text, radius, space, useTheme } from '@/ui';
+import { Button, Card, EmptyState, ErrorState, Input, Note, PageHeader, Screen, Segmented, SkeletonCard, Text, radius, space, toast, useTheme } from '@/ui';
 
 export default function TrainerScreen() {
   const { colors } = useTheme();
@@ -78,6 +79,7 @@ export default function TrainerScreen() {
                   <Fact label="Workouts" value={m.workouts ? `${m.workouts}, ${m.workout_minutes} min` : 'None'} />
                   <Fact label="Weight" value={m.weight_last != null ? `${formatWeight(Number(m.weight_last), unitSystem)}${change != null && Math.abs(change) >= 0.05 ? ` (${change > 0 ? '+' : ''}${change.toFixed(1)} kg)` : ''}` : 'No weigh-in'} />
                 </View>
+                <NoteBox memberUserId={m.member_user_id} name={m.display_name} />
               </Card>
             );
           })
@@ -85,6 +87,33 @@ export default function TrainerScreen() {
       </View>
       <Note>Members can stop sharing at any time from their Profile. Summaries are calculated when you open this screen and are never stored.</Note>
     </Screen>
+  );
+}
+
+function NoteBox({ memberUserId, name }: { memberUserId: string; name: string }) {
+  const send = useSendTrainerNote();
+  const [note, setNote] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  async function submit() {
+    setError(null);
+    try {
+      await send.mutateAsync({ memberUserId, note });
+      setNote('');
+      toast(`Note sent to ${name}`);
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  }
+  return (
+    <View style={{ gap: space.sm }}>
+      <Input label="One line for them, shown on their Home" value={note} onChangeText={setNote} placeholder="Great week. Keep the walks going." maxLength={300} testID={`note-${memberUserId}`} />
+      {error ? (
+        <Text color="danger" variant="small">
+          {error}
+        </Text>
+      ) : null}
+      <Button label="Send note" variant="secondary" size="sm" onPress={() => void submit()} loading={send.isPending} disabled={note.trim().length === 0} testID={`send-note-${memberUserId}`} />
+    </View>
   );
 }
 

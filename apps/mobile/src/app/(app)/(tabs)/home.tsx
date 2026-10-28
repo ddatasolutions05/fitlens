@@ -10,6 +10,7 @@ import { useLogDays } from '@/features/day/useLogDays';
 import { FirstSteps, useFirstSteps } from '@/features/home/FirstSteps';
 import { Avatar, initialsFor } from '@/features/profile/Avatar';
 import { useProfile } from '@/features/profile/hooks';
+import { useDismissTrainerNote, useLatestTrainerNote } from '@/features/trainer/notes';
 import { useWeekSessions, useWeeklyPlan } from '@/features/workouts/hooks';
 import { Button, Card, Icon, Screen, SkeletonCard, Text, radius, space, touch, useCountUp, useTheme, type IconName } from '@/ui';
 
@@ -44,6 +45,8 @@ export default function HomeScreen() {
   const kcalRaw = totals?.kcal != null ? Math.round(totals.kcal / 10) * 10 : null;
   const kcal = useCountUp(kcalRaw);
   const first = useFirstSteps();
+  const trainerNote = useLatestTrainerNote();
+  const dismissNote = useDismissTrainerNote();
   const mealCount = day.data?.meals.length ?? 0;
   const eaten = hideNumbers ? (mealCount ? `${mealCount} meal${mealCount === 1 ? '' : 's'}` : null) : kcal != null ? `${kcal.toLocaleString()} kcal` : null;
   const protein = totals?.protein_g != null ? `${Math.round(totals.protein_g)} g` : null;
@@ -69,6 +72,23 @@ export default function HomeScreen() {
       </View>
 
       {first.show ? <FirstSteps steps={first.steps} done={first.done} /> : null}
+
+      {trainerNote.data ? (
+        <Card style={{ gap: space.sm }} testID="trainer-note">
+          <Text variant="label" color="textMuted">
+            From your trainer
+          </Text>
+          <Text variant="heading" style={{ fontSize: 18, lineHeight: 25 }}>
+            {trainerNote.data.note}
+          </Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Text variant="caption" color="textFaint">
+              {new Date(trainerNote.data.created_at).toLocaleDateString()}
+            </Text>
+            <Button label="Got it" variant="ghost" size="sm" onPress={() => dismissNote.mutate(trainerNote.data!.id)} />
+          </View>
+        </Card>
+      ) : null}
 
       <Card tone={first.show ? 'surface' : 'inverse'} style={{ gap: space.md, paddingVertical: space.xl }} testID="quote">
         <Text variant="label" style={{ color: first.show ? colors.textMuted : colors.onInverse, opacity: first.show ? 1 : 0.6 }}>

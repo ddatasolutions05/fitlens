@@ -75,8 +75,8 @@ export default function TodayScreen() {
           <CalorieCard day={day.data} hideNumbers={hideNumbers} trackingOnly={profile.data?.mode === 'tracking_only'} tdeeEstimate={estimate?.tdee.tdee ?? null} />
           <QuickActions localDate={localDate} />
           {insight ? <InsightCard text={insight.text} /> : null}
-          {!hideNumbers && day.data.goal?.protein_g != null && day.data.totals?.totals.protein_g != null && day.data.goal.protein_g - day.data.totals.totals.protein_g >= 20 && localDate === todayLocal() ? (
-            <ProteinPicks remainingG={day.data.goal.protein_g - day.data.totals.totals.protein_g} localDate={localDate} />
+          {!hideNumbers && day.data.goal?.protein_g != null && day.data.goal.protein_g - (day.data.totals?.totals.protein_g ?? 0) >= 20 && localDate === todayLocal() ? (
+            <ProteinPicks remainingG={day.data.goal.protein_g - (day.data.totals?.totals.protein_g ?? 0)} localDate={localDate} />
           ) : null}
           {hideNumbers ? null : <MacroCard day={day.data} />}
           <View style={{ gap: space.sm }}>

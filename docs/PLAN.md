@@ -150,6 +150,8 @@ once a working Anthropic key was set. Milestone 9 (export, delete) remains
 | 32 | Week in review (`/review`): wins, one change, comparison, rules only | built, verified live | `review.test.ts`; `e2e/review.spec.ts` |
 | 33 | Target check (`/profile/adaptive`): gate reasons, observed burn, capped suggestion applied only on tap | built; the unlocked path needs 21 days of a real account's data to exercise live | `adaptive.test.ts` (core); locked state in `e2e/review.spec.ts` |
 | 34 | Protein picks on Today from the person's own history | built, verified live | rendered in the manual-log flow |
+| 35 | Trainer notes: one line from a coach shown on the member's Home | built, verified live | `rls.test.ts` trainer notes case |
+| 36 | White-label logo via `EXPO_PUBLIC_BRAND_LOGO_URL` | built | config only |
 
 ## 5. Open risks
 
