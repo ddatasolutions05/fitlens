@@ -219,7 +219,7 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
               value={draft.localDate}
               onChangeText={(v) => {
                 if (/^\d{4}-\d{2}-\d{2}$/.test(v) && !Number.isNaN(Date.parse(v))) {
-                  updateDraft((d) => ({ ...d, localDate: v, eatenAt: localDateTimeToIso(v, timeInZone(d.eatenAt, d.tz), d.tz) }));
+                  updateDraft((d) => ({ ...d, localDate: v, eatenAt: localDateTimeToIso(v, timeInZone(d.eatenAt, d.tz), d.tz), eatenAtSource: 'manual' }));
                 }
               }}
               placeholder="YYYY-MM-DD"
@@ -230,12 +230,17 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
               label="Time"
               value={timeInZone(draft.eatenAt, draft.tz)}
               onChangeText={(v) => {
-                if (/^\d{2}:\d{2}$/.test(v)) updateDraft((d) => ({ ...d, eatenAt: localDateTimeToIso(d.localDate, v, d.tz) }));
+                if (/^\d{2}:\d{2}$/.test(v)) updateDraft((d) => ({ ...d, eatenAt: localDateTimeToIso(d.localDate, v, d.tz), eatenAtSource: 'manual' }));
               }}
               placeholder="HH:MM"
             />
           </View>
         </View>
+        {draft.eatenAtSource === 'photo' ? (
+          <Text variant="caption" color="textFaint" testID="time-from-photo">
+            Date and time taken from the photo. Change them above if the meal was eaten later.
+          </Text>
+        ) : null}
         <Input label="Title (optional)" value={draft.title ?? ''} onChangeText={(v) => updateDraft((d) => ({ ...d, title: v || null }))} placeholder="Lunch at home" />
       </View>
 
@@ -290,9 +295,13 @@ function TotalsPlate({ totals, hideNumbers, empty }: { totals: ReturnType<typeof
   return (
     <Card tone="inverse" style={{ gap: space.xs }} testID="meal-totals">
       <Text variant="label" style={{ color: fg, opacity: 0.6 }}>
-        Meal total{empty ? ' (no items yet)' : ''}
+        Meal total
       </Text>
-      {hideNumbers ? (
+      {empty ? (
+        <Text variant="heading" style={{ color: fg }}>
+          No items yet. Add one above to see calories and macros.
+        </Text>
+      ) : hideNumbers ? (
         <Text variant="heading" tabular style={{ color: fg }}>
           Protein {formatNutrient(totals.totals.protein_g, 'g')}, fibre {formatNutrient(totals.totals.fibre_g, 'g')}
         </Text>

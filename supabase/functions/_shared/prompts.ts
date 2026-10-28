@@ -24,12 +24,22 @@ Return exactly one JSON object matching this shape and nothing else, no markdown
       "nutrients_per100_estimate": { "kcal": number, "protein_g": number, "carbs_g": number, "fat_g": number, "fibre_g": number } | null
     }
   ],
-  "packaged_items": [ { "name": string, "reason": string } ],
+  "packaged_items": [
+    {
+      "name": string,                      // brand and product when readable, e.g. "Monster Energy Zero Ultra 473 ml can"
+      "reason": string,
+      "serving_g_estimate": number | null, // grams or ml in the visible container or portion
+      "household_unit_estimate": string,   // e.g. "1 can", "2 sausages"
+      "confidence": "low" | "medium" | "high",
+      "nutrients_per100_estimate": { "kcal": number, "protein_g": number, "carbs_g": number, "fat_g": number, "fibre_g": number } | null
+    }
+  ],
   "questions": [ { "item_ref": string, "question": string, "quick_options": string[], "affects": "portion" | "fat" | "ingredients" | "servings" } ]
 }
 
 Rules:
 - Branded or packaged foods (sausages, bars, bread with a label, drinks in containers) go in packaged_items, not items, because their nutrition should come from the label or barcode, never from appearance.
+- When a packaged product is identifiable by brand and name (a can, bottle or wrapper you can read), fill nutrients_per100_estimate with its typical label values per 100 g or 100 ml and serving_g_estimate with the container size, confidence "medium". Generic packaged food (unbranded sausages, bread) keeps nutrients_per100_estimate null.
 - Ask at most 4 questions and only when the answer materially changes the estimate: counts of countable items (affects "servings"), cooking fat and amount (affects "fat", options like "none", "1 tsp oil", "1 tbsp oil", "2 tbsp oil", "1 tsp ghee", "1 tbsp butter"), portion size or shared plate (affects "portion", options like "small", "medium", "large", "half", "all"), or an addable component with a typical amount (affects "ingredients").
 - Indian dishes: ask roti or paratha size (small, medium, large), katori or bowl size, and dal consistency (thin, thick) when relevant. Use terms like "dal toor", "roti", "paneer bhurji" in db_query_terms.
 - item_ref must equal the item's name exactly.

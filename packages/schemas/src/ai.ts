@@ -1,10 +1,21 @@
 import { z } from 'zod';
 
-export const PROMPT_VERSION = 'analyze-meal/2026-10-27.1';
+export const PROMPT_VERSION = 'analyze-meal/2026-10-28.1';
 export const LABEL_PROMPT_VERSION = 'read-label/2026-10-27.1';
 export const COACH_PROMPT_VERSION = 'coach/2026-10-28.1';
 
 export const confidenceSchema = z.enum(['low', 'medium', 'high']);
+
+export const nutrientsPer100EstimateSchema = z
+    .object({
+      kcal: z.number().min(0).max(900).nullable(),
+      protein_g: z.number().min(0).max(100).nullable(),
+      carbs_g: z.number().min(0).max(100).nullable(),
+      fat_g: z.number().min(0).max(100).nullable(),
+      fibre_g: z.number().min(0).max(60).nullable(),
+    })
+    .nullable()
+    .default(null);
 
 export const analyzedItemSchema = z.object({
   name: z.string().min(1).max(120),
@@ -19,21 +30,18 @@ export const analyzedItemSchema = z.object({
   confidence: confidenceSchema,
   uncertainty_drivers: z.array(z.string().max(120)).max(6),
   // Used only when no database source matches. Labelled "AI estimate" in the app.
-  nutrients_per100_estimate: z
-    .object({
-      kcal: z.number().min(0).max(900).nullable(),
-      protein_g: z.number().min(0).max(100).nullable(),
-      carbs_g: z.number().min(0).max(100).nullable(),
-      fat_g: z.number().min(0).max(100).nullable(),
-      fibre_g: z.number().min(0).max(60).nullable(),
-    })
-    .nullable()
-    .default(null),
+  nutrients_per100_estimate: nutrientsPer100EstimateSchema,
 });
+
 
 export const packagedItemSchema = z.object({
   name: z.string().min(1).max(120),
   reason: z.string().max(200),
+  // A product the model recognises by brand and name gets its typical label values so the meal is not left empty; the app marks them as estimates to check against the pack.
+  serving_g_estimate: z.number().min(0).max(5000).nullable().default(null),
+  household_unit_estimate: z.string().max(80).default(''),
+  confidence: confidenceSchema.default('low'),
+  nutrients_per100_estimate: nutrientsPer100EstimateSchema,
 });
 
 export const clarifyingQuestionSchema = z.object({

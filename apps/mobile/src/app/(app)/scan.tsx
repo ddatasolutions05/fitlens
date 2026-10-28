@@ -5,7 +5,7 @@ import { formatLocalDate, todayLocal } from '@fitlens/core';
 import type { AnalyzeMealResult, ClarifyingQuestion } from '@fitlens/schemas';
 
 import { useUserId } from '@/features/auth/session';
-import { addPhoto, ensureDraft, getDraft, setDraft, updateDraft } from '@/features/meals/draft-store';
+import { addPhoto, adoptPhotoTime, ensureDraft, getDraft, setDraft, updateDraft } from '@/features/meals/draft-store';
 import { saveMeal } from '@/features/meals/api';
 import { AnalyzeError, analyzeMeal, mapAnalysisToItems, questionsFor, type Answer } from '@/features/photo/analyze';
 import { CaptureFailure, pickPhoto, uploadPhoto } from '@/features/photo/capture';
@@ -61,7 +61,9 @@ export default function ScanScreen() {
     }
     setStage('uploading');
     try {
-      const draft = ensureDraft({ localDate, source: 'photo' });
+      ensureDraft({ localDate, source: 'photo' });
+      if (picked.takenAt) adoptPhotoTime(picked.takenAt);
+      const draft = getDraft()!;
       let mealId = draft.mealId;
       if (!mealId) {
         const row = await saveMeal({ userId, draft, status: 'draft' });

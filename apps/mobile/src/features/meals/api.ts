@@ -172,6 +172,7 @@ export function draftFromMeal(meal: MealWithItems): MealDraft {
     idempotencyKey: meal.idempotency_key,
     localDate: meal.local_date,
     eatenAt: meal.eaten_at,
+    eatenAtSource: 'manual',
     tz: meal.tz,
     mealType: meal.meal_type as MealDraft['mealType'],
     source: meal.source,

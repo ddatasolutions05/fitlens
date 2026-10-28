@@ -55,6 +55,8 @@ export interface MealDraft {
   photos: DraftPhoto[];
   /** True when this meal was already confirmed before the current edit. */
   previouslyConfirmed: boolean;
+  /** Where the date and time came from: the clock when the draft opened, the photo, or the person. */
+  eatenAtSource: 'clock' | 'photo' | 'manual';
 }
 
 export function newLocalId(): string {
@@ -87,6 +89,7 @@ export function emptyDraft(i: { localDate: string; eatenAt: string; tz: string; 
     items: [],
     photos: [],
     previouslyConfirmed: false,
+    eatenAtSource: 'clock',
   };
 }
 

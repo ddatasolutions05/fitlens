@@ -8,6 +8,7 @@ export * from './weight';
 export * from './adaptive';
 export * from './activity';
 export * from './dates';
+export * from './exif';
 export * from './day';
 export * from './stats';
 export * from './summary';

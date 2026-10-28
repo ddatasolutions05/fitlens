@@ -1,7 +1,7 @@
 // The meal being built right now. Search and scan add items here; the editor
 // screen renders it and saves it.
 import { useSyncExternalStore } from 'react';
-import { deviceTimeZone, localDateTimeToIso, todayLocal } from '@fitlens/core';
+import { deviceTimeZone, localDateFor, localDateTimeToIso, timeInZone, todayLocal } from '@fitlens/core';
 
 import { emptyDraft, type DraftItem, type DraftPhoto, type MealDraft, type MealSource, type MealType } from './model';
 
@@ -57,6 +57,16 @@ export function updateItem(localId: string, patch: Partial<DraftItem>): void {
 
 export function removeItem(localId: string): void {
   updateDraft((d) => ({ ...d, items: d.items.filter((it) => it.localId !== localId) }));
+}
+
+/** A photo's capture time sets the meal's date and time, unless the person already chose them or items are in. */
+export function adoptPhotoTime(takenAt: string): void {
+  updateDraft((d) => {
+    if (d.previouslyConfirmed || d.eatenAtSource === 'manual' || d.items.length > 0 || d.photos.length > 0) return d;
+    const localDate = localDateFor(new Date(takenAt), d.tz);
+    const hour = Number(timeInZone(takenAt, d.tz).slice(0, 2));
+    return { ...d, eatenAt: takenAt, localDate, mealType: mealTypeForHour(hour), eatenAtSource: 'photo' };
+  });
 }
 
 export function addPhoto(photo: DraftPhoto): void {

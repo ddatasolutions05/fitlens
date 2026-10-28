@@ -204,6 +204,39 @@ export async function mapAnalysisToItems(result: AnalyzeMealResult, answers: Ans
     unmatched.push(ai.name);
   }
 
+  // Packaged products the model could read get their typical label values as an
+  // estimate so the meal is not empty; the ones it could not read stay on the list.
+  const packaged: MappedAnalysis['packaged'] = [];
+  for (const p of result.result.packaged_items) {
+    const n = p.nutrients_per100_estimate;
+    if (!n || n.kcal == null || !p.serving_g_estimate) {
+      packaged.push({ name: p.name, reason: p.reason });
+      continue;
+    }
+    const per100: Per100 = { kcal: n.kcal, protein_g: n.protein_g, carbs_g: n.carbs_g, fat_g: n.fat_g, fibre_g: n.fibre_g, sodium_mg: null, sat_fat_g: null };
+    const { data: food, error } = await supabase
+      .from('foods')
+      .insert({ owner_user_id: userId, source: 'ai_estimate', name: p.name, kcal: per100.kcal, protein_g: per100.protein_g, carbs_g: per100.carbs_g, fat_g: per100.fat_g, fibre_g: per100.fibre_g, default_serving_g: p.serving_g_estimate, attribution: `AI estimate from the product name (${result.model})` })
+      .select('id')
+      .single();
+    if (error) throw error;
+    items.push(
+      newItem({
+        foodId: food.id,
+        name: p.name,
+        grams: Math.round(p.serving_g_estimate),
+        gramsRange: [p.serving_g_estimate * 0.9, p.serving_g_estimate * 1.1],
+        servingLabel: p.household_unit_estimate || null,
+        fractionEaten: 1,
+        per100,
+        provenance: 'ai_estimate',
+        sourceName: result.model,
+        confidence: p.confidence,
+        assumptions: ['Packaged product: typical label values recalled from the name. Check them against the pack.', p.reason],
+      }),
+    );
+  }
+
   for (const a of answers) {
     if (a.question.affects === 'fat') {
       const fat = fatItemFor(a.answer);
@@ -211,7 +244,7 @@ export async function mapAnalysisToItems(result: AnalyzeMealResult, answers: Ans
     }
   }
 
-  return { items, packaged: result.result.packaged_items, unmatched };
+  return { items, packaged, unmatched };
 }
 
 export function questionsFor(result: AnalyzeMealResult): ClarifyingQuestion[] {

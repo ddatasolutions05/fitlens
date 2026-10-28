@@ -36,6 +36,7 @@ export function Segmented<T extends string>({ options, value, onChange, label, w
               key={o.value}
               accessibilityRole="radio"
               accessibilityState={{ selected, checked: selected }}
+              aria-checked={selected}
               onPress={() => onChange(o.value)}
               style={({ pressed }) => [
                 styles.chip,

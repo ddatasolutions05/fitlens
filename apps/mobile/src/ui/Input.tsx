@@ -33,6 +33,7 @@ export function Input({ label, hint, error, suffix, style, ...rest }: InputProps
       >
         <TextInput
           placeholderTextColor={colors.textFaint}
+          accessibilityLabel={label}
           {...rest}
           onFocus={(e) => {
             setFocused(true);

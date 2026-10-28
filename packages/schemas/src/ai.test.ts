@@ -18,7 +18,17 @@ const valid = {
       uncertainty_drivers: ['count of eggs'],
     },
   ],
-  packaged_items: [{ name: 'Pork sausage', reason: 'Nutrition varies by brand; scan the label or barcode.' }],
+  packaged_items: [
+    { name: 'Pork sausage', reason: 'Nutrition varies by brand; scan the label or barcode.' },
+    {
+      name: 'Monster Energy Zero Ultra 473 ml can',
+      reason: 'Branded drink; values recalled from the product name.',
+      serving_g_estimate: 473,
+      household_unit_estimate: '1 can',
+      confidence: 'medium',
+      nutrients_per100_estimate: { kcal: 1, protein_g: 0, carbs_g: 0.6, fat_g: 0, fibre_g: 0 },
+    },
+  ],
   questions: [
     { item_ref: 'Scrambled eggs', question: 'How many eggs?', quick_options: ['1', '2', '3'], affects: 'servings' },
     { item_ref: 'Scrambled eggs', question: 'What fat was used?', quick_options: ['none', '1 tsp butter', '1 tbsp butter', '1 tsp oil'], affects: 'fat' },

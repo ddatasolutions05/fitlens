@@ -330,7 +330,7 @@ function MealRow({ meal, draft, hideNumbers }: { meal: MealWithItems; draft?: bo
       </View>
       {!hideNumbers ? (
         <Text variant="heading" tabular>
-          {kcal.any ? `${roundKcal(kcal.sum)?.toLocaleString()} kcal${kcal.unknown > 0 ? ' +?' : ''}` : 'unknown'}
+          {kcal.any ? `${roundKcal(kcal.sum)?.toLocaleString()} kcal${kcal.unknown > 0 ? ' +?' : ''}` : meal.meal_items.length === 0 ? 'No items' : 'unknown'}
         </Text>
       ) : null}
     </Pressable>

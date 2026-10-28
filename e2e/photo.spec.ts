@@ -40,18 +40,28 @@ test.describe('photo flow against the real configured AI', () => {
     const items = page.locator('[data-testid^="item-"]');
     expect(await items.count()).toBeGreaterThan(0);
 
+    // The fixture photo carries its own capture date, so the draft lands on that
+    // day. Move it to today, as a person would, before checking the Today screen.
+    const today = new Date().toLocaleDateString('en-CA');
+    await page.getByLabel('Date').fill(today);
+    await expect(page.getByLabel('Date')).toHaveValue(today);
+
     // Draft does not count: keep as draft and check Today shows it as a draft
     await page.getByTestId('save-draft').click();
     await page.goto('/today');
     await expect(page.getByText('Draft').first()).toBeVisible();
 
-    await page.locator('[data-testid^="meal-"]').first().click();
+    // Other specs may leave their own drafts behind, so follow this meal by its row id.
+    const row = page.locator('[data-testid^="meal-"]').filter({ hasText: 'Draft' }).first();
+    const rowId = (await row.getAttribute('data-testid'))!;
+    await row.click();
     await page.getByTestId('confirm-meal').click();
     await expect(page.getByTestId('meal-confirmed')).toBeVisible();
     await page.getByTestId('done').click();
-    await expect(page.getByText('Draft')).toHaveCount(0);
+    await expect(page.getByTestId(rowId)).toBeVisible();
+    await expect(page.getByTestId(rowId)).not.toContainText('Draft');
 
-    await page.locator('[data-testid^="meal-"]').first().click();
+    await page.getByTestId(rowId).click();
     await page.getByTestId('delete-meal').click();
     await expect(page.getByTestId('today-screen')).toBeVisible();
   });
