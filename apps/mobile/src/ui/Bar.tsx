@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { Text } from './Text';
 import { useTheme } from './theme';
-import { radius, space } from './tokens';
+import { radius } from './tokens';
 
 export interface BarProps {
   label: string;
@@ -18,9 +18,9 @@ export interface BarProps {
 export function Bar({ label, value, target, unit, color, unknownCount = 0, compact }: BarProps) {
   const { colors } = useTheme();
   const ratio = value != null && target ? Math.max(0, Math.min(1, value / target)) : 0;
-  const valueText = value == null ? 'Not logged' : `${Math.round(value)}${unit}`;
-  const targetText = target != null ? ` of ${Math.round(target)}${unit}` : '';
-  const note = unknownCount > 0 ? ` · ${unknownCount} unknown` : '';
+  const valueText = value == null ? 'Not logged' : `${Math.round(value).toLocaleString()}${unit}`;
+  const targetText = target != null ? ` / ${Math.round(target).toLocaleString()}${unit}` : '';
+  const note = unknownCount > 0 ? `, ${unknownCount} unknown` : '';
   return (
     <View
       accessible
@@ -42,7 +42,7 @@ export function Bar({ label, value, target, unit, color, unknownCount = 0, compa
           ) : null}
         </Text>
       </View>
-      <View style={[styles.track, { backgroundColor: colors.surfaceAlt, height: compact ? 6 : 8 }]}>
+      <View style={[styles.track, { backgroundColor: colors.surfaceAlt, height: compact ? 4 : 6 }]}>
         <View style={[styles.fill, { width: `${ratio * 100}%`, backgroundColor: color }]} />
       </View>
       {unknownCount > 0 ? (
@@ -55,7 +55,7 @@ export function Bar({ label, value, target, unit, color, unknownCount = 0, compa
 }
 
 const styles = StyleSheet.create({
-  wrap: { gap: space.xs },
+  wrap: { gap: 6 },
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
   track: { borderRadius: radius.pill, overflow: 'hidden' },
   fill: { height: '100%', borderRadius: radius.pill },

@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
+import { Platform, StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
 
 import { Text } from './Text';
 import { useTheme } from './theme';
-import { radius, space, touch } from './tokens';
+import { fonts, radius, space, touch } from './tokens';
 
 export interface InputProps extends TextInputProps {
   label?: string;
@@ -18,7 +18,7 @@ export function Input({ label, hint, error, suffix, style, ...rest }: InputProps
   return (
     <View style={styles.wrap}>
       {label ? (
-        <Text variant="small" color="textMuted">
+        <Text variant="caption" color="textMuted">
           {label}
         </Text>
       ) : null}
@@ -27,7 +27,7 @@ export function Input({ label, hint, error, suffix, style, ...rest }: InputProps
           styles.field,
           {
             backgroundColor: colors.surface,
-            borderColor: error ? colors.danger : focused ? colors.accent : colors.border,
+            borderColor: error ? colors.danger : focused ? colors.text : colors.border,
           },
         ]}
       >
@@ -88,7 +88,7 @@ export function NumberField({ value, onChangeNumber: onChange, decimals = 1, ...
 }
 
 const styles = StyleSheet.create({
-  wrap: { gap: space.xs },
+  wrap: { gap: 6 },
   field: {
     minHeight: touch.min + 4,
     borderWidth: 1,
@@ -98,5 +98,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: space.sm,
   },
-  input: { flex: 1, fontSize: 17, paddingVertical: space.sm, minHeight: touch.min },
+  input: { flex: 1, fontSize: 16, fontFamily: fonts.regular, paddingVertical: space.sm, minHeight: touch.min, ...(Platform.OS === 'web' ? ({ outlineStyle: 'none' } as object) : {}) },
 });

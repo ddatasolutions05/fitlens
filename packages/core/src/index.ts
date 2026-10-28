@@ -9,6 +9,7 @@ export * from './adaptive';
 export * from './activity';
 export * from './dates';
 export * from './day';
+export * from './stats';
 export * from './matching';
 export * from './feedback/rules';
 export * from './feedback/tone';

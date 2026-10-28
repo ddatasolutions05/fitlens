@@ -16,19 +16,14 @@ export interface ButtonProps extends Omit<PressableProps, 'style' | 'children'> 
   fullWidth?: boolean;
 }
 
+/** Primary is a solid plate in the opposite colour with an uppercase label. */
 export function Button({ label, variant = 'primary', loading, disabled, size = 'md', icon, style, fullWidth, ...rest }: ButtonProps) {
   const { colors } = useTheme();
   const isDisabled = Boolean(disabled || loading);
 
-  const bg =
-    variant === 'primary'
-      ? colors.accent
-      : variant === 'secondary'
-        ? colors.accentSoft
-        : variant === 'danger'
-          ? colors.danger
-          : 'transparent';
-  const fg = variant === 'primary' || variant === 'danger' ? colors.onAccent : variant === 'secondary' ? colors.accent : colors.text;
+  const bg = variant === 'primary' ? colors.accent : 'transparent';
+  const fg = variant === 'primary' ? colors.onAccent : variant === 'danger' ? colors.danger : variant === 'secondary' ? colors.text : colors.textMuted;
+  const borderColor = variant === 'secondary' ? colors.text : variant === 'danger' ? colors.danger : 'transparent';
   const height = size === 'lg' ? 56 : size === 'sm' ? touch.min : 48;
 
   return (
@@ -39,8 +34,7 @@ export function Button({ label, variant = 'primary', loading, disabled, size = '
       {...rest}
       style={({ pressed }) => [
         styles.base,
-        { backgroundColor: bg, height, opacity: isDisabled ? 0.55 : pressed ? 0.85 : 1 },
-        variant === 'ghost' ? { borderWidth: 1, borderColor: colors.border } : null,
+        { backgroundColor: bg, borderColor, height, opacity: isDisabled ? 0.45 : pressed ? 0.8 : 1 },
         fullWidth ? { alignSelf: 'stretch' } : null,
         style,
       ]}
@@ -50,7 +44,7 @@ export function Button({ label, variant = 'primary', loading, disabled, size = '
       ) : (
         <View style={styles.inner}>
           {icon ? <View style={styles.icon}>{icon}</View> : null}
-          <Text variant={size === 'lg' ? 'heading' : 'bodyStrong'} style={{ color: fg }}>
+          <Text variant="label" style={{ color: fg, fontSize: size === 'lg' ? 14 : size === 'sm' ? 12 : 13, lineHeight: 18 }} numberOfLines={1}>
             {label}
           </Text>
         </View>
@@ -63,6 +57,7 @@ const styles = StyleSheet.create({
   base: {
     minHeight: touch.min,
     borderRadius: radius.md,
+    borderWidth: 1,
     paddingHorizontal: space.lg,
     alignItems: 'center',
     justifyContent: 'center',

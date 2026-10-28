@@ -5,18 +5,19 @@ import { radius, space } from './tokens';
 
 export interface CardProps extends ViewProps {
   padded?: boolean;
-  tone?: 'surface' | 'alt' | 'accent';
+  /** inverse is the white plate on black (black on white in the light scheme). */
+  tone?: 'surface' | 'alt' | 'accent' | 'inverse';
 }
 
 export function Card({ padded = true, tone = 'surface', style, ...rest }: CardProps) {
   const { colors } = useTheme();
-  const bg = tone === 'accent' ? colors.accentSoft : tone === 'alt' ? colors.surfaceAlt : colors.surface;
+  const bg = tone === 'inverse' ? colors.inverse : tone === 'accent' ? colors.accentSoft : tone === 'alt' ? colors.surfaceAlt : colors.surface;
   return (
     <View
       {...rest}
       style={[
         styles.card,
-        { backgroundColor: bg, borderColor: colors.border },
+        { backgroundColor: bg, borderColor: tone === 'inverse' ? colors.inverse : colors.border },
         padded ? styles.padded : null,
         style,
       ]}

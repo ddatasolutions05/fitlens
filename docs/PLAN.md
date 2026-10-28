@@ -120,6 +120,15 @@ targets, tracking-only, Today and Progress screens are therefore
 `verified live`. Milestone 6 (photo) and 9 (export, delete) remain `built`
 until a key is deployed and the screens are exercised.
 
+## 4b. Phase 2 work pulled forward (2026-10-28)
+
+| # | Milestone | Status | Evidence |
+|---|---|---|---|
+| 10 | Monochrome theme (black default, white option), Lato type, stroke icon set, plate hero, tab bar with a log sheet | built, verified live | typecheck/lint clean; hosted smoke green; screenshots in the PR description |
+| 11 | Manual food entry surfaced everywhere: Today tiles, the centre tab sheet, Add food header | built, verified live | `e2e/manual-log.spec.ts` passes through the new tiles |
+| 12 | Stats: KPI grid (days logged, streak, avg calories vs target, days on target, avg protein and fibre, weight change and weekly rate, avg steps, workouts, avg water) on top of the charts, plus a water chart | built, verified live | `packages/core/src/stats.test.ts` (7 tests); `e2e/coach.spec.ts` asserts the grid |
+| 13 | Coach: `coach` edge function grounded on a 14 day summary, JSON reply with confirmable actions, device-only conversation | built; live answer needs the Anthropic workspace id | Deno check 7/7; `e2e/coach.spec.ts` passes in the not-configured and consent states |
+
 ## 5. Open risks
 
 1. **No Supabase project yet.** Auth, Storage and Edge Functions need one.

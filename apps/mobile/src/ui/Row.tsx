@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
+import { Icon } from './Icon';
 import { Text } from './Text';
 import { useTheme } from './theme';
 import { space, touch } from './tokens';
@@ -13,10 +14,12 @@ export interface RowProps {
   accessibilityLabel?: string;
   style?: StyleProp<ViewStyle>;
   chevron?: boolean;
+  /** Draws a hairline under the row so lists read as a single block. */
+  divider?: boolean;
 }
 
 /** A list row with a 44 px minimum touch target. */
-export function Row({ title, subtitle, right, left, onPress, accessibilityLabel, style, chevron }: RowProps) {
+export function Row({ title, subtitle, right, left, onPress, accessibilityLabel, style, chevron, divider }: RowProps) {
   const { colors } = useTheme();
   const content = (
     <>
@@ -30,26 +33,23 @@ export function Row({ title, subtitle, right, left, onPress, accessibilityLabel,
         ) : null}
       </View>
       {right ? <View style={styles.right}>{right}</View> : null}
-      {chevron ?? onPress ? (
-        <Text color="textFaint" style={{ marginLeft: space.sm }}>
-          ›
-        </Text>
-      ) : null}
+      {(chevron ?? Boolean(onPress)) ? <Icon name="chevronRight" size={18} color={colors.textFaint} /> : null}
     </>
   );
+  const rowStyle = [styles.row, divider ? { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border } : null, style];
   if (onPress) {
     return (
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel ?? title}
         onPress={onPress}
-        style={({ pressed }) => [styles.row, { borderColor: colors.border, opacity: pressed ? 0.8 : 1 }, style]}
+        style={({ pressed }) => [rowStyle, { opacity: pressed ? 0.7 : 1 }]}
       >
         {content}
       </Pressable>
     );
   }
-  return <View style={[styles.row, { borderColor: colors.border }, style]}>{content}</View>;
+  return <View style={rowStyle}>{content}</View>;
 }
 
 const styles = StyleSheet.create({
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     paddingVertical: space.sm,
     gap: space.md,
   },
-  left: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
+  left: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   text: { flex: 1, gap: 2 },
   right: { alignItems: 'flex-end' },
 });

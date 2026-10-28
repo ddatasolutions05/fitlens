@@ -80,12 +80,12 @@ export function BarChart({ data, color, targetColor }: { data: SeriesPoint[]; co
           {data.map((d, i) => {
             const x = PAD_L + i * slot + (slot - barW) / 2;
             return (
-              <Rect key={d.label} x={x} y={d.value == null ? y(0) : y(d.value)} width={barW} height={d.value == null ? 0 : y(0) - y(d.value)} fill={color} rx={2} />
+              <Rect key={d.label} x={x} y={d.value == null ? y(0) : y(d.value)} width={barW} height={d.value == null ? 0 : y(0) - y(d.value)} fill={color} rx={1} />
             );
           })}
           {data.map((d, i) =>
             d.target != null ? (
-              <Line key={`g${d.label}`} x1={PAD_L + i * slot} x2={PAD_L + (i + 1) * slot} y1={y(d.target)} y2={y(d.target)} stroke={targetColor ?? colors.text} strokeWidth={1.5} strokeDasharray="3 3" />
+              <Line key={`g${d.label}`} x1={PAD_L + i * slot} x2={PAD_L + (i + 1) * slot} y1={y(d.target)} y2={y(d.target)} stroke={targetColor ?? colors.textMuted} strokeWidth={1.5} strokeDasharray="3 3" />
             ) : null,
           )}
           {data.map((d, i) =>
@@ -179,7 +179,7 @@ export function ConsistencyGrid({ days }: { days: { label: string; status: 'comp
             width: 14,
             height: 14,
             borderRadius: 3,
-            backgroundColor: d.status === 'complete' ? colors.accent : d.status === 'partial' ? colors.accentSoft : colors.surfaceAlt,
+            backgroundColor: d.status === 'complete' ? colors.text : d.status === 'partial' ? colors.textFaint : colors.surfaceAlt,
             borderWidth: d.status === 'not_logged' ? 1 : 0,
             borderColor: colors.border,
           }}

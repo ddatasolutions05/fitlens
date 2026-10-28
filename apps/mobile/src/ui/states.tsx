@@ -7,7 +7,7 @@ import { space } from './tokens';
 
 export function EmptyState({ title, body, action }: { title: string; body?: string; action?: { label: string; onPress: () => void } }) {
   return (
-    <Card tone="alt" style={styles.center}>
+    <Card style={styles.center}>
       <Text variant="heading" align="center">
         {title}
       </Text>
@@ -69,8 +69,8 @@ export function OfflineBanner({ pending, parked, syncing, onRetry }: { pending: 
     <Card tone="alt" style={styles.banner}>
       <View style={{ flex: 1 }}>
         <Text variant="small">
-          {syncing ? 'Syncing…' : pending > 0 ? `${pending} change${pending === 1 ? '' : 's'} waiting to sync` : ''}
-          {parked > 0 ? `${pending > 0 ? ' · ' : ''}${parked} need${parked === 1 ? 's' : ''} attention` : ''}
+          {syncing ? 'Syncing' : pending > 0 ? `${pending} change${pending === 1 ? '' : 's'} waiting to sync` : ''}
+          {parked > 0 ? `${pending > 0 ? ', ' : ''}${parked} need${parked === 1 ? 's' : ''} attention` : ''}
         </Text>
       </View>
       {parked > 0 ? <Button label="Retry" size="sm" variant="secondary" onPress={onRetry} /> : null}

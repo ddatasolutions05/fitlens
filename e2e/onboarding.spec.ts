@@ -10,7 +10,7 @@ test.describe('onboarding to Today', () => {
     await completeOnboardingIfNeeded(page);
     await expect(page.getByTestId('today-screen')).toBeVisible();
     await expect(page.getByTestId('calorie-target')).toContainText('kcal');
-    await page.getByText('What is the difference?').click();
+    await page.getByTestId('tdee-link').click();
     await expect(page.getByTestId('tdee-explainer')).toBeVisible();
     await expect(page.getByText('Resting energy (REE)')).toBeVisible();
     await expect(page.getByText(/× 1\.55/).first()).toBeVisible();
@@ -22,6 +22,7 @@ test.describe('onboarding to Today', () => {
     await page.goto('/profile/edit');
     await page.getByRole('radio', { name: 'Yes' }).first().click();
     await page.getByTestId('save-profile').click();
+    await expect(page.getByTestId('profile-screen')).toBeVisible();
     await page.goto('/profile/targets');
     await expect(page.getByText('Tracking-only mode')).toBeVisible();
     await expect(page.getByText('No calorie target', { exact: true })).toBeVisible();

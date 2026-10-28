@@ -109,12 +109,15 @@ export default function SignIn() {
   return (
     <Screen testID="sign-in-screen" contentContainerStyle={{ justifyContent: 'center', flexGrow: 1 }}>
       <View style={styles.hero}>
-        <LogoMark size={64} />
-        <Text variant="title" align="center">
+        <LogoMark size={48} />
+        <Text variant="label" color="textMuted">
           FitLens
         </Text>
-        <Text color="textMuted" align="center" style={{ maxWidth: 300 }}>
-          Understand what you eat, track how you move, and know what to adjust.
+        <Text variant="title" align="center" style={{ fontSize: 34, lineHeight: 38 }}>
+          Where eating meets evidence
+        </Text>
+        <Text color="textMuted" align="center" style={{ maxWidth: 320 }}>
+          Log what you eat by photo, search or hand. See calories, protein and the weight trend without the noise.
         </Text>
       </View>
 
@@ -137,9 +140,9 @@ export default function SignIn() {
                   setSent(null);
                   setError(null);
                 }}
-                style={[styles.tab, active ? { backgroundColor: colors.surface, shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 4, shadowOffset: { width: 0, height: 1 }, elevation: 1 } : null]}
+                style={[styles.tab, active ? { backgroundColor: colors.inverse } : null]}
               >
-                <Text variant="bodyStrong" style={{ color: active ? colors.text : colors.textMuted }}>
+                <Text variant="label" style={{ color: active ? colors.onInverse : colors.textMuted }}>
                   {label}
                 </Text>
               </Pressable>
@@ -148,7 +151,7 @@ export default function SignIn() {
         </View>
 
         {sent ? (
-          <View style={[styles.notice, { backgroundColor: colors.accentSoft }]}>
+          <View style={[styles.notice, { backgroundColor: colors.surfaceAlt }]}>
             <Text variant="heading">{sent.kind === 'reset' ? 'Reset email sent' : 'Check your inbox'}</Text>
             <Text variant="small" color="textMuted">
               {sent.kind === 'confirm'
@@ -215,14 +218,14 @@ export default function SignIn() {
             )}
             <View style={styles.links}>
               <Pressable accessibilityRole="button" onPress={sendMagicLink} disabled={!emailValid || busy != null} style={styles.link} testID="send-link">
-                <Text variant="small" style={{ color: emailValid ? colors.accent : colors.textFaint }}>
-                  {busy === 'magic' ? 'Sending…' : 'Email me a link instead'}
+                <Text variant="small" style={{ color: emailValid ? colors.text : colors.textFaint, textDecorationLine: 'underline' }}>
+                  {busy === 'magic' ? 'Sending' : 'Email me a link instead'}
                 </Text>
               </Pressable>
               {mode === 'signin' ? (
                 <Pressable accessibilityRole="button" onPress={sendReset} disabled={!emailValid || busy != null} style={styles.link} testID="forgot-password">
-                  <Text variant="small" style={{ color: emailValid ? colors.accent : colors.textFaint }}>
-                    {busy === 'reset' ? 'Sending…' : 'Forgot password?'}
+                  <Text variant="small" style={{ color: emailValid ? colors.text : colors.textFaint, textDecorationLine: 'underline' }}>
+                    {busy === 'reset' ? 'Sending' : 'Forgot password?'}
                   </Text>
                 </Pressable>
               ) : null}
@@ -232,9 +235,9 @@ export default function SignIn() {
       </View>
 
       <View style={styles.features}>
-        <Feature icon="camera" title="Scan a meal" body="Photograph your plate and get an editable estimate." />
-        <Feature icon="ring" title="Know your numbers" body="Calories, protein and activity at a glance." />
-        <Feature icon="leaf" title="Calm feedback" body="Practical suggestions, never a lecture." />
+        <Feature icon="camera" title="Log any way you like" body="Photo, database search or manual entry. Every estimate stays editable." />
+        <Feature icon="ring" title="Numbers that mean something" body="Calories, protein, steps, water and the weight trend in one place." />
+        <Feature icon="leaf" title="A coach grounded in your logs" body="Ask what to eat next. Answers come from your own data, never a lecture." />
       </View>
 
       <Text variant="caption" color="textFaint" align="center" style={{ marginBottom: space.lg }}>
@@ -246,12 +249,12 @@ export default function SignIn() {
 
 function LogoMark({ size }: { size: number }) {
   const { colors } = useTheme();
+  // Three rising strokes, the mark of the brand: lean, upward, monochrome.
   return (
-    <Svg width={size} height={size} viewBox="0 0 64 64" accessibilityLabel="FitLens">
-      <Circle cx={32} cy={32} r={30} fill={colors.accent} />
-      <Circle cx={32} cy={32} r={16} stroke={colors.onAccent} strokeWidth={4} fill="none" />
-      <Circle cx={32} cy={32} r={6} fill={colors.onAccent} />
-      <Path d="M32 8 L32 14 M32 50 L32 56 M8 32 L14 32 M50 32 L56 32" stroke={colors.onAccent} strokeWidth={4} strokeLinecap="round" />
+    <Svg width={size * 1.4} height={size} viewBox="0 0 90 64" accessibilityLabel="FitLens">
+      <Path d="M22 56 L34 8" stroke={colors.text} strokeWidth={9} strokeLinecap="round" />
+      <Path d="M42 56 L54 8" stroke={colors.text} strokeWidth={9} strokeLinecap="round" />
+      <Path d="M62 56 L74 8" stroke={colors.text} strokeWidth={9} strokeLinecap="round" />
     </Svg>
   );
 }
@@ -260,8 +263,8 @@ function Feature({ icon, title, body }: { icon: 'camera' | 'ring' | 'leaf'; titl
   const { colors } = useTheme();
   return (
     <View style={styles.feature}>
-      <View style={[styles.featureIcon, { backgroundColor: colors.accentSoft }]}>
-        <Svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke={colors.accent} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <View style={[styles.featureIcon, { backgroundColor: colors.inverse }]}>
+        <Svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke={colors.onInverse} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
           {icon === 'camera' ? (
             <>
               <Path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
@@ -303,7 +306,7 @@ function ProviderButton({ provider, loading, onPress }: { provider: 'google' | '
       testID={`oauth-${provider}`}
       style={({ pressed }) => [
         styles.provider,
-        provider === 'apple' ? { backgroundColor: colors.text, borderColor: colors.text } : { backgroundColor: colors.surface, borderColor: colors.border },
+        provider === 'apple' ? { backgroundColor: colors.inverse, borderColor: colors.inverse } : { backgroundColor: colors.surface, borderColor: colors.text },
         { opacity: pressed || loading ? 0.8 : 1 },
       ]}
     >
@@ -315,10 +318,10 @@ function ProviderButton({ provider, loading, onPress }: { provider: 'google' | '
           <Path fill="#34A853" d="M24 48c6.3 0 11.7-2.1 15.6-5.7l-7.7-6c-2.1 1.4-4.8 2.3-7.9 2.3-6.3 0-11.6-4.2-13.5-10l-7.9 6.2C6.5 42.6 14.6 48 24 48z" />
         </Svg>
       ) : (
-        <Text style={{ color: colors.bg, fontSize: 20, lineHeight: 22 }}></Text>
+        <Text style={{ color: colors.onInverse, fontSize: 20, lineHeight: 22 }}></Text>
       )}
-      <Text variant="bodyStrong" style={{ color: provider === 'apple' ? colors.bg : colors.text }}>
-        {loading ? 'Opening…' : label}
+      <Text variant="bodyStrong" style={{ color: provider === 'apple' ? colors.onInverse : colors.text }}>
+        {loading ? 'Opening' : label}
       </Text>
     </Pressable>
   );
@@ -334,8 +337,8 @@ function friendly(message: string): string {
 }
 
 const styles = StyleSheet.create({
-  hero: { alignItems: 'center', gap: space.sm, marginTop: space.xl, marginBottom: space.sm },
-  card: { borderRadius: radius.xl, borderWidth: StyleSheet.hairlineWidth, padding: space.lg, gap: space.lg },
+  hero: { alignItems: 'center', gap: space.sm, marginTop: space.xl, marginBottom: space.md },
+  card: { borderRadius: radius.xl, borderWidth: 1, padding: space.lg, gap: space.lg },
   tabs: { flexDirection: 'row', padding: 4, borderRadius: radius.md, gap: 4 },
   tab: { flex: 1, minHeight: touch.min - 4, alignItems: 'center', justifyContent: 'center', borderRadius: radius.sm },
   notice: { borderRadius: radius.md, padding: space.md, gap: space.xs },

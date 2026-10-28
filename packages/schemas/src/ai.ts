@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const PROMPT_VERSION = 'analyze-meal/2026-10-27.1';
 export const LABEL_PROMPT_VERSION = 'read-label/2026-10-27.1';
+export const COACH_PROMPT_VERSION = 'coach/2026-10-28.1';
 
 export const confidenceSchema = z.enum(['low', 'medium', 'high']);
 

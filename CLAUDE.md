@@ -45,7 +45,7 @@ browser keeps the old bundle and e2e results lie.
   `SUPABASE_ACCESS_TOKEN=... SUPABASE_PROJECT_REF=... npx tsx scripts/db/push-remote.ts`.
   With the password, `npx supabase db push` works too.
 - Functions: `npx supabase functions deploy --project-ref <ref>`; secrets with
-  `npx supabase secrets set`. `ANTHROPIC_API_KEY` is not set yet.
+  `npx supabase secrets set`. `ANTHROPIC_API_KEY` is set (service account key); the key is not workspace scoped, so `ANTHROPIC_WORKSPACE_ID` is still needed before photo analysis and the coach answer live.
 - Food data was loaded once by exporting the local import to CSV and
   inserting through the Management API. With the database password the
   direct route is `DATABASE_URL=<pooler url> npm run seed -- --source all`.
@@ -88,6 +88,14 @@ browser keeps the old bundle and e2e results lie.
 - Secrets only in Edge Function env. The client reads `EXPO_PUBLIC_*` only.
 - Commits: conventional commits (`feat:`, `fix:`, `chore:`, `docs:`, `test:`).
 - A milestone is done when typecheck, lint and tests pass, the flow works in the running app, `docs/PLAN.md` is updated and a commit exists.
+
+## Visual system
+
+- Monochrome only: `ui/tokens.ts` holds the black (default) and white palettes; `useTheme().preference` switches them and Profile exposes the choice. Never add a colour outside the ramp; `danger` is the one exception.
+- Type is Lato (`fonts.regular/bold/black`), loaded in `app/_layout.tsx`. Use `Text` variants; `label` is the uppercase eyebrow used for section labels and button text.
+- Icons come from `ui/Icon.tsx` (stroke SVG). No emoji or unicode glyphs in the UI.
+- One plate per screen: `Card tone="inverse"` (or `Stat tone="inverse"`) is the loud element; everything else is a hairline-bordered surface card.
+- Every way to log food must stay one tap from Today: the three tiles and the centre tab sheet (`features/day/AddSheet.tsx`).
 
 ## Feature flags
 

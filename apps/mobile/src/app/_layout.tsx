@@ -1,5 +1,9 @@
+import { Lato_400Regular, Lato_700Bold, Lato_900Black, useFonts } from '@expo-google-fonts/lato';
 import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
+import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -7,8 +11,14 @@ import { SessionProvider } from '@/features/auth/session';
 import { QueryProvider } from '@/lib/query';
 import { ThemeProvider, useTheme } from '@/ui';
 
-function Navigator() {
+SplashScreen.preventAutoHideAsync().catch(() => {});
+
+function Navigator({ fontsReady }: { fontsReady: boolean }) {
   const { colors, scheme } = useTheme();
+  useEffect(() => {
+    if (fontsReady) SplashScreen.hideAsync().catch(() => {});
+  }, [fontsReady]);
+  if (!fontsReady) return <View style={{ flex: 1, backgroundColor: colors.bg }} />;
   return (
     <>
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
@@ -18,13 +28,16 @@ function Navigator() {
 }
 
 export default function RootLayout() {
+  const [loaded, error] = useFonts({ Lato_400Regular, Lato_700Bold, Lato_900Black });
+  // A font failure must not block the app; the system face steps in.
+  const fontsReady = loaded || Boolean(error);
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <ThemeProvider>
           <QueryProvider>
             <SessionProvider>
-              <Navigator />
+              <Navigator fontsReady={fontsReady} />
             </SessionProvider>
           </QueryProvider>
         </ThemeProvider>

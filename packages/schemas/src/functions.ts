@@ -69,6 +69,35 @@ export const featuresResultSchema = z.object({
 });
 export type FeaturesResult = z.infer<typeof featuresResultSchema>;
 
+// coach: a question answered from the caller's own logs
+export const coachRequestSchema = z.object({
+  question: z.string().min(1).max(500),
+  history: z.array(z.object({ role: z.enum(['user', 'coach']), text: z.string().max(1500) })).max(8).optional(),
+  local_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+});
+export type CoachRequest = z.infer<typeof coachRequestSchema>;
+
+export const coachActionSchema = z.object({
+  label: z.string().min(1).max(60),
+  kind: z.enum(['search_food', 'log_water', 'log_weight', 'log_activity', 'open_targets']),
+  query: z.string().max(80).nullable().default(null),
+});
+export const coachReplySchema = z.object({
+  answer: z.string().min(1).max(1500),
+  actions: z.array(coachActionSchema).max(3).default([]),
+  grounded_on: z.array(z.string().max(80)).max(6).default([]),
+});
+export type CoachAction = z.infer<typeof coachActionSchema>;
+export type CoachReply = z.infer<typeof coachReplySchema>;
+
+export const coachResultSchema = z.object({
+  prompt_version: z.string(),
+  model: z.string(),
+  reply: coachReplySchema,
+  usage: z.object({ coach_calls_today: z.number(), daily_limit: z.number() }),
+});
+export type CoachResult = z.infer<typeof coachResultSchema>;
+
 // export-data
 export const exportDataResultSchema = z.object({
   signed_url: z.string().url(),

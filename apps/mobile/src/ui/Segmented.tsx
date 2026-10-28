@@ -18,13 +18,13 @@ export interface SegmentedProps<T extends string> {
   wrap?: boolean;
 }
 
-/** Single-select chips, 44 px tall, wrapping when asked. */
+/** Single-select chips, 44 px tall, wrapping when asked. The selected chip is a solid plate. */
 export function Segmented<T extends string>({ options, value, onChange, label, wrap }: SegmentedProps<T>) {
   const { colors } = useTheme();
   return (
     <View style={styles.wrap} accessibilityRole="radiogroup" accessibilityLabel={label}>
       {label ? (
-        <Text variant="small" color="textMuted">
+        <Text variant="caption" color="textMuted">
           {label}
         </Text>
       ) : null}
@@ -40,18 +40,18 @@ export function Segmented<T extends string>({ options, value, onChange, label, w
               style={({ pressed }) => [
                 styles.chip,
                 {
-                  backgroundColor: selected ? colors.accent : colors.surface,
+                  backgroundColor: selected ? colors.accent : 'transparent',
                   borderColor: selected ? colors.accent : colors.border,
-                  opacity: pressed ? 0.85 : 1,
+                  opacity: pressed ? 0.8 : 1,
                 },
                 wrap ? null : styles.chipGrow,
               ]}
             >
-              <Text variant="bodyStrong" style={{ color: selected ? colors.onAccent : colors.text }} align="center">
+              <Text variant="bodyStrong" style={{ color: selected ? colors.onAccent : colors.text, fontSize: 14, lineHeight: 18 }} align="center" numberOfLines={wrap ? undefined : 1}>
                 {o.label}
               </Text>
               {o.hint ? (
-                <Text variant="caption" style={{ color: selected ? colors.onAccent : colors.textMuted }} align="center">
+                <Text variant="caption" style={{ color: selected ? colors.onAccent : colors.textMuted, opacity: selected ? 0.75 : 1 }} align="center">
                   {o.hint}
                 </Text>
               ) : null}
@@ -69,6 +69,8 @@ const styles = StyleSheet.create({
   rowWrap: { flexWrap: 'wrap' },
   chip: {
     minHeight: touch.min,
+    maxWidth: '100%',
+    flexShrink: 1,
     paddingHorizontal: space.md,
     paddingVertical: space.sm,
     borderRadius: radius.md,

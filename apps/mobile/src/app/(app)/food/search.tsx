@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { formatNutrient, todayLocal } from '@fitlens/core';
 
 import { AddFoodSheet, pickedFromFood, pickedFromSearch, type PickedFood } from '@/features/food/AddFoodSheet';
@@ -8,14 +8,14 @@ import { useRecentFoods, useSearchFoods, useToggleFavourite } from '@/features/f
 import { draftItemsFromSaved, touchSavedMeal, useSavedMeals } from '@/features/food/saved-meals';
 import { addItem, ensureDraft, setDraft, updateItem } from '@/features/meals/draft-store';
 import { provenanceForSource, provenanceLabel, sourceNameFor, type DraftItem } from '@/features/meals/model';
-import { Button, Card, EmptyState, ErrorState, Input, Row, Screen, Skeleton, Text, space, useTheme } from '@/ui';
+import { Button, Card, EmptyState, ErrorState, Icon, Input, Row, Screen, Skeleton, Text, space, useTheme } from '@/ui';
 
 export default function FoodSearch() {
   const { colors } = useTheme();
-  const params = useLocalSearchParams<{ date?: string; fresh?: string; replace?: string }>();
+  const params = useLocalSearchParams<{ date?: string; fresh?: string; replace?: string; q?: string }>();
   const localDate = params.date ?? todayLocal();
   const replaceId = params.replace ?? null;
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(params.q ?? '');
   const search = useSearchFoods(query);
   const recents = useRecentFoods();
   const savedMeals = useSavedMeals();
@@ -46,6 +46,9 @@ export default function FoodSearch() {
     <Screen testID="food-search">
       <View style={{ marginTop: space.md, gap: space.sm }}>
         <Text variant="title">{replaceId ? 'Change food' : 'Add food'}</Text>
+        <Text variant="small" color="textMuted">
+          Search three databases, pick a saved meal, or type the food in yourself.
+        </Text>
         <Input value={query} onChangeText={setQuery} placeholder="Search foods, e.g. dal, roti, chicken breast" autoFocus autoCorrect={false} testID="food-query" returnKeyType="search" />
         <View style={{ flexDirection: 'row', gap: space.sm }}>
           <Button
@@ -78,14 +81,14 @@ export default function FoodSearch() {
                 subtitle={`${formatNutrient(r.kcal == null ? null : Number(r.kcal), 'kcal')} per 100 g · ${provenanceLabel(provenanceForSource(r.source), sourceNameFor(r.source))}${r.variant_label ? ` · ${r.variant_label}` : ''}`}
                 onPress={() => setPicked(pickedFromSearch(r))}
                 right={
-                  <Text
+                  <Pressable
                     accessibilityRole="button"
                     accessibilityLabel={r.favourite ? 'Remove from favourites' : 'Add to favourites'}
                     onPress={() => toggleFav.mutate({ foodId: r.id, favourite: !r.favourite })}
-                    style={{ fontSize: 22, color: r.favourite ? colors.carbs : colors.textFaint, paddingHorizontal: space.sm }}
+                    style={{ padding: space.sm }}
                   >
-                    {r.favourite ? '★' : '☆'}
-                  </Text>
+                    <Icon name={r.favourite ? 'starFilled' : 'star'} size={20} color={r.favourite ? colors.text : colors.textFaint} />
+                  </Pressable>
                 }
               />
             ))
@@ -97,7 +100,9 @@ export default function FoodSearch() {
         <>
           {!replaceId ? (
             <Card style={{ gap: space.xs }} testID="saved-meals">
-              <Text variant="heading">Saved meals</Text>
+              <Text variant="label" color="textMuted">
+                Saved meals
+              </Text>
               {savedMeals.isLoading ? (
                 <Skeleton />
               ) : savedMeals.isError ? (
@@ -121,20 +126,24 @@ export default function FoodSearch() {
           ) : null}
           {favourites.length > 0 ? (
             <Card style={{ gap: space.xs }}>
-              <Text variant="heading">Favourites</Text>
+              <Text variant="label" color="textMuted">
+                Favourites
+              </Text>
               {favourites.map((r) => (
                 <Row
                   key={r.food.id}
                   title={r.food.name}
                   subtitle={r.usual_grams ? `usually ${Math.round(r.usual_grams)} g` : null}
                   onPress={() => setPicked(pickedFromFood(r.food, r.usual_grams))}
-                  right={<Text style={{ fontSize: 22, color: colors.carbs }}>★</Text>}
+                  right={<Icon name="starFilled" size={18} color={colors.text} />}
                 />
               ))}
             </Card>
           ) : null}
           <Card style={{ gap: space.xs }}>
-            <Text variant="heading">Recent</Text>
+            <Text variant="label" color="textMuted">
+              Recent
+            </Text>
             {recents.isLoading ? (
               <Skeleton />
             ) : recents.isError ? (

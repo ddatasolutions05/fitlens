@@ -1,13 +1,15 @@
 export { Bar } from './Bar';
 export { Button } from './Button';
 export { Card } from './Card';
+export { Icon, type IconName } from './Icon';
 export { Input, NumberField } from './Input';
 export { Ring } from './Ring';
 export { Row } from './Row';
 export { Screen } from './Screen';
 export { Segmented } from './Segmented';
 export { Skeleton, SkeletonCard } from './Skeleton';
+export { Stat } from './Stat';
 export { ComingSoon, EmptyState, ErrorState, NotConfigured, OfflineBanner } from './states';
 export { Text } from './Text';
-export { ThemeProvider, useTheme } from './theme';
-export { layout, palette, radius, space, touch, type } from './tokens';
+export { ThemeProvider, useTheme, type ThemePreference } from './theme';
+export { fonts, layout, palette, radius, space, touch, type } from './tokens';

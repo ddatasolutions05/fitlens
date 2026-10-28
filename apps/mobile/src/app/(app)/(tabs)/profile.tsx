@@ -1,13 +1,15 @@
 import { router } from 'expo-router';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { formatHeight, formatWeight, type UnitSystem } from '@fitlens/core';
 
 import { useSession } from '@/features/auth/session';
+import { SectionLabel } from '@/features/day/components';
 import { useLatestWeight, usePreferences, useProfile, useUpsertProfile } from '@/features/profile/hooks';
-import { Button, Card, ErrorState, Row, Screen, Segmented, SkeletonCard, Text, space } from '@/ui';
+import { Button, Card, ErrorState, Row, Screen, Segmented, SkeletonCard, Stat, Text, space, useTheme, type ThemePreference } from '@/ui';
 
 export default function ProfileScreen() {
   const { session, signOut } = useSession();
+  const { preference, setPreference } = useTheme();
   const profile = useProfile();
   const prefs = usePreferences();
   const weight = useLatestWeight();
@@ -32,28 +34,39 @@ export default function ProfileScreen() {
 
   return (
     <Screen testID="profile-screen">
-      <View style={{ marginTop: space.lg, gap: space.xs }}>
+      <View style={{ marginTop: space.md, gap: space.xs }}>
         <Text variant="title">{p.display_name ?? 'Profile'}</Text>
         <Text color="textMuted" variant="small">
           {session?.user.email}
         </Text>
       </View>
 
-      <Card style={{ gap: space.xs }}>
-        <Row title="Height" right={<Text tabular>{p.height_cm != null ? formatHeight(Number(p.height_cm), unitSystem) : 'Not set'}</Text>} />
-        <Row title="Latest weight" right={<Text tabular>{weight.data ? formatWeight(Number(weight.data.kg), unitSystem) : 'Not logged'}</Text>} />
-        <Row title="Goal weight" right={<Text tabular>{p.goal_weight_kg != null ? formatWeight(Number(p.goal_weight_kg), unitSystem) : 'Not set'}</Text>} />
-        <Row title="Mode" right={<Text>{p.mode === 'tracking_only' ? 'Tracking only' : 'Standard'}</Text>} />
-        <Button label="Edit profile" variant="secondary" onPress={() => router.push('/profile/edit')} testID="edit-profile" />
-      </Card>
+      <View style={{ flexDirection: 'row', gap: space.sm }}>
+        <Stat label="Height" value={p.height_cm != null ? formatHeight(Number(p.height_cm), unitSystem) : 'Not set'} style={styles.stat} />
+        <Stat label="Weight" value={weight.data ? formatWeight(Number(weight.data.kg), unitSystem) : 'None'} style={styles.stat} />
+        <Stat label="Goal" value={p.goal_weight_kg != null ? formatWeight(Number(p.goal_weight_kg), unitSystem) : 'Not set'} style={styles.stat} />
+      </View>
 
       <Card style={{ gap: space.xs }}>
-        <Row title="Targets and TDEE" subtitle="See the formula with your numbers, change goal, pace or activity mode" onPress={() => router.push('/profile/targets')} />
-        <Row title="How TDEE differs from the food target" onPress={() => router.push('/profile/tdee')} />
-        <Row title="Diet, allergies and AI photo consent" subtitle={prefs.data?.ai_photo_consent_at ? 'Photo analysis enabled' : 'Photo analysis off'} onPress={() => router.push('/profile/privacy')} />
+        <SectionLabel>Plan</SectionLabel>
+        <Row title="Mode" right={<Text>{p.mode === 'tracking_only' ? 'Tracking only' : 'Standard'}</Text>} divider />
+        <Row title="Targets and TDEE" subtitle="See the formula with your numbers, change goal, pace or activity mode" onPress={() => router.push('/profile/targets')} divider />
+        <Row title="How TDEE differs from the food target" onPress={() => router.push('/profile/tdee')} divider />
+        <Row title="Edit profile" subtitle="Height, birth date, goal weight, training" onPress={() => router.push('/profile/edit')} accessibilityLabel="Edit profile" />
       </Card>
 
       <Card style={{ gap: space.md }}>
+        <SectionLabel>Display</SectionLabel>
+        <Segmented<ThemePreference>
+          label="Theme"
+          value={preference}
+          onChange={setPreference}
+          options={[
+            { value: 'black', label: 'Black' },
+            { value: 'white', label: 'White' },
+            { value: 'system', label: 'System' },
+          ]}
+        />
         <Segmented<UnitSystem>
           label="Units"
           value={unitSystem}
@@ -75,13 +88,19 @@ export default function ProfileScreen() {
       </Card>
 
       <Card style={{ gap: space.xs }}>
-        <Row title="Sign-in and security" subtitle="Password, email, linked sign-in methods" onPress={() => router.push('/profile/security')} />
-        <Row title="Export my data" subtitle="JSON and CSV with photos, as a zip" onPress={() => router.push('/profile/export')} />
+        <SectionLabel>Privacy and account</SectionLabel>
+        <Row title="Diet, allergies and AI consent" subtitle={prefs.data?.ai_photo_consent_at ? 'AI features enabled' : 'AI features off'} onPress={() => router.push('/profile/privacy')} divider />
+        <Row title="Sign-in and security" subtitle="Password, email, linked sign-in methods" onPress={() => router.push('/profile/security')} divider />
+        <Row title="Connected health apps" subtitle="Apple Health and Health Connect need a native build" onPress={() => router.push('/profile/integrations')} divider />
+        <Row title="Export my data" subtitle="JSON and CSV with photos, as a zip" onPress={() => router.push('/profile/export')} divider />
         <Row title="Delete account" subtitle="Removes every row and photo" onPress={() => router.push('/profile/delete')} />
-        <Row title="Connected health apps" subtitle="Apple Health and Health Connect need a native build" onPress={() => router.push('/profile/integrations')} />
       </Card>
 
       <Button label="Sign out" variant="ghost" onPress={() => void signOut()} testID="sign-out" />
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  stat: { minWidth: 0 },
+});

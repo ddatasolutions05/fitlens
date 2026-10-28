@@ -10,7 +10,7 @@ module.exports = {
     orientation: 'portrait',
     icon: './assets/images/icon.png',
     scheme: 'fitlens',
-    userInterfaceStyle: 'automatic',
+    userInterfaceStyle: 'dark',
     ios: {
       supportsTablet: false,
       bundleIdentifier: 'com.fitlens.app',
@@ -22,7 +22,7 @@ module.exports = {
     android: {
       package: 'com.fitlens.app',
       adaptiveIcon: {
-        backgroundColor: '#F4F1EA',
+        backgroundColor: '#000000',
         foregroundImage: './assets/images/android-icon-foreground.png',
         backgroundImage: './assets/images/android-icon-background.png',
         monochromeImage: './assets/images/android-icon-monochrome.png',
@@ -38,7 +38,7 @@ module.exports = {
     },
     plugins: [
       'expo-router',
-      ['expo-splash-screen', { backgroundColor: '#F4F1EA', image: './assets/images/splash-icon.png', imageWidth: 76 }],
+      ['expo-splash-screen', { backgroundColor: '#000000', image: './assets/images/splash-icon.png', imageWidth: 76 }],
       [
         'expo-image-picker',
         {

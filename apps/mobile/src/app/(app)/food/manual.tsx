@@ -83,7 +83,7 @@ export default function ManualFood() {
       <View style={{ marginTop: space.md }}>
         <Text variant="title">Enter food manually</Text>
         <Text color="textMuted" variant="small">
-          Leave a field empty when you do not know it. Unknown values are shown as unknown and never counted as zero.
+          Only the name is required. Leave a field empty when you do not know it; unknown values stay unknown and are never counted as zero.
         </Text>
       </View>
       <Card style={{ gap: space.lg }}>
