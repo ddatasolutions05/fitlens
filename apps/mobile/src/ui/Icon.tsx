@@ -5,6 +5,7 @@ import { useTheme } from './theme';
 export type IconName =
   | 'home'
   | 'dumbbell'
+  | 'barcode'
   | 'today'
   | 'diary'
   | 'progress'
@@ -42,7 +43,15 @@ export function Icon({ name, size = 22, color, strokeWidth = 1.8 }: IconProps) {
   const common = { stroke, strokeWidth, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, fill: 'none' as const };
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24">
-      {name === 'home' ? (
+      {name === 'barcode' ? (
+        <>
+          <Path d="M3 7V4h3M18 4h3v3M21 17v3h-3M6 20H3v-3" {...common} />
+          <Line x1={7} y1={8} x2={7} y2={16} {...common} />
+          <Line x1={10} y1={8} x2={10} y2={16} {...common} />
+          <Line x1={13.5} y1={8} x2={13.5} y2={16} {...common} />
+          <Line x1={17} y1={8} x2={17} y2={16} {...common} />
+        </>
+      ) : name === 'home' ? (
         <>
           <Path d="M4 11l8-7 8 7" {...common} />
           <Path d="M6 10v10h12V10" {...common} />

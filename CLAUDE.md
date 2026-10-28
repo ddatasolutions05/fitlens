@@ -21,6 +21,10 @@ status in `docs/PLAN.md`, decisions in `docs/DECISIONS.md`.
 | Deploy edge functions | `npx supabase functions deploy` |
 | Typecheck edge functions | `npm run functions:check` (uses `~/tools/deno/deno.exe`, `DENO_BIN`, or `deno` on PATH; passes `--node-modules-dir=none` so npm specifiers come from Deno's cache) |
 | Import food data | `npm run seed -- --source usda|cnf|indian|all` |
+| Funnel: sign-ups, finished setup, first meal, feature use | `node scripts/funnel.mjs [--days 7]` |
+| Accounts and what they logged | `node scripts/users.mjs` |
+| Quality walk of every screen | `node scripts/sweep.mjs <base> <outDir> <chromium|webkit> <black|white>` |
+| Reset the e2e user | `npx tsx scripts/e2e-reset.ts` |
 | Error reports and function logs | `node scripts/telemetry.mjs [--hours 24] [--purge]` (needs `SUPABASE_ACCESS_TOKEN` and `SUPABASE_PROJECT_REF`) |
 | Regenerate DB types | `npx supabase gen types typescript --db-url "$DATABASE_URL?sslmode=disable" --schema public > apps/mobile/src/lib/database.types.ts` |
 
@@ -87,6 +91,7 @@ browser keeps the old bundle and e2e results lie.
 - Writes carry an idempotency key where duplicates are possible (meals). Buttons disable while a mutation is in flight.
 - Copy: calm, neutral. No "good/bad/junk/cheat", no shaming, no compensatory exercise. Tone rules are tested in `packages/core/src/feedback/tone.test.ts`.
 - Secrets only in Edge Function env. The client reads `EXPO_PUBLIC_*` only.
+- Usage events go through `track(name, flags)` from `lib/telemetry.ts` (no content, only names and flags); read them with `node scripts/funnel.mjs`.
 - Caught errors that are not expected conditions go through `reportError(scope, err)` from `lib/telemetry.ts`; read them with `node scripts/telemetry.mjs`.
 - Photo resizing on web must never draw the full photo into a canvas (iOS Safari caps canvas pixels); see `features/photo/capture.ts`.
 - Commits: conventional commits (`feat:`, `fix:`, `chore:`, `docs:`, `test:`).

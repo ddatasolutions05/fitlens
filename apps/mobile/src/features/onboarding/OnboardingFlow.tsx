@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import {
   ACTIVITY_LEVEL_LABELS,
@@ -22,7 +22,7 @@ import { useAddGoalVersion, useUpsertPreferences, useUpsertProfile } from '@/fea
 import { planGoal } from '@/features/profile/targets';
 import { config } from '@/lib/config';
 import { errorMessage } from '@/lib/net';
-import { reportError } from '@/lib/telemetry';
+import { reportError, track } from '@/lib/telemetry';
 import { BrandMark, Button, Card, Chips, DateField, Input, Note, NumberField, Screen, Segmented, Stat, Text, radius, space, useTheme } from '@/ui';
 
 interface Answers {
@@ -52,28 +52,14 @@ interface Answers {
   aiConsent: boolean | null;
 }
 
+// Four screens. Diet, allergies, steps and training details live in Profile.
 const STEPS = [
-  { key: 'welcome', title: 'Welcome', lead: 'Nine short questions, under three minutes. Everything stays editable in Profile.' },
-  { key: 'about', title: 'About you', lead: 'Two inputs for the resting energy formula.' },
+  { key: 'about', title: 'About you', lead: 'Four answers, under a minute. Everything stays editable in Profile.' },
   { key: 'body', title: 'Your body', lead: 'Weight drives resting energy, protein and water targets.' },
-  { key: 'activity', title: 'How you move', lead: 'Sets the multiplier on resting energy.' },
-  { key: 'goal', title: 'Your goal', lead: 'Decides the gap between what you burn and what you aim to eat.' },
-  { key: 'food', title: 'What you eat', lead: 'Keeps suggestions and photo results in your lane.' },
-  { key: 'circumstances', title: 'Circumstances', lead: 'Any of these switches the app to tracking-only mode, without deficit or pace.' },
-  { key: 'ai', title: 'Photos and AI', lead: 'Your choice. Everything else works without it.' },
+  { key: 'goal', title: 'Goal and activity', lead: 'Decides the gap between what you burn and what you aim to eat.' },
   { key: 'numbers', title: 'Your numbers', lead: 'Calculated from your answers. Change any of it later under Targets.' },
 ] as const;
 
-const CUISINES = ['Indian', 'Canadian', 'Mediterranean', 'East Asian', 'Mexican', 'Middle Eastern', 'Other'];
-const DIETS = [
-  { value: 'omnivore', label: 'Everything' },
-  { value: 'vegetarian', label: 'Vegetarian' },
-  { value: 'eggetarian', label: 'Eggetarian' },
-  { value: 'vegan', label: 'Vegan' },
-  { value: 'jain', label: 'Jain' },
-  { value: 'halal', label: 'Halal' },
-  { value: 'pescatarian', label: 'Pescatarian' },
-];
 
 const initial: Answers = {
   unitSystem: 'metric',
@@ -124,6 +110,9 @@ export function OnboardingFlow() {
   const tz = deviceTimeZone();
   const today = todayLocal(tz);
   const weightId = useRef(newIdempotencyKey());
+  useEffect(() => {
+    track('onboarding_started');
+  }, []);
 
   const set = <K extends keyof Answers>(key: K, value: Answers[K]) => setA((prev) => ({ ...prev, [key]: value }));
 
@@ -157,20 +146,17 @@ export function OnboardingFlow() {
 
   const canContinue = (() => {
     switch (step) {
-      case 1:
+      case 0:
         return birthValid && a.sex != null;
-      case 2:
+      case 1:
         return heightCm != null && heightCm > 50 && kg != null && kg > 20;
-      case 3:
-        return a.activityLevel != null;
-      case 4:
-        return trackingOnly || a.goalType != null;
-      case 7:
-        return a.aiConsent != null;
+      case 2:
+        return a.activityLevel != null && (trackingOnly || a.goalType != null);
       default:
         return true;
     }
   })();
+  const canFinish = plan != null && a.aiConsent != null;
 
   async function finish() {
     if (!plan || kg == null || heightCm == null) return;
@@ -204,7 +190,8 @@ export function OnboardingFlow() {
       await logWeight.mutateAsync({ id: weightId.current, kg: Math.round(kg * 100) / 100, measuredAt: new Date().toISOString(), localDate: today, tz, note: 'Entered during setup' });
       await addGoal.mutateAsync(plan.row);
       await upsertProfile.mutateAsync({ onboarding_completed_at: new Date().toISOString() });
-      router.replace('/today');
+      track('onboarding_finished', { tracking_only: trackingOnly, ai_consent: Boolean(a.aiConsent) });
+      router.replace('/home');
     } catch (err) {
       reportError('onboarding.save', err);
       setError(errorMessage(err));
@@ -241,20 +228,6 @@ export function OnboardingFlow() {
       {step === 0 ? (
         <View style={styles.fields}>
           <Input label="What should we call you? (optional)" value={a.displayName} onChangeText={(v) => set('displayName', v)} placeholder="First name" />
-          <Segmented<UnitSystem>
-            label="Units"
-            value={a.unitSystem}
-            onChange={(v) => set('unitSystem', v)}
-            options={[
-              { value: 'metric', label: 'Metric', hint: 'kg, cm' },
-              { value: 'imperial', label: 'Imperial', hint: 'lb, ft' },
-            ]}
-          />
-        </View>
-      ) : null}
-
-      {step === 1 ? (
-        <View style={styles.fields}>
           <DateField label="Date of birth" value={a.birthDate} onChange={(v) => set('birthDate', v)} min="1900-01-01" max={today} hint={age != null ? `That makes you ${age}.` : 'Opens a calendar; pick the year first.'} testID="birth-date" />
           <Segmented<SexForEquation>
             label="Sex for the metabolic equation"
@@ -270,10 +243,11 @@ export function OnboardingFlow() {
           <Note label="Why we ask">
             Age is part of the resting energy formula. Mifflin-St Jeor uses different constants by sex (+5 for male, -161 for female); prefer not to say averages both and adds about 80 kcal of uncertainty.
           </Note>
+        
         </View>
       ) : null}
 
-      {step === 2 ? (
+      {step === 1 ? (
         <View style={styles.fields}>
           <Segmented<UnitSystem>
             label="Units"
@@ -302,7 +276,7 @@ export function OnboardingFlow() {
         </View>
       ) : null}
 
-      {step === 3 ? (
+      {step === 2 ? (
         <View style={styles.fields}>
           <Segmented<ActivityLevel>
             label="Typical activity level"
@@ -311,22 +285,6 @@ export function OnboardingFlow() {
             onChange={(v) => set('activityLevel', v)}
             options={(Object.keys(ACTIVITY_LEVEL_LABELS) as ActivityLevel[]).map((k) => ({ value: k, label: ACTIVITY_LEVEL_LABELS[k] }))}
           />
-          <NumberField label="Typical daily steps (optional)" value={a.typicalSteps} onChangeNumber={(v) => set('typicalSteps', v)} decimals={0} placeholder="6000" hint="Your step goal starts 1,000 above this." />
-          <View style={styles.row}>
-            <View style={{ flex: 1 }}>
-              <NumberField label="Training days a week" value={a.trainingDays} onChangeNumber={(v) => set('trainingDays', v)} decimals={0} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <NumberField label="Minutes a session" value={a.trainingMinutes} onChangeNumber={(v) => set('trainingMinutes', v)} decimals={0} />
-            </View>
-          </View>
-          <Input label="Training type (optional)" value={a.trainingType} onChangeText={(v) => set('trainingType', v)} placeholder="strength, running, yoga" />
-          <Note label="Why we ask">Logged steps and workouts are shown but not added on top of the multiplier, so nothing is counted twice.</Note>
-        </View>
-      ) : null}
-
-      {step === 4 ? (
-        <View style={styles.fields}>
           {trackingOnly ? (
             <Card tone="alt" style={{ gap: space.xs }}>
               <Text variant="bodyStrong">Tracking-only mode</Text>
@@ -375,68 +333,39 @@ export function OnboardingFlow() {
               ) : null}
             </>
           )}
-        </View>
-      ) : null}
-
-      {step === 5 ? (
-        <View style={styles.fields}>
-          <Segmented<string> label="Diet pattern" wrap value={a.dietPattern} onChange={(v) => set('dietPattern', v)} options={DIETS} />
-          <Input label="Allergies (comma separated)" value={a.allergies} onChangeText={(v) => set('allergies', v)} placeholder="peanuts, shellfish" />
-          <Chips label="Cuisines you eat most" options={CUISINES} value={a.cuisines} onChange={(v) => set('cuisines', v)} />
-          <Input label="Foods to avoid (optional)" value={a.avoidFoods} onChangeText={(v) => set('avoidFoods', v)} placeholder="mushrooms, cilantro" />
-          <Note label="Why we ask">Items that may contain an allergen are flagged. A photo can never confirm an allergen is absent.</Note>
-        </View>
-      ) : null}
-
-      {step === 6 ? (
-        <View style={styles.fields}>
-          {under18 ? (
-            <Card tone="alt">
-              <Text variant="small" color="textMuted">
-                You are under 18, so tracking-only mode is on.
-              </Text>
-            </Card>
+        
+          <Chips
+            label="Anything that applies (optional)"
+            options={['Pregnant', 'Breastfeeding']}
+            value={[a.pregnant ? 'Pregnant' : null, a.breastfeeding ? 'Breastfeeding' : null].filter((x): x is string => x != null)}
+            onChange={(v) => {
+              set('pregnant', v.includes('Pregnant'));
+              set('breastfeeding', v.includes('Breastfeeding'));
+            }}
+          />
+          {under18 || a.pregnant || a.breastfeeding ? (
+            <Note>Tracking-only mode: intake, nutrients, activity and weight are tracked with no deficit or pace. Targets are best set with your care provider.</Note>
           ) : null}
-          <Segmented<'yes' | 'no'>
-            label="Pregnant"
-            value={a.pregnant ? 'yes' : 'no'}
-            onChange={(v) => set('pregnant', v === 'yes')}
-            options={[
-              { value: 'no', label: 'No' },
-              { value: 'yes', label: 'Yes' },
-            ]}
-          />
-          <Segmented<'yes' | 'no'>
-            label="Breastfeeding"
-            value={a.breastfeeding ? 'yes' : 'no'}
-            onChange={(v) => set('breastfeeding', v === 'yes')}
-            options={[
-              { value: 'no', label: 'No' },
-              { value: 'yes', label: 'Yes' },
-            ]}
-          />
+          <Note label="Why we ask">Logged steps and workouts are shown but not added on top of the multiplier, so nothing is counted twice. Steps, training days and diet can be added later in Profile.</Note>
         </View>
       ) : null}
 
-      {step === 7 ? (
+      {step === 3 ? (
         <View style={styles.fields}>
-          <Text>Scan meal sends your meal photo to an AI provider to identify foods and estimate portions. The Coach sends a summary of your logs, never photos.</Text>
-          <Note label="What is sent">
-            The photo you choose (resized, location data removed) plus your diet pattern and allergies, so suggestions fit. Where: Anthropic, the provider configured for this app. The photo itself stays in your own private storage. You can withdraw consent at any time under Profile; it turns both features off.
-          </Note>
-          <Segmented<'yes' | 'no'>
-            value={a.aiConsent == null ? null : a.aiConsent ? 'yes' : 'no'}
-            onChange={(v) => set('aiConsent', v === 'yes')}
-            options={[
-              { value: 'yes', label: 'Allow AI features' },
-              { value: 'no', label: 'Not now' },
-            ]}
-          />
-        </View>
-      ) : null}
-
-      {step === 8 ? (
-        <View style={styles.fields}>
+          <Card style={{ gap: space.sm }}>
+            <Text variant="bodyStrong">Photo analysis and Coach</Text>
+            <Text variant="small" color="textMuted">
+              With your consent, Scan meal sends the photo you choose (resized, location removed) plus your diet pattern and allergies to the AI provider (Anthropic) to identify foods; the Coach sends a summary of your logs, never photos. Withdraw any time under Profile.
+            </Text>
+            <Segmented<'yes' | 'no'>
+              value={a.aiConsent == null ? null : a.aiConsent ? 'yes' : 'no'}
+              onChange={(v) => set('aiConsent', v === 'yes')}
+              options={[
+                { value: 'yes', label: 'Allow AI features' },
+                { value: 'no', label: 'Not now' },
+              ]}
+            />
+          </Card>
           {plan ? (
             <>
               <Card tone="inverse" style={{ gap: space.sm }}>
@@ -485,9 +414,19 @@ export function OnboardingFlow() {
       <View style={styles.nav}>
         {step > 0 ? <Button label="Back" variant="ghost" onPress={() => setStep(step - 1)} style={{ flex: 1 }} /> : null}
         {step < STEPS.length - 1 ? (
-          <Button label="Continue" size="lg" onPress={() => setStep(step + 1)} disabled={!canContinue} style={{ flex: 2 }} testID="continue" />
+          <Button
+            label="Continue"
+            size="lg"
+            onPress={() => {
+              track('onboarding_step', { step: STEPS[step + 1]?.key ?? '' });
+              setStep(step + 1);
+            }}
+            disabled={!canContinue}
+            style={{ flex: 2 }}
+            testID="continue"
+          />
         ) : (
-          <Button label="Start tracking" size="lg" onPress={() => void finish()} disabled={!plan} loading={saving} style={{ flex: 2 }} testID="finish" />
+          <Button label="Start tracking" size="lg" onPress={() => void finish()} disabled={!canFinish} loading={saving} style={{ flex: 2 }} testID="finish" />
         )}
       </View>
     </Screen>

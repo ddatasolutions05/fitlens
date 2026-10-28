@@ -16,6 +16,7 @@ const FOOD: Action[] = [
   { key: 'search', icon: 'search', title: 'Search food', body: 'Three databases, your recents and saved meals', go: (d) => router.push({ pathname: '/food/search', params: { date: d, fresh: '1' } }) },
   { key: 'manual', icon: 'pencil', title: 'Enter manually', body: 'Type the name and whatever nutrition you know', go: (d) => router.push({ pathname: '/food/manual', params: { date: d, fresh: '1' } }) },
   { key: 'scan', icon: 'camera', title: 'Scan a meal', body: 'Photograph the plate for an editable estimate', go: (d) => router.push({ pathname: '/scan', params: { date: d, fresh: '1' } }) },
+  { key: 'barcode', icon: 'barcode', title: 'Scan a barcode', body: 'Packaged food, values from the label database', go: (d) => router.push({ pathname: '/food/barcode', params: { date: d } }) },
 ];
 
 const OTHER: Action[] = [

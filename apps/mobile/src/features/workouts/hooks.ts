@@ -10,6 +10,7 @@ import { useLogWorkout } from '@/features/logs/hooks';
 import { newIdempotencyKey } from '@/features/meals/model';
 import { useGoalForDate, useLatestWeight, usePreferences, useProfile, useUpsertPreferences } from '@/features/profile/hooks';
 import { supabase } from '@/lib/supabase';
+import { track } from '@/lib/telemetry';
 
 export const PLAN_NOTE_PREFIX = 'plan:';
 
@@ -49,15 +50,17 @@ export function useSavePlanSettings() {
   const upsert = useUpsertPreferences();
   return {
     ...upsert,
-    save: (s: Omit<PlanSettings, 'seed'> & { seed?: number }) =>
-      upsert.mutateAsync({
+    save: (s: Omit<PlanSettings, 'seed'> & { seed?: number }) => {
+      track('plan_built', { days: s.daysPerWeek, focus: s.focus, level: s.level });
+      return upsert.mutateAsync({
         workout_days_per_week: s.daysPerWeek,
         workout_minutes: s.minutes,
         workout_level: s.level,
         workout_focus: s.focus,
         workout_equipment: s.equipment,
         ...(s.seed != null ? { workout_plan_seed: s.seed } : {}),
-      }),
+      });
+    },
   };
 }
 
@@ -113,6 +116,7 @@ export function useCompleteWorkout() {
         note: `${PLAN_NOTE_PREFIX}${i.workout.id}`,
       });
       await qc.invalidateQueries({ queryKey: ['plan-sessions'] });
+      track('workout_logged', { workout: i.workout.id, minutes: i.minutes });
     },
   };
 }

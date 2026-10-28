@@ -42,31 +42,22 @@ if (process.env.E2E_USER_EMAIL && process.env.E2E_USER_PASSWORD) {
   await page.waitForURL(/home|today|onboarding/, { timeout: 60_000 });
   if (/onboarding/.test(page.url())) {
     await shot('onboarding-0');
-    await page.getByTestId('continue').click();
     await page.getByTestId('birth-date').fill('1990-05-10');
     await page.getByRole('radio', { name: 'Male', exact: true }).click();
-    await shot('onboarding-1');
     await page.getByTestId('continue').click();
     await page.getByTestId('height').fill('180');
     await page.getByTestId('weight').fill('80');
-    await shot('onboarding-2');
+    await shot('onboarding-1');
     await page.getByTestId('continue').click();
     await page.getByRole('radio', { name: /^Moderate/ }).click();
-    await shot('onboarding-3');
-    await page.getByTestId('continue').click();
     await page.getByRole('radio', { name: 'Fat loss' }).click();
-    await shot('onboarding-4');
-    await page.getByTestId('continue').click();
-    await shot('onboarding-5');
-    await page.getByTestId('continue').click();
+    await shot('onboarding-2');
     await page.getByTestId('continue').click();
     await page.getByRole('radio', { name: 'Not now' }).click();
-    await shot('onboarding-7');
-    await page.getByTestId('continue').click();
     await page.getByTestId('ree-value').waitFor({ timeout: 30_000 });
-    await shot('onboarding-8');
+    await shot('onboarding-3');
     await page.getByTestId('finish').click();
-    await page.waitForURL(/today/, { timeout: 60_000 });
+    await page.waitForURL(/home/, { timeout: 60_000 });
   }
   await go('today', 'calorie-card');
   await shot('today');

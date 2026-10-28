@@ -137,6 +137,11 @@ once a working Anthropic key was set. Milestone 9 (export, delete) remains
 | 19 | Home tab: avatar upload, greeting, line of the day, today snapshot, day's workout, section cards; tab bar Home, Today, Train, Stats, Coach | built, verified live | `quotes.test.ts`; `e2e/home.spec.ts` |
 | 20 | Workouts: 16-session library, rules-based weekly plan from days, minutes, level, focus and equipment, suggestions for today, one-tap logging as activity | built, verified live | `workouts/plan.test.ts` (8 tests); `e2e/train.spec.ts` |
 | 21 | Phone sign-in and sign-up with SMS codes, shown only when the project has an SMS provider | built; needs Twilio credentials to switch on | `auth.spec.ts` checks the option against `/auth/v1/settings` |
+| 22 | Four-step onboarding (about, body, goal and activity, numbers with AI choice); diet and training details live in Profile | built, verified live | `onboarding.spec.ts`; walkers updated |
+| 23 | Funnel events (`track`) and `scripts/funnel.mjs`: sign-ups, finished setup, first meal, active people, feature use | built, verified live | events land in `client_events` with kind `event` |
+| 24 | Home tiles tap through to logging with a hint when empty; "Log it again" on search from the last fourteen days of confirmed meals | built, verified live | `home.spec.ts`; `manual-log.spec.ts` |
+| 25 | Barcode screen: browser reader where available, typed number elsewhere, `lookup-barcode` function, add a serving | built, verified live | `e2e/barcode.spec.ts` |
+| 26 | Native build config (`eas.json` preview APK and production profiles) | built; first build needs an Expo account login | not run |
 
 ## 5. Open risks
 

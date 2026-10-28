@@ -55,6 +55,16 @@ export function reportError(scope: string, err: unknown, extra?: Record<string, 
   }
 }
 
+/** Records a named usage event for the funnel (onboarding, first meal, scan, coach, workout). No content, just the name and a few flags. */
+export function track(name: string, extra?: Record<string, Json>): void {
+  try {
+    if (!config.supabaseConfigured) return;
+    void send({ scope: trim(name, 80), message: trim(name, 500), stack: null, platform: Platform.OS, user_agent: userAgent(), app_version: Constants.expoConfig?.version ?? null, route: route(), extra: extra ?? null }, 'event');
+  } catch {
+    // never let analytics break a screen
+  }
+}
+
 interface EventRow {
   scope: string;
   message: string;
@@ -66,10 +76,10 @@ interface EventRow {
   extra: Record<string, Json> | null;
 }
 
-async function send(row: EventRow): Promise<void> {
+async function send(row: EventRow, kind: 'error' | 'event' = 'error'): Promise<void> {
   try {
     const { data } = await supabase.auth.getSession();
-    await supabase.from('client_events').insert({ ...row, user_id: data.session?.user.id ?? null });
+    await supabase.from('client_events').insert({ ...row, kind, user_id: data.session?.user.id ?? null });
   } catch {
     // Offline or blocked; the row is dropped.
   }

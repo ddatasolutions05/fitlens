@@ -9,7 +9,7 @@ import { appendMessage, clearConversation, loadConversation, useConversation, ty
 import { useSelectedDate } from '@/features/day/selected-date';
 import { usePreferences } from '@/features/profile/hooks';
 import { useFeatures } from '@/features/sync/useFeatures';
-import { reportError } from '@/lib/telemetry';
+import { reportError, track } from '@/lib/telemetry';
 import { Button, Card, Icon, NotConfigured, Text, fonts, layout, radius, space, touch, useTheme } from '@/ui';
 
 const SUGGESTIONS = ['What should I eat for dinner?', 'How do I reach my protein today?', 'How consistent was this week?', 'Is my weight trend on track?'];
@@ -49,6 +49,7 @@ export default function CoachScreen() {
     setBusy(true);
     try {
       const res = await askCoach({ question: q, history, local_date: localDate });
+      track('coach_asked');
       appendMessage({ role: 'coach', text: res.reply.answer, actions: res.reply.actions, groundedOn: res.reply.grounded_on });
       setUsage({ used: res.usage.coach_calls_today, limit: res.usage.daily_limit });
     } catch (err) {

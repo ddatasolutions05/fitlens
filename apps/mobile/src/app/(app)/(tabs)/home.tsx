@@ -65,10 +65,17 @@ export default function HomeScreen() {
         <SkeletonCard lines={2} />
       ) : (
         <View style={styles.grid}>
-          <Stat label="Eaten" value={hideNumbers ? (day.data?.meals.length ? `${day.data.meals.length} meals` : 'Nothing yet') : kcal != null ? `${kcal.toLocaleString()} kcal` : 'Nothing yet'} note={!hideNumbers && target ? `of ${target.toLocaleString()}` : undefined} style={styles.tile} testID="home-kcal" />
-          <Stat label="Protein" value={totals?.protein_g != null ? `${Math.round(totals.protein_g)} g` : 'Not yet'} note={day.data?.goal?.protein_g ? `of ${day.data.goal.protein_g} g` : undefined} style={styles.tile} />
-          <Stat label="Water" value={day.data?.waterMl ? `${day.data.waterMl.toLocaleString()} ml` : 'Not yet'} note={day.data?.goal?.water_ml ? `of ${day.data.goal.water_ml.toLocaleString()} ml` : undefined} style={styles.tile} />
-          <Stat label="Steps" value={day.data?.steps != null ? day.data.steps.toLocaleString() : 'Not yet'} note={day.data?.goal?.step_goal ? `of ${day.data.goal.step_goal.toLocaleString()}` : undefined} style={styles.tile} />
+          <Tile
+            label="Eaten"
+            value={hideNumbers ? (day.data?.meals.length ? `${day.data.meals.length} meals` : null) : kcal != null ? `${kcal.toLocaleString()} kcal` : null}
+            note={!hideNumbers && target ? `of ${target.toLocaleString()}` : undefined}
+            empty="Tap to log a meal"
+            onPress={() => router.push({ pathname: '/food/search', params: { date: today, fresh: '1' } })}
+            testID="home-kcal"
+          />
+          <Tile label="Protein" value={totals?.protein_g != null ? `${Math.round(totals.protein_g)} g` : null} note={day.data?.goal?.protein_g ? `of ${day.data.goal.protein_g} g` : undefined} empty="Comes from your meals" onPress={() => router.push('/today')} testID="home-protein" />
+          <Tile label="Water" value={day.data?.waterMl ? `${day.data.waterMl.toLocaleString()} ml` : null} note={day.data?.goal?.water_ml ? `of ${day.data.goal.water_ml.toLocaleString()} ml` : undefined} empty="Tap to add a glass" onPress={() => router.push({ pathname: '/log/water', params: { date: today } })} testID="home-water" />
+          <Tile label="Steps" value={day.data?.steps != null ? day.data.steps.toLocaleString() : null} note={day.data?.goal?.step_goal ? `of ${day.data.goal.step_goal.toLocaleString()}` : undefined} empty="Tap to log today's steps" onPress={() => router.push({ pathname: '/log/activity', params: { date: today } })} testID="home-steps" />
         </View>
       )}
 
@@ -123,6 +130,14 @@ export default function HomeScreen() {
         {config.brandName}. {config.brandTagline}.
       </Text>
     </Screen>
+  );
+}
+
+function Tile({ label, value, note, empty, onPress, testID }: { label: string; value: string | null; note?: string; empty: string; onPress: () => void; testID: string }) {
+  return (
+    <Pressable accessibilityRole="button" accessibilityLabel={`${label}: ${value ?? empty}`} onPress={onPress} testID={testID} style={({ pressed }) => [styles.tile, { opacity: pressed ? 0.85 : 1 }]}>
+      <Stat label={label} value={value ?? 'Not yet'} note={value ? note : empty} style={{ minWidth: 0 }} />
+    </Pressable>
   );
 }
 

@@ -103,32 +103,22 @@ await page.waitForURL(/home|today|onboarding/, { timeout: 60_000 });
 if (/onboarding/.test(page.url())) {
   await step('onboarding', async () => {
     await inspect('onboarding-0');
-    await page.getByTestId('continue').click();
     await page.getByTestId('birth-date').fill('1990-05-10');
     await page.getByRole('radio', { name: 'Male', exact: true }).click();
-    await inspect('onboarding-1');
     await page.getByTestId('continue').click();
     await page.getByTestId('height').fill('180');
     await page.getByTestId('weight').fill('80');
-    await inspect('onboarding-2');
+    await inspect('onboarding-1');
     await page.getByTestId('continue').click();
     await page.getByRole('radio', { name: /^Moderate/ }).click();
-    await inspect('onboarding-3');
-    await page.getByTestId('continue').click();
     await page.getByRole('radio', { name: 'Fat loss' }).click();
-    await inspect('onboarding-4');
-    await page.getByTestId('continue').click();
-    await inspect('onboarding-5');
-    await page.getByTestId('continue').click();
-    await inspect('onboarding-6');
+    await inspect('onboarding-2');
     await page.getByTestId('continue').click();
     await page.getByRole('radio', { name: 'Not now' }).click();
-    await inspect('onboarding-7');
-    await page.getByTestId('continue').click();
     await page.getByTestId('ree-value').waitFor({ timeout: 30_000 });
-    await inspect('onboarding-8');
+    await inspect('onboarding-3');
     await page.getByTestId('finish').click();
-    await page.waitForURL(/today/, { timeout: 60_000 });
+    await page.waitForURL(/home/, { timeout: 60_000 });
   });
 }
 
@@ -223,7 +213,8 @@ await step('coach', async () => {
   await go('coach', 'coach-screen');
   await inspect('coach');
   const suggestion = page.getByTestId('coach-suggestion').first();
-  if (await suggestion.isVisible().catch(() => false)) {
+  // Disabled until the person allows AI features, so only tap when it is live.
+  if ((await suggestion.isVisible().catch(() => false)) && (await suggestion.isEnabled().catch(() => false))) {
     await suggestion.click();
     await Promise.race([page.getByTestId('coach-reply').first().waitFor({ timeout: 60_000 }), page.getByTestId('coach-error').waitFor({ timeout: 60_000 })]).catch(() => {});
     await inspect('coach-reply');

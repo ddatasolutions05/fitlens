@@ -14,7 +14,7 @@ import { itemFromEstimate, itemFromProduct, lookupProduct, type PackagedSuggesti
 import { usePreferences } from '@/features/profile/hooks';
 import { useFeatures } from '@/features/sync/useFeatures';
 import { errorMessage } from '@/lib/net';
-import { reportError } from '@/lib/telemetry';
+import { reportError, track } from '@/lib/telemetry';
 import { Button, Card, Icon, NotConfigured, PageHeader, Screen, Segmented, Skeleton, Text, radius, space, useTheme } from '@/ui';
 
 type Stage = 'idle' | 'uploading' | 'analyzing' | 'clarify' | 'mapping' | 'failed';
@@ -96,6 +96,7 @@ export default function ScanScreen() {
     const draft = getDraft();
     if (!draft?.mealId || photos.length === 0) return;
     setStage('analyzing');
+    track('scan_started', { photos: photos.length });
     setError(null);
     try {
       const result = await analyzeMeal({ meal_id: draft.mealId, storage_paths: photos.map((p) => p.storagePath) });

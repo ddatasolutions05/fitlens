@@ -22,8 +22,6 @@ export async function completeOnboardingIfNeeded(page: Page): Promise<void> {
   await page.goto('/');
   await page.waitForURL(/onboarding|today|home/, { timeout: 30_000 });
   if (!page.url().includes('onboarding')) return;
-  // Step 0: welcome
-  await page.getByTestId('continue').click();
   // Step 1: about you
   await page.getByTestId('birth-date').fill('1990-05-10');
   await page.getByRole('radio', { name: 'Male', exact: true }).click();
@@ -32,25 +30,17 @@ export async function completeOnboardingIfNeeded(page: Page): Promise<void> {
   await page.getByTestId('height').fill('180');
   await page.getByTestId('weight').fill('80');
   await page.getByTestId('continue').click();
-  // Step 3: activity
+  // Step 3: goal and activity
   await page.getByRole('radio', { name: /^Moderate/ }).click();
-  await page.getByTestId('continue').click();
-  // Step 4: goal
   await page.getByRole('radio', { name: 'Fat loss' }).click();
   await page.getByTestId('continue').click();
-  // Step 5: food
-  await page.getByTestId('continue').click();
-  // Step 6: circumstances
-  await page.getByTestId('continue').click();
-  // Step 7: AI consent
+  // Step 4: numbers and AI choice
   await page.getByRole('radio', { name: 'Not now' }).click();
-  await page.getByTestId('continue').click();
-  // Step 8: numbers
   await expect(page.getByTestId('ree-value')).toContainText('kcal');
   await expect(page.getByTestId('tdee-value')).toContainText('kcal');
   await expect(page.getByTestId('target-value')).toContainText('kcal');
   await page.getByTestId('finish').click();
-  await page.waitForURL(/today/, { timeout: 30_000 });
+  await page.waitForURL(/home/, { timeout: 30_000 });
 }
 
 export async function readKcalText(page: Page): Promise<string> {

@@ -18,7 +18,7 @@ import { MealPhotoThumb } from '@/features/photo/MealPhotoThumb';
 import { usePreferences, useProfile } from '@/features/profile/hooks';
 import { config } from '@/lib/config';
 import { errorMessage } from '@/lib/net';
-import { reportError } from '@/lib/telemetry';
+import { reportError, track } from '@/lib/telemetry';
 import { Button, Card, DateField, Icon, Input, NumberField, Segmented, Text, radius, space, touch, useTheme } from '@/ui';
 
 import { removeItem, setDraft, updateDraft, updateItem, useDraft } from './draft-store';
@@ -72,6 +72,7 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
     setError(null);
     try {
       const result = await save.mutateAsync({ draft, status: 'confirmed' });
+      track('meal_confirmed', { items: draft.items.length, source: draft.source, photos: draft.photos.length });
       const t = draftTotals(draft.items);
       const dayBeforeRaw = day.data?.totals?.totals ?? null;
       const previous = draft.mealId ? (day.data?.meals.find((m) => m.id === draft.mealId)?.meal_items ?? []) : [];

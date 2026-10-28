@@ -5,6 +5,7 @@ import { formatNutrient, todayLocal } from '@fitlens/core';
 
 import { AddFoodSheet, pickedFromFood, pickedFromSearch, type PickedFood } from '@/features/food/AddFoodSheet';
 import { useRecentFoods, useSearchFoods, useToggleFavourite } from '@/features/food/hooks';
+import { itemsFromMeal, mealLabel, useRecentMeals } from '@/features/food/recent-meals';
 import { draftItemsFromSaved, touchSavedMeal, useSavedMeals } from '@/features/food/saved-meals';
 import { addItem, ensureDraft, setDraft, updateItem } from '@/features/meals/draft-store';
 import { provenanceForSource, provenanceLabel, sourceNameFor, type DraftItem } from '@/features/meals/model';
@@ -19,6 +20,7 @@ export default function FoodSearch() {
   const search = useSearchFoods(query);
   const recents = useRecentFoods();
   const savedMeals = useSavedMeals();
+  const recentMeals = useRecentMeals();
   const toggleFav = useToggleFavourite();
   const [picked, setPicked] = useState<PickedFood | null>(null);
 
@@ -56,6 +58,7 @@ export default function FoodSearch() {
             onPress={() => router.push({ pathname: '/food/manual', params: { date: localDate, ...(replaceId ? { replace: replaceId } : {}) } })}
             testID="manual-entry"
           />
+          {!replaceId ? <Button label="Barcode" variant="secondary" size="sm" style={{ flex: 1 }} onPress={() => router.push({ pathname: '/food/barcode', params: { date: localDate } })} testID="barcode-entry" /> : null}
           {!replaceId ? <Button label="Scan meal" variant="secondary" size="sm" style={{ flex: 1 }} onPress={() => router.push({ pathname: '/scan', params: { date: localDate } })} /> : null}
         </View>
       </View>
@@ -95,6 +98,22 @@ export default function FoodSearch() {
         </Card>
       ) : (
         <>
+          {!replaceId && (recentMeals.data?.length ?? 0) > 0 ? (
+            <Card style={{ gap: space.xs }} testID="recent-meals">
+              <Text variant="label" color="textMuted">
+                Log it again
+              </Text>
+              {recentMeals.data!.map((m) => (
+                <Row
+                  key={m.id}
+                  title={mealLabel(m)}
+                  subtitle={`${m.meal_type[0]!.toUpperCase()}${m.meal_type.slice(1)} on ${m.local_date}, ${m.meal_items.length} item${m.meal_items.length === 1 ? '' : 's'}`}
+                  onPress={() => commit(itemsFromMeal(m))}
+                  right={<Icon name="plus" size={18} color={colors.textMuted} />}
+                />
+              ))}
+            </Card>
+          ) : null}
           {!replaceId ? (
             <Card style={{ gap: space.xs }} testID="saved-meals">
               <Text variant="label" color="textMuted">
