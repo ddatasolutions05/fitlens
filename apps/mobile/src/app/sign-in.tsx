@@ -9,7 +9,7 @@ import { useSession } from '@/features/auth/session';
 import { config } from '@/lib/config';
 import { errorMessage } from '@/lib/net';
 import { getSupabase } from '@/lib/supabase';
-import { Button, Input, Screen, Text, radius, space, touch, useTheme } from '@/ui';
+import { BrandMark, Button, Input, Screen, Text, radius, space, touch, useTheme } from '@/ui';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -109,12 +109,12 @@ export default function SignIn() {
   return (
     <Screen testID="sign-in-screen" contentContainerStyle={{ justifyContent: 'center', flexGrow: 1 }}>
       <View style={styles.hero}>
-        <LogoMark size={48} />
+        <BrandMark size={48} />
         <Text variant="label" color="textMuted">
-          FitLens
+          {config.brandName}
         </Text>
         <Text variant="title" align="center" style={{ fontSize: 34, lineHeight: 38 }}>
-          Where eating meets evidence
+          {config.brandTagline}
         </Text>
         <Text color="textMuted" align="center" style={{ maxWidth: 320 }}>
           Log what you eat by photo, search or hand. See calories, protein and the weight trend without the noise.
@@ -244,18 +244,6 @@ export default function SignIn() {
         Your data lives in your own account. Photos go to an AI provider only after you opt in. Estimates are approximate, not medical advice.
       </Text>
     </Screen>
-  );
-}
-
-function LogoMark({ size }: { size: number }) {
-  const { colors } = useTheme();
-  // Three rising strokes, the mark of the brand: lean, upward, monochrome.
-  return (
-    <Svg width={size * 1.4} height={size} viewBox="0 0 90 64" accessibilityLabel="FitLens">
-      <Path d="M22 56 L34 8" stroke={colors.text} strokeWidth={9} strokeLinecap="round" />
-      <Path d="M42 56 L54 8" stroke={colors.text} strokeWidth={9} strokeLinecap="round" />
-      <Path d="M62 56 L74 8" stroke={colors.text} strokeWidth={9} strokeLinecap="round" />
-    </Svg>
   );
 }
 

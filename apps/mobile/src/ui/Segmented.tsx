@@ -44,10 +44,10 @@ export function Segmented<T extends string>({ options, value, onChange, label, w
                   borderColor: selected ? colors.accent : colors.border,
                   opacity: pressed ? 0.8 : 1,
                 },
-                wrap ? null : styles.chipGrow,
+                wrap ? null : [styles.chipGrow, { paddingHorizontal: 6 }],
               ]}
             >
-              <Text variant="bodyStrong" style={{ color: selected ? colors.onAccent : colors.text, fontSize: 14, lineHeight: 18 }} align="center" numberOfLines={wrap ? undefined : 1}>
+              <Text variant="bodyStrong" style={{ color: selected ? colors.onAccent : colors.text, fontSize: wrap ? 14 : 13, lineHeight: 18 }} align="center" numberOfLines={wrap ? undefined : 1} adjustsFontSizeToFit minimumFontScale={0.85}>
                 {o.label}
               </Text>
               {o.hint ? (

@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
 
 import { goBack } from '@/lib/nav';
 import { usePreferences, useUpsertPreferences, type PreferencesRow } from '@/features/profile/hooks';
 import { config } from '@/lib/config';
 import { errorMessage } from '@/lib/net';
-import { Button, Card, Input, Screen, Segmented, SkeletonCard, Text, radius, space, touch, useTheme } from '@/ui';
+import { Button, Card, Chips, Input, PageHeader, Screen, Segmented, SkeletonCard, Text, space } from '@/ui';
 
 const CUISINES = ['Indian', 'Canadian', 'Mediterranean', 'East Asian', 'Mexican', 'Middle Eastern', 'Other'];
 const DIETS = [
@@ -22,9 +21,7 @@ export default function PrivacyAndDiet() {
   const prefs = usePreferences();
   return (
     <Screen testID="privacy-screen">
-      <Text variant="title" style={{ marginTop: space.lg }}>
-        Diet and AI consent
-      </Text>
+      <PageHeader title="Diet and AI consent" backTo="/profile" />
       {prefs.isLoading ? (
         <SkeletonCard lines={5} />
       ) : (
@@ -33,7 +30,6 @@ export default function PrivacyAndDiet() {
           <DietForm key={prefs.data?.updated_at ?? 'new'} p={prefs.data ?? null} />
         </>
       )}
-      <Button label="Back" variant="ghost" onPress={() => goBack('/profile')} />
     </Screen>
   );
 }
@@ -57,9 +53,9 @@ function ConsentCard({ p }: { p: PreferencesRow | null }) {
 
   return (
     <Card style={{ gap: space.md }}>
-      <Text variant="heading">Photo analysis</Text>
+      <Text variant="heading">Photo analysis and Coach</Text>
       <Text variant="small" color="textMuted">
-        With consent, Scan Meal sends the photo you choose (resized to 1,600 px, location metadata removed) plus your diet pattern and allergies to the configured AI provider (Anthropic) to identify foods and estimate portions. The photo itself is kept only in your private storage in your own Supabase project. The provider&apos;s data-use terms and retention are summarised in docs/PRIVACY.md with links. Consent is versioned ({config.aiConsentVersion}); withdrawing it turns photo analysis off immediately. Everything else keeps working.
+        With consent, Scan meal sends the photo you choose (resized to 1,600 px, location metadata removed) plus your diet pattern and allergies to the AI provider (Anthropic) to identify foods and estimate portions. The Coach sends a summary of your last 14 days of logs with each question, never photos. Photos stay in your own private storage. The provider&apos;s data-use terms are summarised in docs/PRIVACY.md. Consent is versioned ({config.aiConsentVersion}); withdrawing it turns both features off at once. Everything else keeps working.
       </Text>
       <Segmented<'on' | 'off'>
         value={consented ? 'on' : 'off'}
@@ -84,7 +80,6 @@ function ConsentCard({ p }: { p: PreferencesRow | null }) {
 }
 
 function DietForm({ p }: { p: PreferencesRow | null }) {
-  const { colors } = useTheme();
   const upsert = useUpsertPreferences();
   const [diet, setDiet] = useState<string | null>(p?.diet_pattern ?? null);
   const [allergies, setAllergies] = useState((p?.allergies ?? []).join(', '));
@@ -107,27 +102,7 @@ function DietForm({ p }: { p: PreferencesRow | null }) {
       <Text variant="heading">Diet</Text>
       <Segmented<string> label="Pattern" wrap value={diet} onChange={setDiet} options={DIETS} />
       <Input label="Allergies (comma separated)" value={allergies} onChangeText={setAllergies} hint="Items that may contain these are flagged neutrally. A photo can never confirm an allergen is absent." />
-      <View style={{ gap: space.sm }}>
-        <Text variant="small" color="textMuted">
-          Cuisines
-        </Text>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
-          {CUISINES.map((c) => {
-            const on = cuisines.includes(c);
-            return (
-              <Pressable
-                key={c}
-                accessibilityRole="checkbox"
-                accessibilityState={{ checked: on }}
-                onPress={() => setCuisines(on ? cuisines.filter((x) => x !== c) : [...cuisines, c])}
-                style={[styles.chip, { backgroundColor: on ? colors.accent : colors.surface, borderColor: on ? colors.accent : colors.border }]}
-              >
-                <Text style={{ color: on ? colors.onAccent : colors.text }}>{c}</Text>
-              </Pressable>
-            );
-          })}
-        </View>
-      </View>
+      <Chips label="Cuisines" options={CUISINES} value={cuisines} onChange={setCuisines} />
       <Input label="Foods to avoid" value={avoid} onChangeText={setAvoid} />
       {error ? (
         <Text color="danger" variant="small">
@@ -146,6 +121,3 @@ function split(s: string): string[] {
     .filter(Boolean);
 }
 
-const styles = StyleSheet.create({
-  chip: { minHeight: touch.min, paddingHorizontal: space.md, justifyContent: 'center', borderRadius: radius.md, borderWidth: 1 },
-});

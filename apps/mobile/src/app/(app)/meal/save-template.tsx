@@ -6,7 +6,7 @@ import { useUserId } from '@/features/auth/session';
 import { useDraft } from '@/features/meals/draft-store';
 import { errorMessage } from '@/lib/net';
 import { supabase } from '@/lib/supabase';
-import { Button, Card, Input, Screen, Text, space } from '@/ui';
+import { Button, Card, Input, PageHeader, Screen, space, Text } from '@/ui';
 
 export default function SaveTemplate() {
   const draft = useDraft();
@@ -57,9 +57,7 @@ export default function SaveTemplate() {
 
   return (
     <Screen testID="save-template">
-      <Text variant="title" style={{ marginTop: space.md }}>
-        Save as reusable meal
-      </Text>
+      <PageHeader title="Save as reusable meal" backTo="/today" />
       <Card style={{ gap: space.md }}>
         <Text color="textMuted" variant="small">
           {draft ? `${draft.items.length} item${draft.items.length === 1 ? '' : 's'}: ${draft.items.map((i) => i.name).join(', ')}` : 'No meal in progress.'}

@@ -1,11 +1,10 @@
 import { router } from 'expo-router';
 import { ACTIVITY_LEVEL_LABELS, ACTIVITY_MULTIPLIERS, roundKcal, todayLocal, type ActivityLevel } from '@fitlens/core';
 
-import { goBack } from '@/lib/nav';
 import { useDay } from '@/features/day/hooks';
 import { useProfile } from '@/features/profile/hooks';
 import { energyEstimateFor } from '@/features/profile/tdee';
-import { Button, Card, Screen, SkeletonCard, Text, space } from '@/ui';
+import { Button, Card, PageHeader, Screen, SkeletonCard, space, Text } from '@/ui';
 
 export default function TdeeExplainer() {
   const today = todayLocal();
@@ -20,9 +19,7 @@ export default function TdeeExplainer() {
 
   return (
     <Screen testID="tdee-explainer">
-      <Text variant="title" style={{ marginTop: space.lg }}>
-        TDEE and your food target
-      </Text>
+      <PageHeader title="TDEE and your food target" backTo="/profile" />
       {profile.isLoading || day.isLoading ? (
         <SkeletonCard lines={4} />
       ) : (
@@ -76,7 +73,6 @@ export default function TdeeExplainer() {
           <Button label="Change goal or activity mode" variant="secondary" onPress={() => router.push('/profile/targets')} />
         </>
       )}
-      <Button label="Close" variant="ghost" onPress={() => goBack('/profile')} />
     </Screen>
   );
 }

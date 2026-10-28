@@ -97,7 +97,7 @@ export function CalorieCard({ day, hideNumbers, trackingOnly, tdeeEstimate }: { 
           kcal
         </Text>
       </View>
-      <View style={[styles.plateTrack, { backgroundColor: 'rgba(0,0,0,0.12)' }]}>
+      <View style={[styles.plateTrack, { backgroundColor: colors.inverseLine }]}>
         <View style={[styles.plateFill, { width: `${ratio * 100}%`, backgroundColor: fg }]} />
       </View>
       <Text variant="small" style={{ color: fg }}>
@@ -109,11 +109,11 @@ export function CalorieCard({ day, hideNumbers, trackingOnly, tdeeEstimate }: { 
           {unknown > 0 ? `${unknown} item${unknown === 1 ? '' : 's'} with unknown calories not counted.` : ''}
         </Text>
       ) : null}
-      <View style={[styles.plateStats, { borderTopColor: 'rgba(0,0,0,0.12)' }]}>
+      <View style={[styles.plateStats, { borderTopColor: colors.inverseLine }]}>
         <PlateStat label="Target" value={target != null ? `${target.toLocaleString()} kcal` : 'Not set'} fg={fg} testID="calorie-target" />
-        <View style={[styles.plateDivider, { backgroundColor: 'rgba(0,0,0,0.12)' }]} />
+        <View style={[styles.plateDivider, { backgroundColor: colors.inverseLine }]} />
         <PlateStat label="Est. burn" value={tdeeEstimate != null ? (roundKcal(tdeeEstimate) ?? 0).toLocaleString() : 'Unknown'} fg={fg} onPress={() => router.push('/profile/tdee')} />
-        <View style={[styles.plateDivider, { backgroundColor: 'rgba(0,0,0,0.12)' }]} />
+        <View style={[styles.plateDivider, { backgroundColor: colors.inverseLine }]} />
         <PlateStat label="Protein" value={day.totals?.totals.protein_g != null ? `${Math.round(day.totals.totals.protein_g)} g` : '0 g'} fg={fg} />
       </View>
     </Card>

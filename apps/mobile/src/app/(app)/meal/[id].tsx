@@ -1,12 +1,11 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect } from 'react';
 
-import { goBack } from '@/lib/nav';
 import { draftFromMeal } from '@/features/meals/api';
 import { getDraft, setDraft } from '@/features/meals/draft-store';
 import { useMeal } from '@/features/meals/hooks';
 import { MealEditor } from '@/features/meals/MealEditor';
-import { Button, EmptyState, ErrorState, Screen, SkeletonCard, Text, space } from '@/ui';
+import { EmptyState, ErrorState, PageHeader, Screen, SkeletonCard } from '@/ui';
 
 export default function MealDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -18,9 +17,7 @@ export default function MealDetail() {
 
   return (
     <Screen testID="meal-detail">
-      <Text variant="title" style={{ marginTop: space.md }}>
-        {meal.data?.status === 'draft' ? 'Draft meal' : 'Edit meal'}
-      </Text>
+      <PageHeader title={meal.data?.status === 'draft' ? 'Draft meal' : 'Edit meal'} backTo="/today" />
       {meal.isLoading ? (
         <SkeletonCard lines={4} />
       ) : meal.isError ? (
@@ -30,7 +27,6 @@ export default function MealDetail() {
       ) : (
         <MealEditor mode="existing" />
       )}
-      <Button label="Back" variant="ghost" onPress={() => goBack('/today')} />
     </Screen>
   );
 }

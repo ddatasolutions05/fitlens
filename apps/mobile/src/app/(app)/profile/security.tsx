@@ -1,10 +1,9 @@
 import { useState } from 'react';
 
-import { goBack } from '@/lib/nav';
 import { useSession } from '@/features/auth/session';
 import { errorMessage } from '@/lib/net';
 import { getSupabase } from '@/lib/supabase';
-import { Button, Card, Input, Row, Screen, Text, space } from '@/ui';
+import { Button, Card, Input, PageHeader, Row, Screen, space, Text } from '@/ui';
 
 export default function Security() {
   const { session } = useSession();
@@ -55,9 +54,7 @@ export default function Security() {
 
   return (
     <Screen testID="security-screen">
-      <Text variant="title" style={{ marginTop: space.lg }}>
-        Sign-in and security
-      </Text>
+      <PageHeader title="Sign-in and security" backTo="/profile" />
       <Card style={{ gap: space.xs }}>
         <Row title="Email" right={<Text variant="small">{session?.user.email}</Text>} />
         <Row title="Sign-in methods" right={<Text variant="small">{identities.map((i) => i.provider).join(', ') || 'email link'}</Text>} />
@@ -89,7 +86,6 @@ export default function Security() {
           {error}
         </Text>
       ) : null}
-      <Button label="Back" variant="ghost" onPress={() => goBack('/profile')} />
     </Screen>
   );
 }

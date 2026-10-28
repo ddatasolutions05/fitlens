@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useMemo, useRef, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import {
   ACTIVITY_LEVEL_LABELS,
   PACE_DEFAULT,
@@ -22,7 +22,7 @@ import { useAddGoalVersion, useUpsertPreferences, useUpsertProfile } from '@/fea
 import { planGoal } from '@/features/profile/targets';
 import { config } from '@/lib/config';
 import { errorMessage } from '@/lib/net';
-import { Button, Card, Input, NumberField, Screen, Segmented, Text, radius, space, touch, useTheme } from '@/ui';
+import { BrandMark, Button, Card, Chips, Input, Note, NumberField, Screen, Segmented, Stat, Text, radius, space, useTheme } from '@/ui';
 
 interface Answers {
   unitSystem: UnitSystem;
@@ -51,7 +51,17 @@ interface Answers {
   aiConsent: boolean | null;
 }
 
-const STEPS = ['Welcome', 'About you', 'Body', 'Activity', 'Goal', 'Food', 'Circumstances', 'Photos and AI', 'Your numbers'] as const;
+const STEPS = [
+  { key: 'welcome', title: 'Welcome', lead: 'Nine short questions, under three minutes. Everything stays editable in Profile.' },
+  { key: 'about', title: 'About you', lead: 'Two inputs for the resting energy formula.' },
+  { key: 'body', title: 'Your body', lead: 'Weight drives resting energy, protein and water targets.' },
+  { key: 'activity', title: 'How you move', lead: 'Sets the multiplier on resting energy.' },
+  { key: 'goal', title: 'Your goal', lead: 'Decides the gap between what you burn and what you aim to eat.' },
+  { key: 'food', title: 'What you eat', lead: 'Keeps suggestions and photo results in your lane.' },
+  { key: 'circumstances', title: 'Circumstances', lead: 'Any of these switches the app to tracking-only mode, without deficit or pace.' },
+  { key: 'ai', title: 'Photos and AI', lead: 'Your choice. Everything else works without it.' },
+  { key: 'numbers', title: 'Your numbers', lead: 'Calculated from your answers. Change any of it later under Targets.' },
+] as const;
 
 const CUISINES = ['Indian', 'Canadian', 'Mediterranean', 'East Asian', 'Mexican', 'Middle Eastern', 'Other'];
 const DIETS = [
@@ -202,127 +212,119 @@ export function OnboardingFlow() {
   }
 
   const weightUnit = a.unitSystem === 'imperial' ? 'lb' : 'kg';
+  const current = STEPS[step]!;
+  const fg = colors.onInverse;
 
   return (
     <Screen testID={`onboarding-step-${step}`}>
-      <View style={styles.progress}>
-        {STEPS.map((_, i) => (
-          <View key={i} style={[styles.dot, { backgroundColor: i <= step ? colors.accent : colors.border }]} />
-        ))}
+      <View style={styles.progressWrap}>
+        <View style={[styles.track, { backgroundColor: colors.surfaceAlt }]}>
+          <View style={[styles.fill, { width: `${((step + 1) / STEPS.length) * 100}%`, backgroundColor: colors.text }]} />
+        </View>
+        <Text variant="label" color="textMuted">
+          Step {step + 1} of {STEPS.length}
+        </Text>
       </View>
-      <Text variant="caption" color="textMuted">
-        Step {step + 1} of {STEPS.length}
-      </Text>
+
+      <View style={{ gap: space.xs }}>
+        {step === 0 ? (
+          <View style={{ marginBottom: space.sm }}>
+            <BrandMark size={40} />
+          </View>
+        ) : null}
+        <Text variant="title">{step === 0 ? `Welcome to ${config.brandName}` : current.title}</Text>
+        <Text color="textMuted">{current.lead}</Text>
+      </View>
 
       {step === 0 ? (
-        <>
-          <Text variant="title">Welcome to FitLens</Text>
-          <Text color="textMuted">A few questions, under three minutes. Everything stays editable in Profile.</Text>
-          <Card style={{ gap: space.lg }}>
-            <Input label="What should we call you? (optional)" value={a.displayName} onChangeText={(v) => set('displayName', v)} placeholder="First name" />
-            <Segmented<UnitSystem>
-              label="Units"
-              value={a.unitSystem}
-              onChange={(v) => set('unitSystem', v)}
-              options={[
-                { value: 'metric', label: 'Metric', hint: 'kg, cm' },
-                { value: 'imperial', label: 'Imperial', hint: 'lb, ft' },
-              ]}
-            />
-          </Card>
-        </>
+        <View style={styles.fields}>
+          <Input label="What should we call you? (optional)" value={a.displayName} onChangeText={(v) => set('displayName', v)} placeholder="First name" />
+          <Segmented<UnitSystem>
+            label="Units"
+            value={a.unitSystem}
+            onChange={(v) => set('unitSystem', v)}
+            options={[
+              { value: 'metric', label: 'Metric', hint: 'kg, cm' },
+              { value: 'imperial', label: 'Imperial', hint: 'lb, ft' },
+            ]}
+          />
+        </View>
       ) : null}
 
       {step === 1 ? (
-        <>
-          <Text variant="title">About you</Text>
-          <Card style={{ gap: space.lg }}>
-            <Input label="Date of birth" value={a.birthDate} onChangeText={(v) => set('birthDate', v)} placeholder="YYYY-MM-DD" inputMode="numeric" hint="Why we ask: age is part of the resting energy formula." testID="birth-date" />
-            {age != null ? (
-              <Text variant="caption" color="textMuted">
-                That makes you {age}.
-              </Text>
-            ) : null}
-            <Segmented<SexForEquation>
-              label="Sex for the metabolic equation"
-              value={a.sex}
-              onChange={(v) => set('sex', v)}
-              options={[
-                { value: 'female', label: 'Female' },
-                { value: 'male', label: 'Male' },
-                { value: 'unspecified', label: 'Prefer not to say' },
-              ]}
-              wrap
-            />
-            <Text variant="caption" color="textMuted">
-              Why we ask: Mifflin-St Jeor uses different constants (+5 for male, -161 for female). &quot;Prefer not to say&quot; uses the average of both and adds about 80 kcal of uncertainty.
-            </Text>
-          </Card>
-        </>
+        <View style={styles.fields}>
+          <Input label="Date of birth" value={a.birthDate} onChangeText={(v) => set('birthDate', v)} placeholder="YYYY-MM-DD" inputMode="numeric" hint={age != null ? `That makes you ${age}.` : undefined} testID="birth-date" />
+          <Segmented<SexForEquation>
+            label="Sex for the metabolic equation"
+            value={a.sex}
+            onChange={(v) => set('sex', v)}
+            options={[
+              { value: 'female', label: 'Female' },
+              { value: 'male', label: 'Male' },
+              { value: 'unspecified', label: 'Prefer not to say' },
+            ]}
+            wrap
+          />
+          <Note label="Why we ask">
+            Age is part of the resting energy formula. Mifflin-St Jeor uses different constants by sex (+5 for male, -161 for female); prefer not to say averages both and adds about 80 kcal of uncertainty.
+          </Note>
+        </View>
       ) : null}
 
       {step === 2 ? (
-        <>
-          <Text variant="title">Body</Text>
-          <Card style={{ gap: space.lg }}>
-            {a.unitSystem === 'imperial' ? (
-              <View style={{ flexDirection: 'row', gap: space.sm }}>
-                <View style={{ flex: 1 }}>
-                  <NumberField label="Height (ft)" value={a.heightFt} onChangeNumber={(v) => set('heightFt', v)} decimals={0} />
-                </View>
-                <View style={{ flex: 1 }}>
-                  <NumberField label="(in)" value={a.heightIn} onChangeNumber={(v) => set('heightIn', v)} decimals={0} />
-                </View>
+        <View style={styles.fields}>
+          {a.unitSystem === 'imperial' ? (
+            <View style={styles.row}>
+              <View style={{ flex: 1 }}>
+                <NumberField label="Height (ft)" value={a.heightFt} onChangeNumber={(v) => set('heightFt', v)} decimals={0} />
               </View>
-            ) : (
-              <NumberField label="Height (cm)" value={a.heightCm} onChangeNumber={(v) => set('heightCm', v)} decimals={0} placeholder="170" testID="height" />
-            )}
-            <NumberField label={`Current weight (${weightUnit})`} value={a.weight} onChangeNumber={(v) => set('weight', v)} placeholder={a.unitSystem === 'imperial' ? '165' : '75'} testID="weight" hint="Why we ask: weight drives resting energy, protein and water targets. Logged as your first weigh-in." />
-            <NumberField label={`Goal weight (${weightUnit}, optional)`} value={a.goalWeight} onChangeNumber={(v) => set('goalWeight', v)} hint="Why we ask: used for protein when BMI is over 30 and to check the goal is safe." />
-          </Card>
-        </>
+              <View style={{ flex: 1 }}>
+                <NumberField label="(in)" value={a.heightIn} onChangeNumber={(v) => set('heightIn', v)} decimals={0} />
+              </View>
+            </View>
+          ) : (
+            <NumberField label="Height (cm)" value={a.heightCm} onChangeNumber={(v) => set('heightCm', v)} decimals={0} placeholder="170" testID="height" />
+          )}
+          <NumberField label={`Current weight (${weightUnit})`} value={a.weight} onChangeNumber={(v) => set('weight', v)} placeholder={a.unitSystem === 'imperial' ? '165' : '75'} testID="weight" hint="Logged as your first weigh-in." />
+          <NumberField label={`Goal weight (${weightUnit}, optional)`} value={a.goalWeight} onChangeNumber={(v) => set('goalWeight', v)} />
+          <Note label="Why we ask">Goal weight is used for protein when BMI is over 30 and to check the goal is safe.</Note>
+        </View>
       ) : null}
 
       {step === 3 ? (
-        <>
-          <Text variant="title">Activity</Text>
-          <Card style={{ gap: space.lg }}>
-            <Segmented<ActivityLevel>
-              label="Typical activity level"
-              wrap
-              value={a.activityLevel}
-              onChange={(v) => set('activityLevel', v)}
-              options={(Object.keys(ACTIVITY_LEVEL_LABELS) as ActivityLevel[]).map((k) => ({ value: k, label: ACTIVITY_LEVEL_LABELS[k] }))}
-            />
-            <Text variant="caption" color="textMuted">
-              Why we ask: the level sets the multiplier on resting energy. Logged steps and workouts are shown but not added on top, so nothing is counted twice.
-            </Text>
-            <NumberField label="Typical daily steps (optional)" value={a.typicalSteps} onChangeNumber={(v) => set('typicalSteps', v)} decimals={0} placeholder="6000" hint="Your step goal starts 1,000 above this." />
-            <View style={{ flexDirection: 'row', gap: space.sm }}>
-              <View style={{ flex: 1 }}>
-                <NumberField label="Training days / week" value={a.trainingDays} onChangeNumber={(v) => set('trainingDays', v)} decimals={0} />
-              </View>
-              <View style={{ flex: 1 }}>
-                <NumberField label="Minutes / session" value={a.trainingMinutes} onChangeNumber={(v) => set('trainingMinutes', v)} decimals={0} />
-              </View>
+        <View style={styles.fields}>
+          <Segmented<ActivityLevel>
+            label="Typical activity level"
+            wrap
+            value={a.activityLevel}
+            onChange={(v) => set('activityLevel', v)}
+            options={(Object.keys(ACTIVITY_LEVEL_LABELS) as ActivityLevel[]).map((k) => ({ value: k, label: ACTIVITY_LEVEL_LABELS[k] }))}
+          />
+          <NumberField label="Typical daily steps (optional)" value={a.typicalSteps} onChangeNumber={(v) => set('typicalSteps', v)} decimals={0} placeholder="6000" hint="Your step goal starts 1,000 above this." />
+          <View style={styles.row}>
+            <View style={{ flex: 1 }}>
+              <NumberField label="Training days a week" value={a.trainingDays} onChangeNumber={(v) => set('trainingDays', v)} decimals={0} />
             </View>
-            <Input label="Training type (optional)" value={a.trainingType} onChangeText={(v) => set('trainingType', v)} placeholder="strength, running, yoga…" />
-          </Card>
-        </>
+            <View style={{ flex: 1 }}>
+              <NumberField label="Minutes a session" value={a.trainingMinutes} onChangeNumber={(v) => set('trainingMinutes', v)} decimals={0} />
+            </View>
+          </View>
+          <Input label="Training type (optional)" value={a.trainingType} onChangeText={(v) => set('trainingType', v)} placeholder="strength, running, yoga" />
+          <Note label="Why we ask">Logged steps and workouts are shown but not added on top of the multiplier, so nothing is counted twice.</Note>
+        </View>
       ) : null}
 
       {step === 4 ? (
-        <>
-          <Text variant="title">Goal</Text>
+        <View style={styles.fields}>
           {trackingOnly ? (
-            <Card tone="alt">
+            <Card tone="alt" style={{ gap: space.xs }}>
               <Text variant="bodyStrong">Tracking-only mode</Text>
               <Text variant="small" color="textMuted">
-                Because of what you told us, FitLens will track intake, nutrients, activity and weight without setting a deficit or a pace. Targets are best set with your care provider. You can edit this later in Profile.
+                Because of what you told us, the app will track intake, nutrients, activity and weight without setting a deficit or a pace. Targets are best set with your care provider. You can change this later in Profile.
               </Text>
             </Card>
           ) : (
-            <Card style={{ gap: space.lg }}>
+            <>
               <Segmented<GoalType>
                 label="What are you working toward?"
                 wrap
@@ -360,149 +362,101 @@ export function OnboardingFlow() {
                   ]}
                 />
               ) : null}
-            </Card>
+            </>
           )}
-        </>
+        </View>
       ) : null}
 
       {step === 5 ? (
-        <>
-          <Text variant="title">Food</Text>
-          <Card style={{ gap: space.lg }}>
-            <Segmented<string> label="Diet pattern" wrap value={a.dietPattern} onChange={(v) => set('dietPattern', v)} options={DIETS} />
-            <Input label="Allergies (comma separated)" value={a.allergies} onChangeText={(v) => set('allergies', v)} placeholder="peanuts, shellfish" hint="Why we ask: items that may contain these are flagged. A photo can never confirm an allergen is absent." />
-            <View style={{ gap: space.sm }}>
-              <Text variant="small" color="textMuted">
-                Cuisines you eat most
-              </Text>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: space.sm }}>
-                {CUISINES.map((c) => {
-                  const on = a.cuisines.includes(c);
-                  return (
-                    <Pressable
-                      key={c}
-                      accessibilityRole="checkbox"
-                      accessibilityState={{ checked: on }}
-                      onPress={() => set('cuisines', on ? a.cuisines.filter((x) => x !== c) : [...a.cuisines, c])}
-                      style={[styles.chip, { backgroundColor: on ? colors.accent : colors.surface, borderColor: on ? colors.accent : colors.border }]}
-                    >
-                      <Text style={{ color: on ? colors.onAccent : colors.text }}>{c}</Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            </View>
-            <Input label="Foods to avoid (optional)" value={a.avoidFoods} onChangeText={(v) => set('avoidFoods', v)} placeholder="mushrooms, cilantro" />
-          </Card>
-        </>
+        <View style={styles.fields}>
+          <Segmented<string> label="Diet pattern" wrap value={a.dietPattern} onChange={(v) => set('dietPattern', v)} options={DIETS} />
+          <Input label="Allergies (comma separated)" value={a.allergies} onChangeText={(v) => set('allergies', v)} placeholder="peanuts, shellfish" />
+          <Chips label="Cuisines you eat most" options={CUISINES} value={a.cuisines} onChange={(v) => set('cuisines', v)} />
+          <Input label="Foods to avoid (optional)" value={a.avoidFoods} onChangeText={(v) => set('avoidFoods', v)} placeholder="mushrooms, cilantro" />
+          <Note label="Why we ask">Items that may contain an allergen are flagged. A photo can never confirm an allergen is absent.</Note>
+        </View>
       ) : null}
 
       {step === 6 ? (
-        <>
-          <Text variant="title">Circumstances</Text>
-          <Text color="textMuted">These change the guidance. Any of them switches FitLens to tracking-only mode.</Text>
-          <Card style={{ gap: space.md }}>
-            {under18 ? (
+        <View style={styles.fields}>
+          {under18 ? (
+            <Card tone="alt">
               <Text variant="small" color="textMuted">
                 You are under 18, so tracking-only mode is on.
               </Text>
-            ) : null}
-            <Segmented<'yes' | 'no'>
-              label="Pregnant"
-              value={a.pregnant ? 'yes' : 'no'}
-              onChange={(v) => set('pregnant', v === 'yes')}
-              options={[
-                { value: 'no', label: 'No' },
-                { value: 'yes', label: 'Yes' },
-              ]}
-            />
-            <Segmented<'yes' | 'no'>
-              label="Breastfeeding"
-              value={a.breastfeeding ? 'yes' : 'no'}
-              onChange={(v) => set('breastfeeding', v === 'yes')}
-              options={[
-                { value: 'no', label: 'No' },
-                { value: 'yes', label: 'Yes' },
-              ]}
-            />
-          </Card>
-        </>
+            </Card>
+          ) : null}
+          <Segmented<'yes' | 'no'>
+            label="Pregnant"
+            value={a.pregnant ? 'yes' : 'no'}
+            onChange={(v) => set('pregnant', v === 'yes')}
+            options={[
+              { value: 'no', label: 'No' },
+              { value: 'yes', label: 'Yes' },
+            ]}
+          />
+          <Segmented<'yes' | 'no'>
+            label="Breastfeeding"
+            value={a.breastfeeding ? 'yes' : 'no'}
+            onChange={(v) => set('breastfeeding', v === 'yes')}
+            options={[
+              { value: 'no', label: 'No' },
+              { value: 'yes', label: 'Yes' },
+            ]}
+          />
+        </View>
       ) : null}
 
       {step === 7 ? (
-        <>
-          <Text variant="title">Photos and AI</Text>
-          <Card style={{ gap: space.md }}>
-            <Text>Scan Meal sends your meal photo to an AI provider to identify foods and estimate portions.</Text>
-            <Text variant="small" color="textMuted">
-              What is sent: the photo you choose (resized, location data removed) and your diet pattern and allergies, so the suggestions fit. Where: Anthropic&apos;s API, the provider configured for this app. Retention: the photo is stored in your own private storage; the provider&apos;s data-use terms are summarised in Profile, Privacy. You can withdraw consent at any time, which turns photo analysis off. Everything else works without it.
-            </Text>
-            <Segmented<'yes' | 'no'>
-              value={a.aiConsent == null ? null : a.aiConsent ? 'yes' : 'no'}
-              onChange={(v) => set('aiConsent', v === 'yes')}
-              options={[
-                { value: 'yes', label: 'Allow photo analysis' },
-                { value: 'no', label: 'Not now' },
-              ]}
-            />
-          </Card>
-        </>
+        <View style={styles.fields}>
+          <Text>Scan meal sends your meal photo to an AI provider to identify foods and estimate portions. The Coach sends a summary of your logs, never photos.</Text>
+          <Note label="What is sent">
+            The photo you choose (resized, location data removed) plus your diet pattern and allergies, so suggestions fit. Where: Anthropic, the provider configured for this app. The photo itself stays in your own private storage. You can withdraw consent at any time under Profile; it turns both features off.
+          </Note>
+          <Segmented<'yes' | 'no'>
+            value={a.aiConsent == null ? null : a.aiConsent ? 'yes' : 'no'}
+            onChange={(v) => set('aiConsent', v === 'yes')}
+            options={[
+              { value: 'yes', label: 'Allow AI features' },
+              { value: 'no', label: 'Not now' },
+            ]}
+          />
+        </View>
       ) : null}
 
       {step === 8 ? (
-        <>
-          <Text variant="title">Your numbers</Text>
+        <View style={styles.fields}>
           {plan ? (
             <>
-              <Card style={{ gap: space.sm }}>
-                <Text variant="small" color="textMuted">
-                  Resting energy (Mifflin-St Jeor)
-                </Text>
-                <Text variant="heading" tabular testID="ree-value">
-                  {Math.round(plan.ree.ree).toLocaleString()} kcal
-                </Text>
-                <Text variant="small" color="textMuted">
-                  {plan.ree.formula}
-                </Text>
-                {plan.ree.note ? (
-                  <Text variant="caption" color="textFaint">
-                    {plan.ree.note}
-                  </Text>
-                ) : null}
-                <Text variant="caption" color="textFaint">
-                  Individual resting energy commonly varies by about ±10%.
-                </Text>
-              </Card>
-              <Card style={{ gap: space.sm }}>
-                <Text variant="small" color="textMuted">
-                  Estimated daily energy use (TDEE)
-                </Text>
-                <Text variant="heading" tabular testID="tdee-value">
-                  {plan.tdee.toLocaleString()} kcal
-                </Text>
-                <Text variant="small" color="textMuted">
-                  Resting energy × {ACTIVITY_LEVEL_LABELS[a.activityLevel ?? 'sedentary']} multiplier. This is what you burn, not what you should eat.
-                </Text>
-              </Card>
-              <Card tone="accent" style={{ gap: space.sm }}>
-                <Text variant="small" color="accent">
+              <Card tone="inverse" style={{ gap: space.sm }}>
+                <Text variant="label" style={{ color: fg, opacity: 0.6 }}>
                   Daily food target
                 </Text>
-                <Text variant="title" tabular testID="target-value">
-                  {plan.targets.calorieTarget != null ? `${plan.targets.calorieTarget.toLocaleString()} kcal` : 'No calorie target (tracking only)'}
+                <Text variant="display" tabular style={{ color: fg, fontSize: 48, lineHeight: 52 }} testID="target-value">
+                  {plan.targets.calorieTarget != null ? `${plan.targets.calorieTarget.toLocaleString()} kcal` : 'No calorie target'}
                 </Text>
-                <Text variant="small">{plan.targets.rationale}</Text>
-                <Text variant="small" color="textMuted">
-                  Protein {plan.targets.proteinG} g{plan.targets.carbsG != null ? ` · Carbs ${plan.targets.carbsG} g` : ''}
-                  {plan.targets.fatG != null ? ` · Fat ${plan.targets.fatG} g` : ''}
-                  {plan.targets.fibreG != null ? ` · Fibre ${plan.targets.fibreG} g` : ''} · Water {plan.targets.waterMl} ml · Steps {plan.targets.stepGoal.toLocaleString()}
+                <Text variant="small" style={{ color: fg }}>
+                  {plan.targets.calorieTarget != null ? plan.targets.rationale : 'Tracking only: intake, nutrients, activity and weight, with no deficit or pace.'}
                 </Text>
-                {plan.targets.notes.map((n) => (
-                  <Text key={n} variant="caption" color="textMuted">
-                    {n}
+                <View style={[styles.plateLine, { borderTopColor: colors.inverseLine }]}>
+                  <Text variant="small" style={{ color: fg }} tabular>
+                    Protein {plan.targets.proteinG} g{plan.targets.carbsG != null ? `, carbs ${plan.targets.carbsG} g` : ''}
+                    {plan.targets.fatG != null ? `, fat ${plan.targets.fatG} g` : ''}
+                    {plan.targets.fibreG != null ? `, fibre ${plan.targets.fibreG} g` : ''}
                   </Text>
-                ))}
+                  <Text variant="small" style={{ color: fg }} tabular>
+                    Water {plan.targets.waterMl.toLocaleString()} ml, steps {plan.targets.stepGoal.toLocaleString()}
+                  </Text>
+                </View>
               </Card>
+              <View style={styles.row}>
+                <Stat label="Resting energy" value={`${Math.round(plan.ree.ree).toLocaleString()} kcal`} note="Mifflin-St Jeor" testID="ree-value" style={{ minWidth: 0 }} />
+                <Stat label="Daily burn (TDEE)" value={`${plan.tdee.toLocaleString()} kcal`} note={`${ACTIVITY_LEVEL_LABELS[a.activityLevel ?? 'sedentary']} multiplier`} testID="tdee-value" style={{ minWidth: 0 }} />
+              </View>
+              <Note label="How it is built">
+                {`Resting energy: ${plan.ree.formula}.${plan.ree.note ? ` ${plan.ree.note}` : ''} It commonly varies by about 10% between people. TDEE is what you burn; the target is what you aim to eat.`}
+              </Note>
+              {plan.targets.notes.length > 0 ? <Note>{plan.targets.notes.join(' ')}</Note> : null}
             </>
           ) : (
             <Card tone="alt">
@@ -514,15 +468,15 @@ export function OnboardingFlow() {
               {error}
             </Text>
           ) : null}
-        </>
+        </View>
       ) : null}
 
       <View style={styles.nav}>
         {step > 0 ? <Button label="Back" variant="ghost" onPress={() => setStep(step - 1)} style={{ flex: 1 }} /> : null}
         {step < STEPS.length - 1 ? (
-          <Button label="Continue" onPress={() => setStep(step + 1)} disabled={!canContinue} style={{ flex: 2 }} testID="continue" />
+          <Button label="Continue" size="lg" onPress={() => setStep(step + 1)} disabled={!canContinue} style={{ flex: 2 }} testID="continue" />
         ) : (
-          <Button label="Start tracking" onPress={() => void finish()} disabled={!plan} loading={saving} style={{ flex: 2 }} testID="finish" />
+          <Button label="Start tracking" size="lg" onPress={() => void finish()} disabled={!plan} loading={saving} style={{ flex: 2 }} testID="finish" />
         )}
       </View>
     </Screen>
@@ -537,8 +491,11 @@ function splitList(s: string): string[] {
 }
 
 const styles = StyleSheet.create({
-  progress: { flexDirection: 'row', gap: 4, marginTop: space.lg },
-  dot: { flex: 1, height: 4, borderRadius: 2 },
+  progressWrap: { gap: space.sm, marginTop: space.md },
+  track: { height: 3, borderRadius: radius.pill, overflow: 'hidden' },
+  fill: { height: '100%' },
+  fields: { gap: space.lg },
+  row: { flexDirection: 'row', gap: space.sm },
+  plateLine: { borderTopWidth: 1, paddingTop: space.sm, marginTop: space.xs, gap: 2 },
   nav: { flexDirection: 'row', gap: space.sm, marginTop: space.md },
-  chip: { minHeight: touch.min, paddingHorizontal: space.md, justifyContent: 'center', borderRadius: radius.md, borderWidth: 1 },
 });

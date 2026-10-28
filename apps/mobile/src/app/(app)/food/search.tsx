@@ -3,13 +3,12 @@ import { useEffect, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { formatNutrient, todayLocal } from '@fitlens/core';
 
-import { goBack } from '@/lib/nav';
 import { AddFoodSheet, pickedFromFood, pickedFromSearch, type PickedFood } from '@/features/food/AddFoodSheet';
 import { useRecentFoods, useSearchFoods, useToggleFavourite } from '@/features/food/hooks';
 import { draftItemsFromSaved, touchSavedMeal, useSavedMeals } from '@/features/food/saved-meals';
 import { addItem, ensureDraft, setDraft, updateItem } from '@/features/meals/draft-store';
 import { provenanceForSource, provenanceLabel, sourceNameFor, type DraftItem } from '@/features/meals/model';
-import { Button, Card, EmptyState, ErrorState, Icon, Input, Row, Screen, Skeleton, Text, space, useTheme } from '@/ui';
+import { Button, Card, EmptyState, ErrorState, Icon, Input, PageHeader, Row, Screen, Skeleton, space, Text, useTheme } from '@/ui';
 
 export default function FoodSearch() {
   const { colors } = useTheme();
@@ -45,11 +44,8 @@ export default function FoodSearch() {
 
   return (
     <Screen testID="food-search">
-      <View style={{ marginTop: space.md, gap: space.sm }}>
-        <Text variant="title">{replaceId ? 'Change food' : 'Add food'}</Text>
-        <Text variant="small" color="textMuted">
-          Search three databases, pick a saved meal, or type the food in yourself.
-        </Text>
+      <PageHeader title={replaceId ? 'Change food' : 'Add food'} subtitle="Search three databases, pick a saved meal, or type the food in yourself." backTo="/today" />
+      <View style={{ gap: space.sm }}>
         <Input value={query} onChangeText={setQuery} placeholder="Search foods, e.g. dal, roti, chicken breast" autoFocus autoCorrect={false} testID="food-query" returnKeyType="search" />
         <View style={{ flexDirection: 'row', gap: space.sm }}>
           <Button
@@ -159,8 +155,6 @@ export default function FoodSearch() {
           </Card>
         </>
       )}
-
-      <Button label="Back" variant="ghost" onPress={() => goBack('/today')} />
 
       <AddFoodSheet food={picked} onClose={() => setPicked(null)} onAdd={(item) => commit([item])} />
     </Screen>

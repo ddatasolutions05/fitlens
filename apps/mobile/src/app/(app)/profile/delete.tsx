@@ -2,11 +2,10 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { deleteAccountResultSchema, functionErrorSchema } from '@fitlens/schemas';
 
-import { goBack } from '@/lib/nav';
 import { useSession } from '@/features/auth/session';
 import { errorMessage } from '@/lib/net';
 import { supabase } from '@/lib/supabase';
-import { Button, Card, Input, Screen, Text, space } from '@/ui';
+import { Button, Card, Input, PageHeader, Screen, space, Text } from '@/ui';
 
 export default function DeleteAccount() {
   const { signOut } = useSession();
@@ -37,9 +36,7 @@ export default function DeleteAccount() {
 
   return (
     <Screen testID="delete-screen">
-      <Text variant="title" style={{ marginTop: space.lg }}>
-        Delete account
-      </Text>
+      <PageHeader title="Delete account" backTo="/profile" />
       <Card style={{ gap: space.md }}>
         <Text color="textMuted" variant="small">
           This removes every row you own (profile, preferences, goals, meals, photos, weight, activity, water, day status, usage counters), every photo in storage, and then your sign-in. It runs immediately and cannot be undone. Export first if you want a copy.
@@ -52,7 +49,6 @@ export default function DeleteAccount() {
           </Text>
         ) : null}
       </Card>
-      <Button label="Back" variant="ghost" onPress={() => goBack('/profile')} />
     </Screen>
   );
 }

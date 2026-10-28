@@ -5,7 +5,7 @@ import { useSession } from '@/features/auth/session';
 import { config } from '@/lib/config';
 import { errorMessage } from '@/lib/net';
 import { getSupabase } from '@/lib/supabase';
-import { Button, Card, Input, Screen, Text, space } from '@/ui';
+import { Button, Card, Input, PageHeader, Screen, space, Text } from '@/ui';
 
 /** Landing page for the password recovery link. The link signs the user in; this screen sets the new password. */
 export default function ResetPassword() {
@@ -42,9 +42,7 @@ export default function ResetPassword() {
 
   return (
     <Screen testID="reset-password">
-      <Text variant="title" style={{ marginTop: space.xxl }}>
-        Choose a new password
-      </Text>
+      <PageHeader title="Choose a new password" backTo="/sign-in" />
       {loading ? (
         <Text color="textMuted">Checking your link…</Text>
       ) : !session ? (

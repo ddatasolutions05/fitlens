@@ -1,10 +1,9 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { View } from 'react-native';
-import { todayLocal } from '@fitlens/core';
+import { StyleSheet, View } from 'react-native';
+import { formatLocalDate, todayLocal } from '@fitlens/core';
 import type { AnalyzeMealResult, ClarifyingQuestion } from '@fitlens/schemas';
 
-import { goBack } from '@/lib/nav';
 import { useUserId } from '@/features/auth/session';
 import { addPhoto, ensureDraft, getDraft, setDraft, updateDraft } from '@/features/meals/draft-store';
 import { saveMeal } from '@/features/meals/api';
@@ -14,11 +13,12 @@ import { MealPhotoThumb } from '@/features/photo/MealPhotoThumb';
 import { usePreferences } from '@/features/profile/hooks';
 import { useFeatures } from '@/features/sync/useFeatures';
 import { errorMessage } from '@/lib/net';
-import { Button, Card, NotConfigured, Screen, Segmented, Skeleton, Text, space } from '@/ui';
+import { Button, Card, Icon, NotConfigured, PageHeader, Screen, Segmented, Skeleton, Text, radius, space, useTheme } from '@/ui';
 
 type Stage = 'idle' | 'uploading' | 'analyzing' | 'clarify' | 'mapping' | 'failed';
 
 export default function ScanScreen() {
+  const { colors } = useTheme();
   const params = useLocalSearchParams<{ date?: string; fresh?: string }>();
   const localDate = params.date ?? todayLocal();
   const userId = useUserId();
@@ -142,41 +142,50 @@ export default function ScanScreen() {
   }
 
   const busy = stage === 'uploading' || stage === 'analyzing' || stage === 'mapping';
+  const ready = consent && vision?.configured !== false;
 
   return (
     <Screen testID="scan-screen">
-      <View style={{ marginTop: space.md, gap: space.xs }}>
-        <Text variant="title">Scan meal</Text>
-        <Text color="textMuted" variant="small">
-          {localDate} · Take a photo of the plate. Add a second angle or the nutrition label to the same meal if it helps.
-        </Text>
-      </View>
+      <PageHeader title="Scan meal" subtitle={`${formatLocalDate(localDate, 'relative')}. One photo of the plate is enough; add a second angle or the label if it helps.`} backTo="/today" />
 
       {!features.isLoading && vision && !vision.configured ? <NotConfigured feature="Photo analysis" reason={vision.reason ?? 'Set VISION_PROVIDER, ANTHROPIC_API_KEY and VISION_MODEL on the edge functions.'} /> : null}
       {!prefs.isLoading && !consent ? (
         <Card tone="alt" style={{ gap: space.sm }}>
           <Text variant="bodyStrong">Photo analysis is off</Text>
           <Text variant="small" color="textMuted">
-            You have not allowed photos to be sent to the AI provider. You can still attach photos to a meal and log it manually.
+            You have not allowed photos to be sent to the AI provider. You can still attach photos to a meal and log it by hand.
           </Text>
           <Button label="Review consent" variant="secondary" size="sm" onPress={() => router.push('/profile/privacy')} />
         </Card>
       ) : null}
 
-      {photos.length > 0 ? (
-        <View style={{ flexDirection: 'row', gap: space.sm, flexWrap: 'wrap' }}>
+      {photos.length === 0 ? (
+        <View style={[styles.frame, { borderColor: colors.border }]}>
+          <View style={[styles.corner, styles.tl, { borderColor: colors.text }]} />
+          <View style={[styles.corner, styles.tr, { borderColor: colors.text }]} />
+          <View style={[styles.corner, styles.bl, { borderColor: colors.text }]} />
+          <View style={[styles.corner, styles.br, { borderColor: colors.text }]} />
+          <Icon name="camera" size={40} color={colors.textMuted} strokeWidth={1.4} />
+          <Text variant="small" color="textMuted" align="center" style={{ maxWidth: 220 }}>
+            Fill the frame with the plate in good light. Portions come out closer that way.
+          </Text>
+        </View>
+      ) : (
+        <View style={styles.photos}>
           {photos.map((p) => (
-            <MealPhotoThumb key={p.storagePath} storagePath={p.storagePath} localUri={p.localUri} size={96} />
+            <MealPhotoThumb key={p.storagePath} storagePath={p.storagePath} localUri={p.localUri} size={104} />
           ))}
         </View>
-      ) : null}
+      )}
 
       {stage === 'clarify' && analysis ? (
         <Card style={{ gap: space.lg }} testID="clarify">
-          <Text variant="heading">A few quick questions</Text>
-          <Text variant="small" color="textMuted">
-            Found: {analysis.result.items.map((i) => i.name).join(', ')}. Portions are approximate; you can edit everything on the next screen.
-          </Text>
+          <View style={{ gap: space.xs }}>
+            <Text variant="heading">A few quick questions</Text>
+            <Text variant="small" color="textMuted">
+              Found: {analysis.result.items.map((i) => i.name).join(', ')}. Portions are approximate; everything is editable on the next screen.
+            </Text>
+          </View>
           {questions.map((q, i) => (
             <Segmented<string>
               key={`${q.item_ref}-${i}`}
@@ -194,7 +203,7 @@ export default function ScanScreen() {
 
       {busy ? (
         <Card style={{ gap: space.md }}>
-          <Text variant="bodyStrong">{stage === 'uploading' ? 'Uploading photo…' : stage === 'analyzing' ? 'Identifying foods…' : 'Matching to the food database…'}</Text>
+          <Text variant="bodyStrong">{stage === 'uploading' ? 'Uploading photo' : stage === 'analyzing' ? 'Identifying foods' : 'Matching to the food database'}</Text>
           <Skeleton />
           <Skeleton width="70%" />
         </Card>
@@ -230,18 +239,37 @@ export default function ScanScreen() {
 
       {stage === 'idle' || stage === 'failed' ? (
         <View style={{ gap: space.sm }}>
-          <View style={{ flexDirection: 'row', gap: space.sm }}>
-            <Button label={photos.length ? 'Another photo' : 'Take photo'} style={{ flex: 1 }} onPress={() => void capture('camera')} testID="take-photo" />
-            <Button label="Choose from gallery" variant="secondary" style={{ flex: 1 }} onPress={() => void capture('library')} testID="choose-photo" />
-          </View>
-          {photos.length > 0 && consent && vision?.configured !== false ? (
+          {photos.length > 0 && ready ? (
             <Button label={`Identify foods (${photos.length} photo${photos.length === 1 ? '' : 's'})`} size="lg" onPress={() => void analyze()} testID="analyze" />
           ) : null}
-          <Button label={photos.length ? 'Log this meal manually' : 'Add food manually instead'} variant="ghost" onPress={manualInstead} testID="manual-instead" />
+          <View style={styles.row}>
+            <Button label={photos.length ? 'Another photo' : 'Take photo'} size="lg" variant={photos.length > 0 && ready ? 'secondary' : 'primary'} style={{ flex: 1 }} onPress={() => void capture('camera')} testID="take-photo" />
+            <Button label="From gallery" size="lg" variant="secondary" style={{ flex: 1 }} onPress={() => void capture('library')} testID="choose-photo" />
+          </View>
+          <Button label={photos.length ? 'Log this meal by hand instead' : 'Add food by hand instead'} variant="ghost" onPress={manualInstead} testID="manual-instead" />
         </View>
       ) : null}
-
-      <Button label="Close" variant="ghost" onPress={() => goBack('/today')} />
     </Screen>
   );
 }
+
+const CORNER = 22;
+
+const styles = StyleSheet.create({
+  frame: {
+    aspectRatio: 4 / 3,
+    borderRadius: radius.lg,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: space.md,
+    padding: space.xl,
+  },
+  corner: { position: 'absolute', width: CORNER, height: CORNER, borderWidth: 2 },
+  tl: { top: 12, left: 12, borderRightWidth: 0, borderBottomWidth: 0, borderTopLeftRadius: 6 },
+  tr: { top: 12, right: 12, borderLeftWidth: 0, borderBottomWidth: 0, borderTopRightRadius: 6 },
+  bl: { bottom: 12, left: 12, borderRightWidth: 0, borderTopWidth: 0, borderBottomLeftRadius: 6 },
+  br: { bottom: 12, right: 12, borderLeftWidth: 0, borderTopWidth: 0, borderBottomRightRadius: 6 },
+  photos: { flexDirection: 'row', gap: space.sm, flexWrap: 'wrap' },
+  row: { flexDirection: 'row', gap: space.sm },
+});

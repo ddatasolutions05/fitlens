@@ -8,7 +8,7 @@ import { useCreateUserFood } from '@/features/food/hooks';
 import { addItem, ensureDraft, setDraft, updateItem } from '@/features/meals/draft-store';
 import { newItem } from '@/features/meals/model';
 import { errorMessage } from '@/lib/net';
-import { Button, Card, Input, NumberField, Screen, Segmented, Text, space } from '@/ui';
+import { Button, Card, Input, NumberField, PageHeader, Screen, Segmented, space, Text } from '@/ui';
 
 type Basis = 'serving' | 'per100';
 
@@ -81,12 +81,7 @@ export default function ManualFood() {
 
   return (
     <Screen testID="manual-food">
-      <View style={{ marginTop: space.md }}>
-        <Text variant="title">Enter food manually</Text>
-        <Text color="textMuted" variant="small">
-          Only the name is required. Leave a field empty when you do not know it; unknown values stay unknown and are never counted as zero.
-        </Text>
-      </View>
+      <PageHeader title="Enter food manually" subtitle="Only the name is required. Leave a field empty when you do not know it; unknown values stay unknown and are never counted as zero." backTo="/today" />
       <Card style={{ gap: space.lg }}>
         <Input label="Name" value={name} onChangeText={setName} placeholder="Protein bar, homemade sabzi…" autoFocus testID="manual-name" />
         <Segmented<Basis>

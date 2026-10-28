@@ -1,12 +1,13 @@
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { adherenceLabel, formatWeight, type RangeStats, type UnitSystem } from '@fitlens/core';
+import { adherenceLabel, formatWeight, rangeSummary, type RangeStats, type UnitSystem } from '@fitlens/core';
 
 import { SectionLabel } from '@/features/day/components';
 import { BarChart, ChartFrame, ConsistencyGrid, LineChart } from '@/features/progress/charts';
 import { useProgress, type Range } from '@/features/progress/hooks';
 import { useProfile } from '@/features/profile/hooks';
-import { Card, ErrorState, Screen, Segmented, SkeletonCard, Stat, Text, space, useTheme } from '@/ui';
+import { Card, EmptyState, ErrorState, Screen, Segmented, SkeletonCard, Stat, Text, space, useTheme } from '@/ui';
 
 function dayLabel(localDate: string): string {
   return localDate.slice(8);
@@ -59,6 +60,12 @@ export default function ProgressScreen() {
         <ErrorState message={(progress.error as Error).message} onRetry={() => progress.refetch()} />
       ) : progress.data ? (
         <>
+          {progress.data.stats.loggedDays === 0 ? (
+            <EmptyState title="Nothing logged in this range" body="Stats fill in from the first logged day." action={{ label: 'Log today', onPress: () => router.navigate('/today') }} />
+          ) : (
+            <SummaryPlate stats={progress.data.stats} range={range} hideNumbers={hideNumbers} trackingOnly={trackingOnly} unitSystem={unitSystem} />
+          )}
+
           <KpiGrid stats={progress.data.stats} hideNumbers={hideNumbers} trackingOnly={trackingOnly} unitSystem={unitSystem} range={range} />
 
           <Card>
@@ -148,19 +155,31 @@ export default function ProgressScreen() {
   );
 }
 
+function SummaryPlate({ stats, range, hideNumbers, trackingOnly, unitSystem }: { stats: RangeStats; range: Range; hideNumbers: boolean; trackingOnly: boolean; unitSystem: UnitSystem }) {
+  const { colors } = useTheme();
+  const lines = rangeSummary({ stats, rangeDays: range, hideNumbers, trackingOnly, unitSystem });
+  const fg = colors.onInverse;
+  return (
+    <Card tone="inverse" style={{ gap: space.sm }} testID="range-summary">
+      <Text variant="label" style={{ color: fg, opacity: 0.6 }}>
+        {`Last ${range} days, in short`}
+      </Text>
+      {lines.map((line) => (
+        <Text key={line} variant="heading" style={{ color: fg, fontSize: 18, lineHeight: 25 }}>
+          {line}
+        </Text>
+      ))}
+    </Card>
+  );
+}
+
 function KpiGrid({ stats, hideNumbers, trackingOnly, unitSystem, range }: { stats: RangeStats; hideNumbers: boolean; trackingOnly: boolean; unitSystem: UnitSystem; range: Range }) {
   const kg = (v: number) => (unitSystem === 'imperial' ? `${signed(v * 2.20462, 1)} lb` : `${signed(v, 1)} kg`);
   return (
     <View style={{ gap: space.sm }} testID="kpi-grid">
       <SectionLabel>{`Last ${range} days`}</SectionLabel>
       <View style={styles.grid}>
-        <Stat
-          label="Days logged"
-          value={`${stats.loggedDays} / ${stats.totalDays}`}
-          note={`${stats.completeDays} marked complete`}
-          tone="inverse"
-          testID="kpi-logged"
-        />
+        <Stat label="Days logged" value={`${stats.loggedDays} / ${stats.totalDays}`} note={`${stats.completeDays} marked complete`} testID="kpi-logged" />
         <Stat label="Current streak" value={`${stats.streak} day${stats.streak === 1 ? '' : 's'}`} note={`Best ${stats.bestStreak} in range`} tone={stats.streak >= 3 ? 'on' : 'neutral'} testID="kpi-streak" />
       </View>
       {!hideNumbers ? (
@@ -205,11 +224,7 @@ function KpiGrid({ stats, hideNumbers, trackingOnly, unitSystem, range }: { stat
         />
       </View>
       <View style={styles.grid}>
-        <Stat
-          label="Workouts"
-          value={`${stats.workoutDays} day${stats.workoutDays === 1 ? '' : 's'}`}
-          note={stats.workoutMinutes > 0 ? `${Math.round(stats.workoutMinutes)} min in total` : 'None logged'}
-        />
+        <Stat label="Workouts" value={`${stats.workoutDays} day${stats.workoutDays === 1 ? '' : 's'}`} note={stats.workoutMinutes > 0 ? `${Math.round(stats.workoutMinutes)} min in total` : 'None logged'} />
         <Stat
           label="Avg water"
           value={stats.avgWater != null ? `${Math.round(stats.avgWater).toLocaleString()} ml` : 'No data'}

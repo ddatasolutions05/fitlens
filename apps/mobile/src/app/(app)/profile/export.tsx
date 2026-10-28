@@ -2,10 +2,9 @@ import { useState } from 'react';
 import { Linking, Platform } from 'react-native';
 import { exportDataResultSchema, functionErrorSchema, type ExportDataResult } from '@fitlens/schemas';
 
-import { goBack } from '@/lib/nav';
 import { errorMessage } from '@/lib/net';
 import { supabase } from '@/lib/supabase';
-import { Button, Card, Screen, Text, space } from '@/ui';
+import { Button, Card, PageHeader, Screen, space, Text } from '@/ui';
 
 export default function ExportScreen() {
   const [busy, setBusy] = useState(false);
@@ -36,9 +35,7 @@ export default function ExportScreen() {
 
   return (
     <Screen testID="export-screen">
-      <Text variant="title" style={{ marginTop: space.lg }}>
-        Export my data
-      </Text>
+      <PageHeader title="Export my data" backTo="/profile" />
       <Card style={{ gap: space.md }}>
         <Text color="textMuted" variant="small">
           Builds a zip with a JSON file and a CSV file for every table (profile, preferences, goals, foods you created, meals and items, photos index, weight, activity, water, day status) plus the original photos. The link expires after five minutes.
@@ -62,7 +59,6 @@ export default function ExportScreen() {
           </Text>
         ) : null}
       </Card>
-      <Button label="Back" variant="ghost" onPress={() => goBack('/profile')} />
     </Screen>
   );
 }

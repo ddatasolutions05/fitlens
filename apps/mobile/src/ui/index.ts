@@ -1,8 +1,12 @@
 export { Bar } from './Bar';
+export { BrandMark } from './BrandMark';
 export { Button } from './Button';
 export { Card } from './Card';
+export { Chips } from './Chips';
 export { Icon, type IconName } from './Icon';
 export { Input, NumberField } from './Input';
+export { Note } from './Note';
+export { PageHeader } from './PageHeader';
 export { Ring } from './Ring';
 export { Row } from './Row';
 export { Screen } from './Screen';

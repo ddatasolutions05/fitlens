@@ -10,6 +10,7 @@ export * from './activity';
 export * from './dates';
 export * from './day';
 export * from './stats';
+export * from './summary';
 export * from './matching';
 export * from './feedback/rules';
 export * from './feedback/tone';

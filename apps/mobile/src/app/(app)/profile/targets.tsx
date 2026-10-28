@@ -16,7 +16,7 @@ import { goBack } from '@/lib/nav';
 import { useAddGoalVersion, useGoalForDate, useGoalHistory, useLatestWeight, useProfile, type GoalVersionRow, type ProfileRow } from '@/features/profile/hooks';
 import { planGoal } from '@/features/profile/targets';
 import { errorMessage } from '@/lib/net';
-import { Button, Card, NumberField, Screen, Segmented, SkeletonCard, Text, space } from '@/ui';
+import { Button, Card, NumberField, PageHeader, Screen, Segmented, SkeletonCard, space, Text } from '@/ui';
 
 export default function TargetsScreen() {
   const today = todayLocal();
@@ -30,9 +30,7 @@ export default function TargetsScreen() {
 
   return (
     <Screen testID="targets-screen">
-      <Text variant="title" style={{ marginTop: space.lg }}>
-        Targets
-      </Text>
+      <PageHeader title="Targets" subtitle="Past days keep the targets in force then. Saving creates a new version from today." backTo="/profile" />
       {!ready ? (
         <SkeletonCard lines={5} />
       ) : !profile.data || !complete ? (
@@ -53,7 +51,6 @@ export default function TargetsScreen() {
           ))}
         </Card>
       ) : null}
-      <Button label="Back" variant="ghost" onPress={() => goBack('/profile')} />
     </Screen>
   );
 }

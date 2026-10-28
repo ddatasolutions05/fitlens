@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Animated, Pressable, StyleSheet, View } from 'react-native';
 import {
   CONFIDENCE_LABELS,
   formatNutrient,
@@ -11,13 +11,14 @@ import {
   type Feedback,
 } from '@fitlens/core';
 
+import { SectionLabel } from '@/features/day/components';
 import { useDay } from '@/features/day/hooks';
 import { setSelectedDate } from '@/features/day/selected-date';
 import { MealPhotoThumb } from '@/features/photo/MealPhotoThumb';
 import { usePreferences, useProfile } from '@/features/profile/hooks';
 import { config } from '@/lib/config';
 import { errorMessage } from '@/lib/net';
-import { Button, Card, Input, NumberField, Segmented, Text, radius, space, touch, useTheme } from '@/ui';
+import { Button, Card, Icon, Input, NumberField, Segmented, Text, radius, space, touch, useTheme } from '@/ui';
 
 import { removeItem, setDraft, updateDraft, updateItem, useDraft } from './draft-store';
 import { useDeleteMeal, useSaveMeal } from './hooks';
@@ -55,7 +56,7 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
 
   if (!draft) {
     return (
-      <Card tone="alt">
+      <Card tone="alt" style={{ gap: space.md }}>
         <Text color="textMuted">No meal in progress.</Text>
         <Button label="Add food" variant="secondary" onPress={() => router.replace('/food/search')} />
       </Card>
@@ -170,25 +171,13 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
   if (confirmedId) {
     return (
       <View style={{ gap: space.lg }} testID="meal-confirmed">
-        <Card tone="accent" style={{ gap: space.sm }}>
-          <Text variant="heading">Meal saved</Text>
-          {!hideNumbers && totals ? (
-            <Text tabular>
-              {formatNutrient(roundKcal(totals.totals.kcal), 'kcal')} · P {formatNutrient(totals.totals.protein_g, 'g')} · C {formatNutrient(totals.totals.carbs_g, 'g')} · F {formatNutrient(totals.totals.fat_g, 'g')}
-            </Text>
-          ) : null}
-          {confirmedId === 'queued' ? (
-            <Text variant="caption" color="textMuted">
-              You are offline. The meal is queued and will sync when you are back online.
-            </Text>
-          ) : null}
-        </Card>
+        <SavedPlate totals={totals} hideNumbers={hideNumbers} queued={confirmedId === 'queued'} />
         {feedback ? (
-          <Card style={{ gap: space.sm }}>
+          <View style={[styles.feedback, { borderLeftColor: colors.text }]}>
             <Text>{feedback.observation}</Text>
             <Text color="textMuted">{feedback.suggestion}</Text>
             {feedback.why ? <WhyLine why={feedback.why} /> : null}
-          </Card>
+          </View>
         ) : null}
         {undoLeft > 0 ? <Button label={`Undo (${undoLeft})`} variant="ghost" onPress={() => void undo()} testID="undo" /> : null}
         <Button label="Done" size="lg" onPress={finish} testID="done" />
@@ -200,14 +189,14 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
   return (
     <View style={{ gap: space.lg }} testID="meal-editor">
       {draft.photos.length > 0 ? (
-        <View style={{ flexDirection: 'row', gap: space.sm, flexWrap: 'wrap' }}>
+        <View style={styles.photos}>
           {draft.photos.map((p) => (
-            <MealPhotoThumb key={p.storagePath} storagePath={p.storagePath} localUri={p.localUri} size={88} />
+            <MealPhotoThumb key={p.storagePath} storagePath={p.storagePath} localUri={p.localUri} size={104} />
           ))}
         </View>
       ) : null}
 
-      <Card style={{ gap: space.md }}>
+      <View style={{ gap: space.md }}>
         <Segmented<MealType>
           value={draft.mealType}
           onChange={(v) => updateDraft((d) => ({ ...d, mealType: v }))}
@@ -218,7 +207,7 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
             { value: 'snack', label: 'Snack' },
           ]}
         />
-        <View style={{ flexDirection: 'row', gap: space.sm }}>
+        <View style={styles.row}>
           <View style={{ flex: 1 }}>
             <Input
               label="Date"
@@ -242,13 +231,22 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
             />
           </View>
         </View>
-        <Input label="Title (optional)" value={draft.title ?? ''} onChangeText={(v) => updateDraft((d) => ({ ...d, title: v || null }))} placeholder="e.g. Lunch at home" />
-      </Card>
+        <Input label="Title (optional)" value={draft.title ?? ''} onChangeText={(v) => updateDraft((d) => ({ ...d, title: v || null }))} placeholder="Lunch at home" />
+      </View>
 
       <View style={{ gap: space.sm }}>
-        {draft.items.map((item) => (
-          <ItemRow key={item.localId} item={item} hideNumbers={hideNumbers} />
-        ))}
+        <SectionLabel>{`Items${draft.items.length ? ` (${draft.items.length})` : ''}`}</SectionLabel>
+        {draft.items.length === 0 ? (
+          <Card tone="alt">
+            <Text color="textMuted">No items yet. Add one from search, by hand, or from a photo.</Text>
+          </Card>
+        ) : (
+          <Card padded={false}>
+            {draft.items.map((item, i) => (
+              <ItemRow key={item.localId} item={item} hideNumbers={hideNumbers} last={i === draft.items.length - 1} />
+            ))}
+          </Card>
+        )}
         <Button label="Add another item" variant="secondary" onPress={() => router.push({ pathname: '/food/search', params: { date: draft.localDate } })} testID="add-item" />
       </View>
 
@@ -260,45 +258,7 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
         </Card>
       ) : null}
 
-      {totals ? (
-        <Card style={{ gap: space.xs }} testID="meal-totals">
-          <Text variant="small" color="textMuted">
-            Meal total{draft.items.length === 0 ? ' (no items yet)' : ''}
-          </Text>
-          {hideNumbers ? (
-            <Text tabular>
-              Protein {formatNutrient(totals.totals.protein_g, 'g')} · Fibre {formatNutrient(totals.totals.fibre_g, 'g')}
-            </Text>
-          ) : (
-            <>
-              <Text variant="heading" tabular testID="meal-kcal">
-                {formatNutrient(roundKcal(totals.totals.kcal), 'kcal')}
-                {totals.kcalRange ? (
-                  <Text variant="small" color="textMuted">
-                    {' '}
-                    ({roundKcal(totals.kcalRange[0])} to {roundKcal(totals.kcalRange[1])})
-                  </Text>
-                ) : null}
-              </Text>
-              <Text tabular color="textMuted">
-                P {formatNutrient(totals.totals.protein_g, 'g')} · C {formatNutrient(totals.totals.carbs_g, 'g')} · F {formatNutrient(totals.totals.fat_g, 'g')} · Fibre {formatNutrient(totals.totals.fibre_g, 'g')}
-              </Text>
-              {totals.totals.sodium_mg != null || totals.totals.sat_fat_g != null ? (
-                <Text variant="small" color="textFaint" tabular>
-                  {totals.totals.sodium_mg != null ? `Sodium ${formatNutrient(totals.totals.sodium_mg, 'mg')}` : ''}
-                  {totals.totals.sodium_mg != null && totals.totals.sat_fat_g != null ? ' · ' : ''}
-                  {totals.totals.sat_fat_g != null ? `Sat. fat ${formatNutrient(totals.totals.sat_fat_g, 'g')}` : ''}
-                </Text>
-              ) : null}
-            </>
-          )}
-          {Object.entries(totals.unknown).some(([, c]) => c > 0) ? (
-            <Text variant="caption" color="textFaint">
-              Unknown values are left out of the totals, not counted as zero.
-            </Text>
-          ) : null}
-        </Card>
-      ) : null}
+      {totals ? <TotalsPlate totals={totals} hideNumbers={hideNumbers} empty={draft.items.length === 0} /> : null}
 
       {error ? (
         <Text color="danger" variant="small">
@@ -307,42 +267,116 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
       ) : null}
 
       <Button label={mode === 'existing' && draft.mealId ? 'Save changes' : 'Confirm meal'} size="lg" onPress={() => void confirm()} loading={save.isPending} disabled={draft.items.length === 0 || save.isPending} testID="confirm-meal" />
-      <View style={{ flexDirection: 'row', gap: space.sm }}>
+      <View style={styles.row}>
         <Button label="Keep as draft" variant="ghost" style={{ flex: 1 }} onPress={() => void saveDraft()} disabled={save.isPending} testID="save-draft" />
         <Button label={draft.mealId ? 'Delete meal' : 'Discard'} variant="ghost" style={{ flex: 1 }} onPress={() => void remove()} disabled={del.isPending} testID="delete-meal" />
       </View>
-      <Text variant="caption" style={{ color: colors.textFaint }}>
+      <Text variant="caption" color="textFaint">
         Drafts never count toward daily totals until confirmed.
       </Text>
     </View>
   );
 }
 
-function ItemRow({ item, hideNumbers }: { item: DraftItem; hideNumbers: boolean }) {
+function TotalsPlate({ totals, hideNumbers, empty }: { totals: ReturnType<typeof draftTotals>; hideNumbers: boolean; empty: boolean }) {
+  const { colors } = useTheme();
+  const fg = colors.onInverse;
+  const unknown = Object.entries(totals.unknown).some(([, c]) => c > 0);
+  return (
+    <Card tone="inverse" style={{ gap: space.xs }} testID="meal-totals">
+      <Text variant="label" style={{ color: fg, opacity: 0.6 }}>
+        Meal total{empty ? ' (no items yet)' : ''}
+      </Text>
+      {hideNumbers ? (
+        <Text variant="heading" tabular style={{ color: fg }}>
+          Protein {formatNutrient(totals.totals.protein_g, 'g')}, fibre {formatNutrient(totals.totals.fibre_g, 'g')}
+        </Text>
+      ) : (
+        <>
+          <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: space.sm }}>
+            <Text variant="display" tabular style={{ color: fg, fontSize: 40, lineHeight: 44 }} testID="meal-kcal">
+              {formatNutrient(roundKcal(totals.totals.kcal), 'kcal')}
+            </Text>
+            {totals.kcalRange ? (
+              <Text variant="small" tabular style={{ color: fg, opacity: 0.6, marginBottom: 6 }}>
+                {roundKcal(totals.kcalRange[0])} to {roundKcal(totals.kcalRange[1])}
+              </Text>
+            ) : null}
+          </View>
+          <Text tabular style={{ color: fg }}>
+            P {formatNutrient(totals.totals.protein_g, 'g')}, C {formatNutrient(totals.totals.carbs_g, 'g')}, F {formatNutrient(totals.totals.fat_g, 'g')}, fibre {formatNutrient(totals.totals.fibre_g, 'g')}
+          </Text>
+          {totals.totals.sodium_mg != null || totals.totals.sat_fat_g != null ? (
+            <Text variant="small" tabular style={{ color: fg, opacity: 0.6 }}>
+              {totals.totals.sodium_mg != null ? `Sodium ${formatNutrient(totals.totals.sodium_mg, 'mg')}` : ''}
+              {totals.totals.sodium_mg != null && totals.totals.sat_fat_g != null ? ', ' : ''}
+              {totals.totals.sat_fat_g != null ? `sat. fat ${formatNutrient(totals.totals.sat_fat_g, 'g')}` : ''}
+            </Text>
+          ) : null}
+        </>
+      )}
+      {unknown ? (
+        <Text variant="caption" style={{ color: fg, opacity: 0.6 }}>
+          Unknown values are left out of the totals, not counted as zero.
+        </Text>
+      ) : null}
+    </Card>
+  );
+}
+
+function SavedPlate({ totals, hideNumbers, queued }: { totals: ReturnType<typeof draftTotals> | null; hideNumbers: boolean; queued: boolean }) {
+  const { colors, reducedMotion } = useTheme();
+  const [scale] = useState(() => new Animated.Value(reducedMotion ? 1 : 0.92));
+  const [opacity] = useState(() => new Animated.Value(reducedMotion ? 1 : 0));
+  useEffect(() => {
+    if (reducedMotion) return;
+    Animated.parallel([
+      Animated.spring(scale, { toValue: 1, useNativeDriver: true, friction: 6, tension: 80 }),
+      Animated.timing(opacity, { toValue: 1, duration: 220, useNativeDriver: true }),
+    ]).start();
+  }, [scale, opacity, reducedMotion]);
+  const fg = colors.onInverse;
+  return (
+    <Animated.View style={{ transform: [{ scale }], opacity }}>
+      <Card tone="inverse" style={{ gap: space.sm }}>
+        <View style={[styles.check, { borderColor: fg }]}>
+          <Icon name="check" size={22} color={fg} strokeWidth={2.6} />
+        </View>
+        <Text variant="title" style={{ color: fg }}>
+          Meal saved
+        </Text>
+        {!hideNumbers && totals ? (
+          <Text tabular style={{ color: fg }}>
+            {formatNutrient(roundKcal(totals.totals.kcal), 'kcal')}, P {formatNutrient(totals.totals.protein_g, 'g')}, C {formatNutrient(totals.totals.carbs_g, 'g')}, F {formatNutrient(totals.totals.fat_g, 'g')}
+          </Text>
+        ) : null}
+        {queued ? (
+          <Text variant="caption" style={{ color: fg, opacity: 0.7 }}>
+            You are offline. The meal is queued and will sync when you are back online.
+          </Text>
+        ) : null}
+      </Card>
+    </Animated.View>
+  );
+}
+
+function ItemRow({ item, hideNumbers, last }: { item: DraftItem; hideNumbers: boolean; last: boolean }) {
   const { colors } = useTheme();
   const { nutrients, kcalRange } = itemNutrients(item);
   const [open, setOpen] = useState(false);
   return (
-    <Card style={{ gap: space.sm }} testID={`item-${item.localId}`}>
+    <View style={[styles.item, last ? null : { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border }]} testID={`item-${item.localId}`}>
       <Pressable onPress={() => setOpen(!open)} accessibilityRole="button" accessibilityLabel={`${item.name}, ${open ? 'collapse' : 'edit'}`} style={styles.itemHead}>
         <View style={{ flex: 1, gap: 2 }}>
           <Text variant="bodyStrong">{item.name}</Text>
           <Text variant="caption" color="textMuted">
-            {item.servingLabel ? `${item.servingLabel} · ` : ''}
-            {Math.round(item.grams)} g{item.fractionEaten < 1 ? ` · ate ${Math.round(item.fractionEaten * 100)}%` : ''}
+            {item.servingLabel ? `${item.servingLabel}, ` : ''}
+            {Math.round(item.grams)} g{item.fractionEaten < 1 ? `, ate ${Math.round(item.fractionEaten * 100)}%` : ''}
           </Text>
-          <View style={{ flexDirection: 'row', gap: space.sm, flexWrap: 'wrap', alignItems: 'center' }}>
-            <View style={[styles.badge, { backgroundColor: item.provenance === 'ai_estimate' ? colors.surfaceAlt : colors.accentSoft }]}>
-              <Text variant="caption" color={item.provenance === 'ai_estimate' ? 'textMuted' : 'accent'}>
-                {provenanceLabel(item.provenance, item.sourceName)}
-              </Text>
-            </View>
-            {item.confidence ? (
-              <Text variant="caption" color="textFaint">
-                Confidence: {CONFIDENCE_LABELS[item.confidence]}
-              </Text>
-            ) : null}
-          </View>
+          <Text variant="caption" color="textFaint">
+            {provenanceLabel(item.provenance, item.sourceName)}
+            {item.confidence ? `, confidence ${CONFIDENCE_LABELS[item.confidence].toLowerCase()}` : ''}
+          </Text>
         </View>
         {!hideNumbers ? (
           <View style={{ alignItems: 'flex-end' }}>
@@ -359,9 +393,10 @@ function ItemRow({ item, hideNumbers }: { item: DraftItem; hideNumbers: boolean 
             </Text>
           </View>
         ) : null}
+        <Icon name={open ? 'close' : 'pencil'} size={18} color={colors.textFaint} />
       </Pressable>
       {open ? (
-        <View style={{ gap: space.md }}>
+        <View style={{ gap: space.md, paddingTop: space.sm }}>
           <NumberField label="Grams" value={item.grams} onChangeNumber={(g) => updateItem(item.localId, { grams: g ?? 0, servingLabel: null, gramsRange: null })} decimals={0} testID={`grams-${item.localId}`} />
           <Segmented<string> label="Fraction eaten" value={String(item.fractionEaten)} onChange={(v) => updateItem(item.localId, { fractionEaten: Number(v) })} options={FRACTIONS} />
           {item.assumptions.length > 0 ? (
@@ -371,18 +406,18 @@ function ItemRow({ item, hideNumbers }: { item: DraftItem; hideNumbers: boolean 
               </Text>
               {item.assumptions.map((a) => (
                 <Text key={a} variant="caption" color="textFaint">
-                  • {a}
+                  {a}
                 </Text>
               ))}
             </View>
           ) : null}
-          <View style={{ flexDirection: 'row', gap: space.sm }}>
+          <View style={styles.row}>
             <Button label="Change food" variant="secondary" size="sm" style={{ flex: 1 }} onPress={() => router.push({ pathname: '/food/search', params: { replace: item.localId } })} />
             <Button label="Remove" variant="ghost" size="sm" style={{ flex: 1 }} onPress={() => removeItem(item.localId)} testID={`remove-${item.localId}`} />
           </View>
         </View>
       ) : null}
-    </Card>
+    </View>
   );
 }
 
@@ -390,7 +425,7 @@ function WhyLine({ why }: { why: string }) {
   const [open, setOpen] = useState(false);
   return (
     <Pressable onPress={() => setOpen(!open)} accessibilityRole="button" style={{ minHeight: touch.min, justifyContent: 'center' }}>
-      <Text variant="caption" color="accent">
+      <Text variant="caption" style={{ textDecorationLine: 'underline' }}>
         {open ? 'Hide why' : 'Why?'}
       </Text>
       {open ? (
@@ -413,6 +448,10 @@ function subNullable(a: number | null, b: number | null): number | null {
 }
 
 const styles = StyleSheet.create({
+  photos: { flexDirection: 'row', gap: space.sm, flexWrap: 'wrap' },
+  row: { flexDirection: 'row', gap: space.sm },
+  item: { paddingHorizontal: space.lg, paddingVertical: space.md },
   itemHead: { flexDirection: 'row', gap: space.md, alignItems: 'flex-start', minHeight: touch.min },
-  badge: { paddingHorizontal: space.sm, paddingVertical: 2, borderRadius: radius.pill },
+  feedback: { borderLeftWidth: 3, paddingLeft: space.md, gap: space.xs },
+  check: { width: 40, height: 40, borderRadius: radius.pill, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
 });

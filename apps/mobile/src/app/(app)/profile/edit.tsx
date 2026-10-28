@@ -5,15 +5,13 @@ import { cmToFtIn, ftInToCm, kgToLb, lbToKg, type SexForEquation, type UnitSyste
 import { goBack } from '@/lib/nav';
 import { useProfile, useUpsertProfile, type ProfileRow } from '@/features/profile/hooks';
 import { errorMessage } from '@/lib/net';
-import { Button, Card, Input, NumberField, Screen, Segmented, SkeletonCard, Text, space } from '@/ui';
+import { Button, Card, Input, NumberField, PageHeader, Screen, Segmented, SkeletonCard, space, Text } from '@/ui';
 
 export default function EditProfile() {
   const profile = useProfile();
   return (
     <Screen testID="edit-profile">
-      <Text variant="title" style={{ marginTop: space.lg }}>
-        Edit profile
-      </Text>
+      <PageHeader title="Edit profile" backTo="/profile" />
       {profile.isLoading ? <SkeletonCard lines={6} /> : profile.data ? <EditForm key={profile.data.updated_at} p={profile.data} /> : <EditForm p={null} />}
       <Button label="Cancel" variant="ghost" onPress={() => goBack('/profile')} />
     </Screen>

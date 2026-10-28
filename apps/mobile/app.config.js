@@ -2,9 +2,11 @@
 // (GitHub Pages serves the app at /<repo>/); local dev leaves it empty.
 const basePath = (process.env.EXPO_PUBLIC_BASE_PATH || '').replace(/\/$/, '');
 
+const brandName = (process.env.EXPO_PUBLIC_BRAND_NAME || 'FitLens').trim();
+
 module.exports = {
   expo: {
-    name: 'FitLens',
+    name: brandName,
     slug: 'fitlens',
     version: '0.1.0',
     orientation: 'portrait',

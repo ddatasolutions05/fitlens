@@ -1,12 +1,12 @@
 import { Card, Screen, Text, space } from '@/ui';
-import { setupProblems } from '@/lib/config';
+import { config, setupProblems } from '@/lib/config';
 
 export default function Setup() {
   const problems = setupProblems();
   return (
     <Screen>
       <Text variant="title" style={{ marginTop: space.xxl }}>
-        FitLens needs a Supabase project
+        {config.brandName} needs a Supabase project
       </Text>
       <Text color="textMuted">
         The app stores your data in your own Supabase project. Nothing runs until it is connected.
