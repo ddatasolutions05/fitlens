@@ -18,7 +18,7 @@ export interface BarProps {
 export function Bar({ label, value, target, unit, color, unknownCount = 0, compact }: BarProps) {
   const { colors } = useTheme();
   const ratio = value != null && target ? Math.max(0, Math.min(1, value / target)) : 0;
-  const valueText = value == null ? 'Not logged' : `${Math.round(value).toLocaleString()}${unit}`;
+  const valueText = value == null ? (unknownCount > 0 ? 'Unknown' : 'Not logged') : `${Math.round(value).toLocaleString()}${unit}`;
   const targetText = target != null ? ` / ${Math.round(target).toLocaleString()}${unit}` : '';
   const note = unknownCount > 0 ? `, ${unknownCount} unknown` : '';
   return (

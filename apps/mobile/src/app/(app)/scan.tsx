@@ -6,7 +6,7 @@ import type { AnalyzeMealResult, ClarifyingQuestion } from '@fitlens/schemas';
 
 import { useUserId } from '@/features/auth/session';
 import { addItem, addPhoto, adoptPhotoTime, ensureDraft, getDraft, setDraft, updateDraft } from '@/features/meals/draft-store';
-import { saveMeal } from '@/features/meals/api';
+import { deleteMeal, saveMeal } from '@/features/meals/api';
 import { AnalyzeError, analyzeMeal, mapAnalysisToItems, questionsFor, type Answer } from '@/features/photo/analyze';
 import { CaptureFailure, pickPhoto, uploadPhoto } from '@/features/photo/capture';
 import { MealPhotoThumb } from '@/features/photo/MealPhotoThumb';
@@ -82,6 +82,12 @@ export default function ScanScreen() {
     } catch (err) {
       setStage('failed');
       reportError('scan.upload', err);
+      // A meal row was opened for the photo; with nothing in it, it would linger as an empty draft.
+      const d = getDraft();
+      if (d?.mealId && d.items.length === 0 && d.photos.length === 0) {
+        await deleteMeal({ mealId: d.mealId }).catch(() => {});
+        updateDraft((x) => ({ ...x, mealId: null }));
+      }
       setError(`Upload failed: ${errorMessage(err)}. The photo was not saved.`);
     }
   }

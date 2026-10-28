@@ -55,7 +55,7 @@ function ConsentCard({ p }: { p: PreferencesRow | null }) {
     <Card style={{ gap: space.md }}>
       <Text variant="heading">Photo analysis and Coach</Text>
       <Text variant="small" color="textMuted">
-        With consent, Scan meal sends the photo you choose (resized to 1,600 px, location metadata removed) plus your diet pattern and allergies to the AI provider (Anthropic) to identify foods and estimate portions. The Coach sends a summary of your last 14 days of logs with each question, never photos. Photos stay in your own private storage. The provider&apos;s data-use terms are summarised in docs/PRIVACY.md. Consent is versioned ({config.aiConsentVersion}); withdrawing it turns both features off at once. Everything else keeps working.
+        With consent, Scan meal sends the photo you choose (resized to 1,600 px, location metadata removed) plus your diet pattern and allergies to the AI provider (Anthropic) to identify foods and estimate portions. The Coach sends a summary of your last 14 days of logs with each question, never photos. Photos stay in your own private storage. Under the provider&apos;s commercial terms, requests are not used to train its models. Consent is versioned ({config.aiConsentVersion}); withdrawing it turns both features off at once. Everything else keeps working.
       </Text>
       <Segmented<'on' | 'off'>
         value={consented ? 'on' : 'off'}

@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Pressable, StyleSheet, View } from 'react-native';
+import { Animated, Platform, Pressable, StyleSheet, View } from 'react-native';
 import {
   CONFIDENCE_LABELS,
   formatNutrient,
@@ -345,8 +345,8 @@ function SavedPlate({ totals, hideNumbers, queued }: { totals: ReturnType<typeof
   useEffect(() => {
     if (reducedMotion) return;
     Animated.parallel([
-      Animated.spring(scale, { toValue: 1, useNativeDriver: true, friction: 6, tension: 80 }),
-      Animated.timing(opacity, { toValue: 1, duration: 220, useNativeDriver: true }),
+      Animated.spring(scale, { toValue: 1, useNativeDriver: Platform.OS !== 'web', friction: 6, tension: 80 }),
+      Animated.timing(opacity, { toValue: 1, duration: 220, useNativeDriver: Platform.OS !== 'web' }),
     ]).start();
   }, [scale, opacity, reducedMotion]);
   const fg = colors.onInverse;
