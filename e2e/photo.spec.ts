@@ -16,14 +16,25 @@ test.describe('photo flow against the real configured AI', () => {
     await completeOnboardingIfNeeded(page);
     await page.goto('/profile/privacy');
     await page.getByRole('radio', { name: 'Allowed', exact: true }).click();
+    // The consent save is in flight; leaving the page before it lands would abort it.
+    await expect(page.getByText(/Consent given/)).toBeVisible();
 
     await page.goto('/scan');
     const [chooser] = await Promise.all([page.waitForEvent('filechooser'), page.getByTestId('choose-photo').click()]);
     await chooser.setFiles(fixture);
     await page.getByTestId('analyze').click();
-    await Promise.race([page.getByTestId('clarify').waitFor({ timeout: 90_000 }), page.getByTestId('meal-editor').waitFor({ timeout: 90_000 })]);
+    // Three outcomes are all valid: clarifying questions, packaged or unmatched items to review, or straight to the editor.
+    await Promise.race([
+      page.getByTestId('clarify').waitFor({ timeout: 90_000 }),
+      page.getByTestId('review-continue').waitFor({ timeout: 90_000 }),
+      page.getByTestId('meal-editor').waitFor({ timeout: 90_000 }),
+    ]);
     if (await page.getByTestId('clarify').isVisible()) {
       await page.getByTestId('clarify-continue').click();
+      await Promise.race([page.getByTestId('review-continue').waitFor({ timeout: 90_000 }), page.getByTestId('meal-editor').waitFor({ timeout: 90_000 })]);
+    }
+    if (await page.getByTestId('review-continue').isVisible()) {
+      await page.getByTestId('review-continue').click();
     }
     await expect(page.getByTestId('meal-editor')).toBeVisible({ timeout: 90_000 });
     const items = page.locator('[data-testid^="item-"]');

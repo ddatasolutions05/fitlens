@@ -83,7 +83,7 @@ counts), `daily_water`, `daily_activity` (one step source per day),
 | 3 | Auth + onboarding, tracking-only, AI consent | built, needs a Supabase project to verify live | typecheck/lint clean; e2e spec written, skipped without project |
 | 4 | Today screen + date navigation | built, needs project | same |
 | 5 | Food import (USDA, CNF, Indian), search, manual log, recents, favourites | built; import verified on local DB | 8262 USDA + 5690 CNF + 86 IFCT rows, 34k servings; 5 importer tests |
-| 6 | Photo flow: capture -> analyze-meal -> clarify -> review -> confirm | built, needs project + `ANTHROPIC_API_KEY` | 6 edge functions typecheck under Deno; 7 schema tests; e2e spec skipped without key |
+| 6 | Photo flow: capture -> analyze-meal -> clarify -> review -> confirm | built, verified live (2026-10-28) | `e2e/photo.spec.ts` passes against the deployed function and the real model: draft from a photo, packaged items flagged, confirm and delete update totals |
 | 7 | Steps, workouts, weight, water | built, needs project | typecheck/lint clean |
 | 8 | Progress charts + post-meal feedback | built, needs project | feedback rules unit tested incl. tone |
 | 9 | Export, photo deletion, account deletion | built, needs project | functions typecheck; screens wired |
@@ -117,8 +117,9 @@ post-save navigation stacked a second Today screen.
 
 Milestones 3, 4, 5 (search, manual log, recents), 7, 8 (feedback) and the
 targets, tracking-only, Today and Progress screens are therefore
-`verified live`. Milestone 6 (photo) and 9 (export, delete) remain `built`
-until a key is deployed and the screens are exercised.
+`verified live`. Milestone 6 (photo) became `verified live` on 2026-10-28
+once a working Anthropic key was set. Milestone 9 (export, delete) remains
+`built` until those screens are exercised.
 
 ## 4b. Phase 2 work pulled forward (2026-10-28)
 
@@ -127,7 +128,7 @@ until a key is deployed and the screens are exercised.
 | 10 | Monochrome theme (black default, white option), Lato type, stroke icon set, plate hero, tab bar with a log sheet | built, verified live | typecheck/lint clean; hosted smoke green; screenshots in the PR description |
 | 11 | Manual food entry surfaced everywhere: Today tiles, the centre tab sheet, Add food header | built, verified live | `e2e/manual-log.spec.ts` passes through the new tiles |
 | 12 | Stats: KPI grid (days logged, streak, avg calories vs target, days on target, avg protein and fibre, weight change and weekly rate, avg steps, workouts, avg water) on top of the charts, plus a water chart | built, verified live | `packages/core/src/stats.test.ts` (7 tests); `e2e/coach.spec.ts` asserts the grid |
-| 13 | Coach: `coach` edge function grounded on a 14 day summary, JSON reply with confirmable actions, device-only conversation | built; live answer needs the Anthropic workspace id | Deno check 7/7; `e2e/coach.spec.ts` passes in the not-configured and consent states |
+| 13 | Coach: `coach` edge function grounded on a 14 day summary, JSON reply with confirmable actions, device-only conversation | built, verified live (2026-10-28) | Deno check 7/7; `e2e/coach.spec.ts`; a live call returned a grounded answer with three actions once a workspace-capable key was set |
 | 14 | Polish pass: shared page header, brand config, onboarding redesign, meal editor and scan restyle, log screens, range summary on Stats, empty states, light theme and reduced-motion checks | built, verified live | screenshots of 30 screens in both themes reviewed; `summary.test.ts` (5 tests); Playwright suite green |
 | 15 | Web photo resize under the browser canvas cap; first-party error telemetry (`client_events`, `reportError`, global handlers, `AppErrorBoundary`), `scripts/telemetry.mjs` | built, verified live | `photo-resize.spec.ts` (6000 px image comes out at 1,600 px JPEG); RLS test for `client_events`; hosted smoke green |
 
@@ -138,8 +139,8 @@ until a key is deployed and the screens are exercised.
    deploy` have run, the app shows its setup guide and the seven
    Supabase-dependent Playwright specs skip. Everything downstream of sign-in
    is built but not yet exercised in a browser.
-2. **No `ANTHROPIC_API_KEY` here.** The photo flow is built against the real
-   adapter and cannot be run live. The Playwright photo spec stays skipped.
+2. **`ANTHROPIC_API_KEY` arrived on 2026-10-28.** The photo flow and the Coach
+   run live; the Playwright photo spec passes with `E2E_VISION_CONFIGURED=1`.
 3. **No native toolchain.** Web and Expo Go only. HealthKit / Health Connect
    are labelled "Requires native build".
 4. **Edge Functions are typechecked, not executed.** `supabase functions

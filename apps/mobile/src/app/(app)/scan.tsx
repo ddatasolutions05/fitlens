@@ -219,7 +219,7 @@ export default function ScanScreen() {
           <Text variant="bodyStrong">Packaged items</Text>
           {packaged.map((p) => (
             <Text key={p.name} variant="small" color="textMuted">
-              {p.name}: {p.reason} Use the values from the label or barcode rather than a visual guess.
+              {p.name}: {sentence(p.reason)} Use the values from the label or barcode rather than a visual guess.
             </Text>
           ))}
           <Button label="Enter from the label" variant="secondary" size="sm" onPress={() => router.push({ pathname: '/food/manual', params: { date: localDate } })} testID="packaged-manual" />
@@ -232,7 +232,7 @@ export default function ScanScreen() {
           </Text>
         </Card>
       ) : null}
-      {(packaged.length > 0 || unmatched.length > 0) && stage === 'idle' ? <Button label="Continue to review" size="lg" onPress={() => router.replace('/meal/edit')} /> : null}
+      {(packaged.length > 0 || unmatched.length > 0) && stage === 'idle' ? <Button label="Continue to review" size="lg" onPress={() => router.replace('/meal/edit')} testID="review-continue" /> : null}
 
       {error ? (
         <Card tone="alt">
@@ -256,6 +256,12 @@ export default function ScanScreen() {
       ) : null}
     </Screen>
   );
+}
+
+/** Model reasons arrive without a final stop; one sentence per item reads better. */
+function sentence(text: string): string {
+  const t = text.trim();
+  return /[.!?]$/.test(t) ? t : `${t}.`;
 }
 
 const CORNER = 22;

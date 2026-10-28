@@ -46,7 +46,7 @@ browser keeps the old bundle and e2e results lie.
   `SUPABASE_ACCESS_TOKEN=... SUPABASE_PROJECT_REF=... npx tsx scripts/db/push-remote.ts`.
   With the password, `npx supabase db push` works too.
 - Functions: `npx supabase functions deploy --project-ref <ref>`; secrets with
-  `npx supabase secrets set`. `ANTHROPIC_API_KEY` is set (service account key); the key is not workspace scoped, so `ANTHROPIC_WORKSPACE_ID` is still needed before photo analysis and the coach answer live.
+  `npx supabase secrets set`. `ANTHROPIC_API_KEY` is a user key from the owner's Console (set 2026-10-28); photo analysis and the coach answer live. A key that is not scoped to a workspace needs `ANTHROPIC_WORKSPACE_ID` as well, otherwise the functions report `not_configured`.
 - Food data was loaded once by exporting the local import to CSV and
   inserting through the Management API. With the database password the
   direct route is `DATABASE_URL=<pooler url> npm run seed -- --source all`.
