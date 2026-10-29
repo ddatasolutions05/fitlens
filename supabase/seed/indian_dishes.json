@@ -33,7 +33,7 @@
           "grams": 240
         }
       ],
-      "aliases": "arhar dal, tur dal, daal, lentils"
+      "aliases": "dal, arhar dal, tur dal, daal, lentils"
     },
     {
       "slug": "dal_toor_tadka",
@@ -529,7 +529,7 @@
           "grams": 100
         }
       ],
-      "aliases": "cottage cheese"
+      "aliases": "paneer, cottage cheese"
     },
     {
       "slug": "egg_curry",
@@ -1034,7 +1034,7 @@
           "grams": 160
         }
       ],
-      "aliases": "chawal, bhaat, steamed rice, white rice"
+      "aliases": "rice, chawal, bhaat, steamed rice, white rice"
     },
     {
       "slug": "jeera_rice",
@@ -1249,7 +1249,7 @@
           "grams": 55
         }
       ],
-      "aliases": "chapati, phulka, chapathi, rotli"
+      "aliases": "roti, chapati, phulka, chapathi, rotli"
     },
     {
       "slug": "roti_ghee",
@@ -1585,7 +1585,7 @@
           "grams": 55
         }
       ],
-      "aliases": "idly"
+      "aliases": "idli, idly"
     },
     {
       "slug": "dosa_plain",
@@ -1614,7 +1614,7 @@
           "grams": 120
         }
       ],
-      "aliases": "dosai, sada dosa"
+      "aliases": "dosa, dosai, sada dosa"
     },
     {
       "slug": "dosa_masala",
@@ -1739,7 +1739,7 @@
           "grams": 100
         }
       ],
-      "aliases": "samosa aloo"
+      "aliases": "samosa, samosa aloo"
     },
     {
       "slug": "pakora_onion",
@@ -2017,7 +2017,7 @@
           "grams": 245
         }
       ],
-      "aliases": "dahi, yogurt, yoghurt, thayir, mosaru"
+      "aliases": "curd, dahi, yogurt, yoghurt, thayir, mosaru"
     },
     {
       "slug": "raita_cucumber",
@@ -2125,7 +2125,7 @@
           "grams": 250
         }
       ],
-      "aliases": "tea, doodh wali chai"
+      "aliases": "chai, tea, doodh wali chai"
     },
     {
       "slug": "chai_milk_no_sugar",
@@ -6162,7 +6162,7 @@
     {
       "slug": "filter_coffee",
       "name": "Filter coffee with milk and sugar",
-      "aliases": "kaapi, south indian coffee, coffee with milk",
+      "aliases": "coffee, kaapi, south indian coffee, coffee with milk",
       "kcal": 52,
       "protein_g": 1.5,
       "carbs_g": 8,
