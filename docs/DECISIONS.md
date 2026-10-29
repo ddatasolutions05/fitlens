@@ -2,6 +2,9 @@
 
 Newest first. Each entry: context, decision, consequences.
 
+## D-039 Daily reminder over web push (2026-10-29)
+Decision: one notification a day at a time the person picks, delivered by web push so it needs no native build or push vendor. The browser subscription (endpoint and keys) lives in `push_subscriptions`, the time in `reminders` (local to the profile timezone). A pg_cron job every ten minutes posts to the `send-reminders` function with a secret stored in Vault; the function decides who is due (`packages/core/src/reminders.ts`), skips anyone who confirmed a meal in the last two hours, sends through the `web-push` package with the project's VAPID pair, and drops subscriptions the push service reports gone. The function is deployed without gateway JWT verification; it checks the secret itself, or a user token for the "send a test" path. iPhone needs the site on the Home Screen first, which the screen explains. The public key ships as `EXPO_PUBLIC_VAPID_PUBLIC_KEY`; the private key, subject, cron secret and app URL are function secrets.
+
 ## D-038 Indian food list and search aliases (2026-10-29)
 Decision: the curated seed grows from 86 to 248 dishes (breads, rice dishes, dals, sabzis, eggs and meat, street food, Indo-Chinese, regional staples, drinks, sweets, sides), each with household servings and values set so kcal matches 4/4/9 from the macros. `foods.aliases` holds the other names people type (chawal, anda, sabji, gol gappe, kaapi) and `search_foods` matches it beside the name. Searches that return nothing are written to `search_misses` through `note_search_miss()` (words only, no other data) and listed on the admin page so the list grows where people actually look. `scripts/db/push-foods-remote.ts` upserts the seed through the Management API.
 

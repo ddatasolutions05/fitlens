@@ -21,6 +21,7 @@ status in `docs/PLAN.md`, decisions in `docs/DECISIONS.md`.
 | Deploy edge functions | `npx supabase functions deploy` |
 | Typecheck edge functions | `npm run functions:check` (uses `~/tools/deno/deno.exe`, `DENO_BIN`, or `deno` on PATH; passes `--node-modules-dir=none` so npm specifiers come from Deno's cache) |
 | Import food data | `npm run seed -- --source usda|cnf|indian|all` |
+| Reminder schedule (one time, after setting the function secrets) | `SUPABASE_ACCESS_TOKEN=... SUPABASE_PROJECT_REF=... REMINDER_CRON_SECRET=... node scripts/db/setup-reminder-cron.mjs` |
 | Push the Indian seed to the linked project | `SUPABASE_ACCESS_TOKEN=... SUPABASE_PROJECT_REF=... npx tsx scripts/db/push-foods-remote.ts` |
 | Funnel: sign-ups, finished setup, first meal, feature use | `node scripts/funnel.mjs [--days 7]` |
 | Accounts and what they logged | `node scripts/users.mjs` |
@@ -50,7 +51,7 @@ browser keeps the old bundle and e2e results lie.
 - Without the database password, migrations go through the Management API:
   `SUPABASE_ACCESS_TOKEN=... SUPABASE_PROJECT_REF=... npx tsx scripts/db/push-remote.ts`.
   With the password, `npx supabase db push` works too.
-- Nine functions are deployed (analyze-meal, describe-meal, read-label, lookup-barcode, lookup-product, features, export-data, delete-account, coach). Functions: `npx supabase functions deploy --project-ref <ref>`; secrets with
+- Ten functions are deployed (analyze-meal, describe-meal, read-label, lookup-barcode, lookup-product, features, export-data, delete-account, coach, send-reminders). `send-reminders` is deployed with `--no-verify-jwt` and checks `REMINDER_CRON_SECRET` itself; its secrets are `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, `REMINDER_CRON_SECRET`, `APP_URL`. The pg_cron job `fitlens-reminders` calls it every 10 minutes with the secret from Vault. Functions: `npx supabase functions deploy --project-ref <ref>`; secrets with
   `npx supabase secrets set`. `ANTHROPIC_API_KEY` is a user key from the owner's Console (set 2026-10-28); photo analysis and the coach answer live. A key that is not scoped to a workspace needs `ANTHROPIC_WORKSPACE_ID` as well, otherwise the functions report `not_configured`.
 - Food data was loaded once by exporting the local import to CSV and
   inserting through the Management API. With the database password the
@@ -67,8 +68,8 @@ browser keeps the old bundle and e2e results lie.
   exports the web build with `EXPO_PUBLIC_BASE_PATH=/fitlens` (sub-path hosting
   via `experiments.baseUrl` in `app.config.js`) and publishes to
   https://ddatasolutions05.github.io/fitlens/ with `404.html` as the SPA fallback.
-- Build-time values come from repo variables `EXPO_PUBLIC_SUPABASE_URL` and
-  `EXPO_PUBLIC_SUPABASE_ANON_KEY` (`gh variable set`). No secrets in the build.
+- Build-time values come from repo variables `EXPO_PUBLIC_SUPABASE_URL`,
+  `EXPO_PUBLIC_SUPABASE_ANON_KEY` and `EXPO_PUBLIC_VAPID_PUBLIC_KEY` (`gh variable set`). No secrets in the build.
 - The Pages URL is in the Supabase auth allow list and is the site URL, so
   confirmation, magic-link and recovery emails point there.
 
@@ -114,6 +115,7 @@ browser keeps the old bundle and e2e results lie.
 - Dates are picked, not typed: use `DateField` (web date input, native OS picker; `.native.tsx` split) and keep values as YYYY-MM-DD.
 - Times use `TimeField`, an in-app sheet with a Set time button (the browser and OS wheels have none on phones); values stay HH:MM.
 - Food search matches `foods.aliases` as well as the name; give every curated dish the names people type (`supabase/seed/indian_dishes.json`, `aliases`). Searches with no result land in `search_misses` and show on the admin page.
+- Reminders are web push: `public/sw.js` is the service worker, `features/reminders/push.ts` subscribes (iPhone only from the Home Screen), `reminders` holds the time. Reminder copy lives in `packages/core/src/reminders.ts` and is tone-tested.
 - Admin: `/admin` reads `admin_overview()`; access is a row in `app_admins`, added only by hand (`insert into public.app_admins (user_id) select id from auth.users where email = '<owner>'` through the Management API query endpoint). Never grant it from the client or seed an email in a migration.
 - Confirm quick saves with `toast('...')` from `@/ui`; never block with an alert. Animated values are `useState(() => new Animated.Value())`, not refs, and every animation checks `reducedMotion`.
 - Pushed screens start with `PageHeader` (chevron falls back to the owning tab); no trailing Back buttons. Forms sit on the background; use `Note` for asides and `Chips` for multi-select.

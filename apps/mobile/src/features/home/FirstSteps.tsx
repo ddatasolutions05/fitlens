@@ -7,6 +7,8 @@ import { daysBetween, todayLocal } from '@fitlens/core';
 
 import { useUserId } from '@/features/auth/session';
 import { useProfile } from '@/features/profile/hooks';
+import { useReminder } from '@/features/reminders/hooks';
+import { pushSupport } from '@/features/reminders/push';
 import { usePlanSettings } from '@/features/workouts/hooks';
 import { supabase } from '@/lib/supabase';
 import { useT } from '@/lib/i18n';
@@ -41,7 +43,7 @@ function useHasAskedCoach() {
 }
 
 export interface FirstStep {
-  key: 'meal' | 'plan' | 'coach';
+  key: 'meal' | 'plan' | 'coach' | 'remind';
   title: string;
   body: string;
   done: boolean;
@@ -55,6 +57,8 @@ export function useFirstSteps(): { show: boolean; steps: FirstStep[]; done: numb
   const meal = useHasConfirmedMeal();
   const coach = useHasAskedCoach();
   const { configured } = usePlanSettings();
+  const reminder = useReminder();
+  const support = pushSupport();
   const today = todayLocal();
   const completedAt = profile.data?.onboarding_completed_at ?? null;
   const ageDays = completedAt ? daysBetween(completedAt.slice(0, 10), today) : 0;
@@ -62,9 +66,10 @@ export function useFirstSteps(): { show: boolean; steps: FirstStep[]; done: numb
     { key: 'meal', title: t('first.meal'), body: t('first.mealBody'), done: meal.data === true, go: () => router.push({ pathname: '/food/search', params: { date: today, fresh: '1' } }), testID: 'first-step-meal' },
     { key: 'plan', title: t('first.plan'), body: t('first.planBody'), done: configured, go: () => router.push('/workouts/plan'), testID: 'first-step-plan' },
     { key: 'coach', title: t('first.coach'), body: t('first.coachBody'), done: coach.data === true, go: () => router.push('/coach'), testID: 'first-step-coach' },
+    ...(support.ok || support.needsInstall ? [{ key: 'remind' as const, title: t('first.remind'), body: t('first.remindBody'), done: reminder.data?.enabled === true, go: () => router.push('/profile/reminders'), testID: 'first-step-remind' }] : []),
   ];
   const done = steps.filter((s) => s.done).length;
-  const loaded = !meal.isLoading && !coach.isLoading && !profile.isLoading;
+  const loaded = !meal.isLoading && !coach.isLoading && !profile.isLoading && !reminder.isLoading;
   return { show: loaded && done < steps.length && ageDays <= 14, steps, done };
 }
 

@@ -15,6 +15,8 @@ export const config = {
   brandLogoUrl: process.env.EXPO_PUBLIC_BRAND_LOGO_URL?.trim() || '',
   /** Sub-path the web build is served from, e.g. /fitlens on GitHub Pages. Empty locally. */
   basePath: (process.env.EXPO_PUBLIC_BASE_PATH ?? '').replace(/\/$/, ''),
+  /** Web push application server key (public half of the VAPID pair). Empty disables reminders. */
+  vapidPublicKey: process.env.EXPO_PUBLIC_VAPID_PUBLIC_KEY?.trim() ?? '',
   supabaseUrl,
   supabaseAnonKey,
   supabaseConfigured: looksLikeUrl(supabaseUrl) && supabaseAnonKey.length > 20 && !supabaseAnonKey.includes('your-anon'),

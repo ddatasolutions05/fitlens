@@ -12,6 +12,7 @@ export * from './exif';
 export * from './quotes';
 export * from './streak';
 export * from './review';
+export * from './reminders';
 export * from './workouts/library';
 export * from './workouts/plan';
 export * from './day';

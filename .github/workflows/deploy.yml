@@ -32,6 +32,7 @@ jobs:
           EXPO_PUBLIC_SUPABASE_URL: ${{ vars.EXPO_PUBLIC_SUPABASE_URL }}
           EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
           EXPO_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
+          EXPO_PUBLIC_VAPID_PUBLIC_KEY: ${{ vars.EXPO_PUBLIC_VAPID_PUBLIC_KEY }}
       - name: Sub-path asset links and SPA fallback
         run: |
           sed -i 's#href="/manifest.webmanifest"#href="/${{ github.event.repository.name }}/manifest.webmanifest"#; s#href="/icons/#href="/${{ github.event.repository.name }}/icons/#' apps/mobile/dist/index.html

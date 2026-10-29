@@ -51,3 +51,8 @@ import_map = "./functions/import_map.json"
 [functions.delete-account]
 verify_jwt = true
 import_map = "./functions/import_map.json"
+
+[functions.send-reminders]
+# The schedule calls it with a shared secret; a signed-in test request carries a user token.
+verify_jwt = false
+import_map = "./functions/import_map.json"

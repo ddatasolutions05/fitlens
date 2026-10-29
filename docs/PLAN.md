@@ -161,6 +161,7 @@ once a working Anthropic key was set. Milestone 9 (export, delete) remains
 | 43 | Admin overview for the owner: accounts, activity, errors, feature use (`/admin`, `app_admins`) | built, verified live | SQL test in `rls.test.ts`; `e2e/admin.spec.ts` (denied path) |
 | 44 | First meal pays off: day-after bars, first-meal headline, low-confidence chips, scan progress with a way out | built, verified live | `manual-log.spec.ts` checks the bars |
 | 45 | Indian food list 86 to 248 dishes with aliases; missed searches recorded and shown to the admin | built, loaded on the project | seed tests; alias and miss SQL tests |
+| 46 | Daily reminder over web push: Profile > Daily reminder, time picker, test send, pg_cron schedule, `send-reminders` function | built, schedule live; a real phone subscription still to be confirmed by the owner | core tests for due logic and copy; RLS test; `e2e/reminders.spec.ts`; function probed with and without the secret |
 
 ## 5. Open risks
 

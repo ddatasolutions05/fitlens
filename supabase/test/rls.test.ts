@@ -457,3 +457,19 @@ describe('admin overview', () => {
     await admin((c) => c.query('delete from app_admins where user_id = $1', [userA.id]));
   });
 });
+
+describe('reminders and push subscriptions', () => {
+  it('are private to the account', async () => {
+    await as(userA, (c) => c.query(`insert into reminders (user_id, enabled, local_time) values ($1, true, '20:00')`, [userA.id]));
+    await as(userA, (c) => c.query(`insert into push_subscriptions (user_id, endpoint, p256dh, auth) values ($1, 'https://push.example/a', 'k', 'a')`, [userA.id]));
+    const mine = await as(userA, (c) => c.query('select enabled, local_time from reminders'));
+    expect(mine.rowCount).toBe(1);
+    expect(String(mine.rows[0].local_time)).toMatch(/^20:00/);
+    const theirs = await as(userB, (c) => c.query('select * from reminders'));
+    expect(theirs.rowCount).toBe(0);
+    const subs = await as(userB, (c) => c.query('select * from push_subscriptions'));
+    expect(subs.rowCount).toBe(0);
+    const forged = await expectDenied(as(userB, (c) => c.query(`insert into push_subscriptions (user_id, endpoint, p256dh, auth) values ($1, 'https://push.example/b', 'k', 'a')`, [userA.id])));
+    expect(forged).toMatch(/row-level security/i);
+  });
+});

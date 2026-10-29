@@ -18,7 +18,7 @@ export { Stat } from './Stat';
 export { ComingSoon, EmptyState, ErrorState, NotConfigured, OfflineBanner } from './states';
 export { Text } from './Text';
 export { ThemeProvider, useTheme, type ThemePreference } from './theme';
-export { TimeField } from './TimeField';
+export { TimeField, format12 } from './TimeField';
 export { ToastHost, toast } from './toast';
 export { useCountUp } from './useCountUp';
 export { fonts, layout, palette, radius, space, touch, type } from './tokens';

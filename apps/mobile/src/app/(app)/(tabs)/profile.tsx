@@ -8,13 +8,15 @@ import { useSession } from '@/features/auth/session';
 import { SectionLabel } from '@/features/day/components';
 import { Avatar, AvatarCancelled, initialsFor, useUploadAvatar } from '@/features/profile/Avatar';
 import { useLatestWeight, usePreferences, useProfile, useUpsertProfile } from '@/features/profile/hooks';
+import { useReminder } from '@/features/reminders/hooks';
 import { errorMessage } from '@/lib/net';
 import { LANGS, useI18n } from '@/lib/i18n';
-import { Button, Card, ErrorState, Row, Screen, Segmented, SkeletonCard, Stat, Text, space, useTheme, type ThemePreference } from '@/ui';
+import { Button, Card, ErrorState, Row, Screen, Segmented, SkeletonCard, Stat, Text, format12, space, useTheme, type ThemePreference } from '@/ui';
 
 export default function ProfileScreen() {
   const { lang, setLang, t } = useI18n();
   const isAdmin = useIsAdmin();
+  const reminder = useReminder();
   const { session, signOut } = useSession();
   const { preference, setPreference } = useTheme();
   const profile = useProfile();
@@ -84,6 +86,7 @@ export default function ProfileScreen() {
         <SectionLabel>Coaching</SectionLabel>
         <Row title="Your trainer" subtitle="Share a weekly summary with a coach, or stop sharing" onPress={() => router.push('/profile/trainer')} divider />
         <Row title="Trainer view" subtitle="Your code and the people who share with you" onPress={() => router.push('/trainer')} divider />
+        <Row title="Daily reminder" subtitle={reminder.data?.enabled ? `On, ${format12(reminder.data.local_time.slice(0, 5))}` : 'Off. One notification a day at a time you choose'} onPress={() => router.push('/profile/reminders')} accessibilityLabel="Daily reminder" divider />
         <Row title="How it works" subtitle="Drafts, unknown values, targets, the trend and the Coach" onPress={() => router.push('/profile/help')} divider={isAdmin.data === true} />
         {isAdmin.data === true ? <Row title="Admin" subtitle="Accounts, activity, errors and feature use" onPress={() => router.push('/admin')} accessibilityLabel="Admin" /> : null}
       </Card>
