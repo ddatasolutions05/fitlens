@@ -31,3 +31,22 @@ export function formatWeight(kg: number, unitSystem: UnitSystem, digits = 1): st
   const value = unitSystem === 'metric' ? kg : kgToLb(kg);
   return `${value.toFixed(digits)} ${unitSystem === 'metric' ? 'kg' : 'lb'}`;
 }
+
+/** Water in the person's units: "250 ml" or "8 fl oz". */
+export function formatWater(ml: number, unitSystem: UnitSystem): string {
+  if (unitSystem === 'imperial') return `${Math.round(mlToFlOz(ml))} fl oz`;
+  return `${Math.round(ml).toLocaleString()} ml`;
+}
+
+export function waterUnit(unitSystem: UnitSystem): 'ml' | 'fl oz' {
+  return unitSystem === 'imperial' ? 'fl oz' : 'ml';
+}
+
+/** Millilitres shown as the unit's number, for bars and inputs. */
+export function waterValue(ml: number | null, unitSystem: UnitSystem): number | null {
+  if (ml == null) return null;
+  return unitSystem === 'imperial' ? Math.round(mlToFlOz(ml)) : Math.round(ml);
+}
+
+/** Quick-add amounts in millilitres that read as round numbers in each unit. */
+export const WATER_QUICK_ML: Record<UnitSystem, number[]> = { metric: [250, 500, 750], imperial: [237, 473, 710] };

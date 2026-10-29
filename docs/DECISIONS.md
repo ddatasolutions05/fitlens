@@ -2,6 +2,11 @@
 
 Newest first. Each entry: context, decision, consequences.
 
+## D-033 Friction pass: instant sign-up, pickers, units, editing, help (2026-10-28)
+Context: a review of where a new person stalls in the first week.
+Decision: email sign-ups are confirmed automatically on the project (auth setting), so nobody waits for a mail that may not arrive; Resend still matters for links and resets. The goal step offers "use sensible defaults" (light activity, maintenance). The first-meal screen after setup leads with "Scan the plate", then describe, then search. Time is picked with the phone's time control (`TimeField`) in the meal editor and the weigh-in form. Water follows the unit choice everywhere: fluid ounces and 8, 16 and 24 oz quick buttons for Imperial, millilitres otherwise. Weigh-ins and activity entries can be edited from Diary; the log screens open in edit mode keyed by the entry so the form mounts with its values rather than patching state in an effect. The Coach consent card shows one sample answer. Profile links to a short "How it works" page. Text props allow a per-element font scale cap for tight rows.
+Consequences: `e2e/edit-entries.spec.ts` covers the edit flow and the help page. The auth setting is recorded here because it is not in the repo.
+
 ## D-032 Today with one row of actions (2026-10-28)
 Context: Today carried two rows of tiles above the fold, and the owner kept asking for a calmer screen.
 Decision: the second row (water, weight, activity) moved into the Body and activity card as three small outlined buttons above the bars they affect. The three food tiles stay. Test ids are unchanged.

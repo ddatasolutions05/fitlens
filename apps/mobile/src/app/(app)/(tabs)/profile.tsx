@@ -79,7 +79,8 @@ export default function ProfileScreen() {
       <Card style={{ gap: space.xs }}>
         <SectionLabel>Coaching</SectionLabel>
         <Row title="Your trainer" subtitle="Share a weekly summary with a coach, or stop sharing" onPress={() => router.push('/profile/trainer')} divider />
-        <Row title="Trainer view" subtitle="Your code and the people who share with you" onPress={() => router.push('/trainer')} />
+        <Row title="Trainer view" subtitle="Your code and the people who share with you" onPress={() => router.push('/trainer')} divider />
+        <Row title="How it works" subtitle="Drafts, unknown values, targets, the trend and the Coach" onPress={() => router.push('/profile/help')} />
       </Card>
 
       <Card style={{ gap: space.md }}>

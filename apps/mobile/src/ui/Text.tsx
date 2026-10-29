@@ -14,9 +14,9 @@ export function Text({ variant = 'body', color = 'text', align, tabular, style, 
   const { colors } = useTheme();
   return (
     <RNText
-      {...rest}
       allowFontScaling
       maxFontSizeMultiplier={1.6}
+      {...rest}
       style={[
         typeScale[variant],
         { color: colors[color] },

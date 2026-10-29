@@ -1,19 +1,23 @@
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { View } from 'react-native';
 import { WORKOUT_TYPES, deviceTimeZone, formatLocalDate, localDateTimeToIso, todayLocal, workoutEstimate, type Intensity, type WorkoutType } from '@fitlens/core';
 
 import { useLogSteps, useLogWorkout } from '@/features/logs/hooks';
 import { newIdempotencyKey } from '@/features/meals/model';
 import { useLatestWeight } from '@/features/profile/hooks';
+import { supabase } from '@/lib/supabase';
 import { goBack } from '@/lib/nav';
 import { errorMessage } from '@/lib/net';
-import { Button, Input, Note, NumberField, PageHeader, Screen, Segmented, Text, space, toast } from '@/ui';
+import { Button, Input, Note, NumberField, PageHeader, Screen, Segmented, SkeletonCard, Text, space, toast } from '@/ui';
 
 type Kind = 'steps' | 'workout';
 
-export default function LogActivity() {
-  const params = useLocalSearchParams<{ date?: string }>();
+type ActivityRow = { id: string; kind: string; steps: number | null; workout_type: string | null; intensity: string | null; duration_min: number | null; note: string | null };
+
+function ActivityForm({ editId, initial }: { editId: string | null; initial: ActivityRow | null }) {
+  const params = useLocalSearchParams<{ date?: string; edit?: string }>();
   const tz = deviceTimeZone();
   const localDate = params.date ?? todayLocal(tz);
   const isToday = localDate === todayLocal(tz);
@@ -22,12 +26,12 @@ export default function LogActivity() {
   const logWorkout = useLogWorkout();
   const kg = latest.data ? Number(latest.data.kg) : null;
 
-  const [kind, setKind] = useState<Kind>('steps');
-  const [steps, setSteps] = useState<number | null>(null);
-  const [type, setType] = useState<WorkoutType>('walking');
-  const [intensity, setIntensity] = useState<Intensity>('moderate');
-  const [minutes, setMinutes] = useState<number | null>(30);
-  const [note, setNote] = useState('');
+  const [kind, setKind] = useState<Kind>((initial?.kind as Kind | undefined) ?? 'steps');
+  const [steps, setSteps] = useState<number | null>(initial?.kind === 'steps' ? (initial.steps ?? null) : null);
+  const [type, setType] = useState<WorkoutType>(((initial?.kind === 'workout' && initial.workout_type) || 'walking') as WorkoutType);
+  const [intensity, setIntensity] = useState<Intensity>(((initial?.kind === 'workout' && initial.intensity) || 'moderate') as Intensity);
+  const [minutes, setMinutes] = useState<number | null>(initial?.kind === 'workout' && initial.duration_min != null ? Number(initial.duration_min) : 30);
+  const [note, setNote] = useState(initial?.note ?? '');
   const [error, setError] = useState<string | null>(null);
 
   const estimate = kind === 'workout' && minutes && kg ? workoutEstimate({ type, intensity, minutes, kg }) : null;
@@ -41,15 +45,15 @@ export default function LogActivity() {
           setError('Enter steps between 0 and 100,000.');
           return;
         }
-        await logSteps.mutateAsync({ id: newIdempotencyKey(), steps: Math.round(steps), localDate, tz, startAt, kg });
+        await logSteps.mutateAsync({ id: editId ?? newIdempotencyKey(), steps: Math.round(steps), localDate, tz, startAt, kg });
       } else {
         if (minutes == null || minutes <= 0 || minutes > 600) {
           setError('Enter a duration between 1 and 600 minutes.');
           return;
         }
-        await logWorkout.mutateAsync({ id: newIdempotencyKey(), type, intensity, minutes, localDate, tz, startAt, kg, note: note.trim() || null });
+        await logWorkout.mutateAsync({ id: editId ?? newIdempotencyKey(), type, intensity, minutes, localDate, tz, startAt, kg, note: note.trim() || null });
       }
-      toast(kind === 'steps' ? 'Steps saved' : 'Workout saved');
+      toast(editId ? 'Entry updated' : kind === 'steps' ? 'Steps saved' : 'Workout saved');
       goBack('/today');
     } catch (err) {
       setError(errorMessage(err));
@@ -58,7 +62,7 @@ export default function LogActivity() {
 
   return (
     <Screen testID="log-activity">
-      <PageHeader title="Add activity" subtitle={formatLocalDate(localDate, 'relative')} backTo="/today" />
+      <PageHeader title={editId ? 'Edit activity' : 'Add activity'} subtitle={formatLocalDate(localDate, 'relative')} backTo="/today" />
       <Segmented<Kind>
         value={kind}
         onChange={setKind}
@@ -111,4 +115,26 @@ export default function LogActivity() {
       <Button label="Cancel" variant="ghost" onPress={() => goBack('/today')} />
     </Screen>
   );
+}
+
+export default function LogActivity() {
+  const params = useLocalSearchParams<{ edit?: string }>();
+  const editId = params.edit ?? null;
+  const existing = useQuery({
+    queryKey: ['activity-entry', editId],
+    enabled: Boolean(editId),
+    queryFn: async () => {
+      const { data, error } = await supabase.from('activity_records').select('id, kind, steps, workout_type, intensity, duration_min, note').eq('id', editId as string).single();
+      if (error) throw error;
+      return data as ActivityRow;
+    },
+  });
+  if (editId && !existing.data) {
+    return (
+      <Screen testID="log-activity">
+        <SkeletonCard lines={3} />
+      </Screen>
+    );
+  }
+  return <ActivityForm key={editId ?? 'new'} editId={editId} initial={existing.data ?? null} />;
 }

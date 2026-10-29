@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { adherenceLabel, formatWeight, rangeSummary, type RangeStats, type UnitSystem } from '@fitlens/core';
+import { adherenceLabel, formatWater, formatWeight, rangeSummary, waterUnit, waterValue, type RangeStats, type UnitSystem } from '@fitlens/core';
 
 import { SectionLabel } from '@/features/day/components';
 import { BarChart, ChartFrame, ConsistencyGrid, LineChart } from '@/features/progress/charts';
@@ -107,8 +107,8 @@ export default function ProgressScreen() {
           </Card>
 
           <Card>
-            <ChartFrame title="Water" unit="ml">
-              <BarChart data={progress.data.days.map((d) => ({ label: dayLabel(d.localDate), value: d.waterMl, target: d.waterTarget }))} color={colors.fat} />
+            <ChartFrame title="Water" unit={waterUnit(unitSystem)}>
+              <BarChart data={progress.data.days.map((d) => ({ label: dayLabel(d.localDate), value: waterValue(d.waterMl, unitSystem), target: waterValue(d.waterTarget, unitSystem) }))} color={colors.fat} />
             </ChartFrame>
           </Card>
 
@@ -229,7 +229,7 @@ function KpiGrid({ stats, hideNumbers, trackingOnly, unitSystem, range }: { stat
         <Stat label="Workouts" value={`${stats.workoutDays} day${stats.workoutDays === 1 ? '' : 's'}`} note={stats.workoutMinutes > 0 ? `${Math.round(stats.workoutMinutes)} min in total` : 'None logged'} />
         <Stat
           label="Avg water"
-          value={stats.avgWater != null ? `${Math.round(stats.avgWater).toLocaleString()} ml` : 'No data'}
+          value={stats.avgWater != null ? formatWater(stats.avgWater, unitSystem) : 'No data'}
           note={stats.waterEligible ? `${adherenceLabel(stats.waterHitDays, stats.waterEligible, 'water')} at goal` : 'No water logs yet'}
         />
       </View>

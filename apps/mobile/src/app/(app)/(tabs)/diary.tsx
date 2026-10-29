@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { View } from 'react-native';
-import { formatWeight, timeInZone, type UnitSystem } from '@fitlens/core';
+import { type UnitSystem, formatWater, formatWeight, timeInZone } from '@fitlens/core';
 
 import { DateSwitcher, MealTimeline, SectionLabel } from '@/features/day/components';
 import { useDay } from '@/features/day/hooks';
@@ -51,7 +51,12 @@ export default function DiaryScreen() {
                   key={w.id}
                   title={formatWeight(Number(w.kg), unitSystem)}
                   subtitle={`${timeInZone(w.measured_at, w.tz)}${w.note ? `, ${w.note}` : ''}`}
-                  right={<Button label="Delete" size="sm" variant="ghost" onPress={() => deleteWeight.mutate({ id: w.id })} />}
+                  right={
+                    <View style={{ flexDirection: 'row' }}>
+                      <Button label="Edit" size="sm" variant="ghost" onPress={() => router.push({ pathname: '/log/weight', params: { date: localDate, edit: w.id } })} />
+                      <Button label="Delete" size="sm" variant="ghost" onPress={() => deleteWeight.mutate({ id: w.id })} />
+                    </View>
+                  }
                 />
               ))
             ) : (
@@ -73,7 +78,12 @@ export default function DiaryScreen() {
                       ? `${a.intensity ?? ''}${a.kcal_estimate != null ? `, about ${Math.round(Number(a.kcal_estimate))} kcal (estimate)` : ''}`
                       : `${a.source === 'manual' ? 'Entered by you' : a.source}`
                   }
-                  right={<Button label="Delete" size="sm" variant="ghost" onPress={() => deleteActivity.mutate({ id: a.id })} />}
+                  right={
+                    <View style={{ flexDirection: 'row' }}>
+                      <Button label="Edit" size="sm" variant="ghost" onPress={() => router.push({ pathname: '/log/activity', params: { date: localDate, edit: a.id } })} />
+                      <Button label="Delete" size="sm" variant="ghost" onPress={() => deleteActivity.mutate({ id: a.id })} />
+                    </View>
+                  }
                 />
               ))
             ) : (
@@ -89,7 +99,7 @@ export default function DiaryScreen() {
               logs.data.water.map((w) => (
                 <Row
                   key={w.id}
-                  title={`${w.ml} ml`}
+                  title={formatWater(w.ml, unitSystem)}
                   subtitle={timeInZone(w.logged_at, w.tz)}
                   right={<Button label="Delete" size="sm" variant="ghost" onPress={() => deleteWater.mutate({ id: w.id })} />}
                 />

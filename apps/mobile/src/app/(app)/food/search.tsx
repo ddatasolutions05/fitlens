@@ -52,7 +52,18 @@ export default function FoodSearch() {
         subtitle={first ? 'Start with what you last ate. Searching, typing or a photo all work; skip if you would rather look around first.' : 'Search three databases, pick a saved meal, or type the food in yourself.'}
         backTo={first ? '/home' : '/today'}
       />
-      {first ? <Button label="Skip for now" variant="ghost" size="sm" onPress={() => router.replace('/home')} testID="first-skip" /> : null}
+      {first ? (
+        <View style={{ gap: space.sm }}>
+          <Button label="Scan the plate" size="lg" onPress={() => router.push({ pathname: '/scan', params: { date: localDate, fresh: '1' } })} testID="first-scan" />
+          <View style={{ flexDirection: 'row', gap: space.sm }}>
+            <Button label="Describe it" variant="secondary" style={{ flex: 1 }} onPress={() => router.push({ pathname: '/food/describe', params: { date: localDate } })} />
+            <Button label="Skip for now" variant="ghost" style={{ flex: 1 }} onPress={() => router.replace('/home')} testID="first-skip" />
+          </View>
+          <Text variant="caption" color="textFaint" align="center">
+            Or search below.
+          </Text>
+        </View>
+      ) : null}
       <View style={{ gap: space.sm }}>
         <Input value={query} onChangeText={setQuery} placeholder="Search foods, e.g. dal, roti, chicken breast" autoFocus autoCorrect={false} testID="food-query" returnKeyType="search" />
         <View style={{ flexDirection: 'row', gap: space.sm }}>

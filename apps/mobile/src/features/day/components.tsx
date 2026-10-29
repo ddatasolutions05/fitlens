@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { addDays, formatLocalDate, formatWeight, roundKcal, todayLocal, type UnitSystem } from '@fitlens/core';
+import { type UnitSystem, addDays, formatLocalDate, formatWeight, roundKcal, todayLocal, waterUnit, waterValue } from '@fitlens/core';
 
 import type { MealWithItems } from '@/features/meals/api';
 import { displayKcal } from '@/features/meals/model';
@@ -177,7 +177,7 @@ export function ActivityCard({ day, unitSystem }: { day: DaySummary; unitSystem:
           {day.workoutKcal != null ? `, about ${Math.round(day.workoutKcal)} kcal (estimate)` : ''}
         </Text>
       ) : null}
-      <Bar label="Water" value={day.waterMl} target={waterGoal} unit=" ml" color={colors.water} />
+      <Bar label="Water" value={waterValue(day.waterMl, unitSystem)} target={waterValue(waterGoal, unitSystem)} unit={` ${waterUnit(unitSystem)}`} color={colors.water} />
       <View style={[styles.weightRow, { borderTopColor: colors.border }]}>
         <View style={{ flex: 1 }}>
           <Text variant="caption" color="textMuted">

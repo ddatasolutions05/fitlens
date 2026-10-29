@@ -84,6 +84,17 @@ export default function CoachScreen() {
               <Text color="textMuted">
                 The coach sends a summary of your logs (meals, totals, activity and weight trend, never photos) to the AI provider for each question. Turn on AI consent to use it.
               </Text>
+              <View style={{ gap: space.xs, borderLeftWidth: 2, borderLeftColor: colors.border, paddingLeft: space.md }} testID="coach-sample">
+                <Text variant="caption" color="textFaint">
+                  What an answer looks like
+                </Text>
+                <Text variant="small" color="textMuted">
+                  You: How do I reach my protein today?
+                </Text>
+                <Text variant="small">
+                  You are at 62 g of 130 g with dinner to go. Something like 150 g of chicken, paneer or dal with yoghurt would cover most of it. Water is at 1.2 L of 2.8 L, so a glass with dinner helps too.
+                </Text>
+              </View>
               <Button label="Open AI consent" variant="secondary" onPress={() => router.push('/profile/privacy')} />
             </Card>
           ) : null}

@@ -1,16 +1,15 @@
 import { useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { deviceTimeZone, formatLocalDate, localDateTimeToIso, todayLocal } from '@fitlens/core';
+import { WATER_QUICK_ML, deviceTimeZone, flOzToMl, formatLocalDate, formatWater, localDateTimeToIso, todayLocal, waterUnit, waterValue, type UnitSystem } from '@fitlens/core';
 
 import { useDay } from '@/features/day/hooks';
 import { useLogWater } from '@/features/logs/hooks';
+import { useProfile } from '@/features/profile/hooks';
 import { newIdempotencyKey } from '@/features/meals/model';
 import { goBack } from '@/lib/nav';
 import { errorMessage } from '@/lib/net';
 import { Bar, Button, Icon, NumberField, PageHeader, Screen, Text, radius, space, toast, useTheme } from '@/ui';
-
-const QUICK = [250, 500, 750];
 
 export default function LogWater() {
   const { colors } = useTheme();
@@ -19,6 +18,10 @@ export default function LogWater() {
   const localDate = params.date ?? todayLocal(tz);
   const isToday = localDate === todayLocal(tz);
   const day = useDay(localDate);
+  const profile = useProfile();
+  const unitSystem = (profile.data?.unit_system ?? 'metric') as UnitSystem;
+  const unit = waterUnit(unitSystem);
+  const quick = WATER_QUICK_ML[unitSystem];
   const log = useLogWater();
   const [custom, setCustom] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +36,7 @@ export default function LogWater() {
         localDate,
         tz,
       });
-      toast(`${Math.round(ml)} ml of water added`);
+      toast(`${formatWater(ml, unitSystem)} of water added`);
       goBack('/today');
     } catch (err) {
       setError(errorMessage(err));
@@ -43,13 +46,13 @@ export default function LogWater() {
   return (
     <Screen testID="log-water">
       <PageHeader title="Add water" subtitle={formatLocalDate(localDate, 'relative')} backTo="/today" />
-      {day.data ? <Bar label="So far today" value={day.data.waterMl} target={day.data.goal?.water_ml ?? null} unit=" ml" color={colors.water} /> : null}
+      {day.data ? <Bar label="So far today" value={waterValue(day.data.waterMl, unitSystem)} target={waterValue(day.data.goal?.water_ml ?? null, unitSystem)} unit={` ${unit}`} color={colors.water} /> : null}
       <View style={styles.row}>
-        {QUICK.map((ml) => (
+        {quick.map((ml) => (
           <Pressable
             key={ml}
             accessibilityRole="button"
-            accessibilityLabel={`Add ${ml} millilitres`}
+            accessibilityLabel={`Add ${formatWater(ml, unitSystem)}`}
             onPress={() => void add(ml)}
             disabled={log.isPending}
             testID={`water-${ml}`}
@@ -57,21 +60,21 @@ export default function LogWater() {
           >
             <Icon name="water" size={22} />
             <Text variant="heading" tabular>
-              {ml}
+              {waterValue(ml, unitSystem)}
             </Text>
             <Text variant="caption" color="textMuted">
-              ml
+              {unit}
             </Text>
           </Pressable>
         ))}
       </View>
-      <NumberField label="Custom amount (ml)" value={custom} onChangeNumber={setCustom} decimals={0} placeholder="330" testID="water-custom" />
+      <NumberField label={`Custom amount (${unit})`} value={custom} onChangeNumber={setCustom} decimals={0} placeholder={unitSystem === 'imperial' ? '12' : '330'} testID="water-custom" />
       {error ? (
         <Text color="danger" variant="small">
           {error}
         </Text>
       ) : null}
-      <Button label="Add custom amount" size="lg" disabled={!custom || custom <= 0 || custom > 5000} onPress={() => custom && void add(custom)} loading={log.isPending} />
+      <Button label="Add custom amount" size="lg" disabled={!custom || custom <= 0 || (unitSystem === 'imperial' ? flOzToMl(custom) : custom) > 5000} onPress={() => custom && void add(unitSystem === 'imperial' ? flOzToMl(custom) : custom)} loading={log.isPending} />
       <Button label="Cancel" variant="ghost" onPress={() => goBack('/today')} />
     </Screen>
   );

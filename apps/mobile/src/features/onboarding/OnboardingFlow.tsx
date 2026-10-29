@@ -347,6 +347,18 @@ export function OnboardingFlow() {
             <Note>Tracking-only mode: intake, nutrients, activity and weight are tracked with no deficit or pace. Targets are best set with your care provider.</Note>
           ) : null}
           <Note label="Why we ask">Logged steps and workouts are shown but not added on top of the multiplier, so nothing is counted twice. Steps, training days and diet can be added later in Profile.</Note>
+          <Button
+            label="Not sure yet. Use sensible defaults"
+            variant="ghost"
+            size="sm"
+            onPress={() => {
+              if (!a.activityLevel) set('activityLevel', 'light');
+              if (!a.goalType) set('goalType', 'maintenance');
+              track('onboarding_step', { step: 'numbers', defaults: true });
+              setStep(3);
+            }}
+            testID="goal-defaults"
+          />
         </View>
       ) : null}
 

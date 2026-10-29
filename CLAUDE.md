@@ -54,6 +54,7 @@ browser keeps the old bundle and e2e results lie.
 - Food data was loaded once by exporting the local import to CSV and
   inserting through the Management API. With the database password the
   direct route is `DATABASE_URL=<pooler url> npm run seed -- --source all`.
+- Email sign-ups are auto-confirmed on the project (`mailer_autoconfirm` set 2026-10-28 through the Management API); the built-in mailer still caps links and resets at 2 an hour until Resend is set.
 - Google sign-in is enabled on the project (OAuth client in the owner's Google Cloud account; callback `https://apoollhmgfocnkjvfocq.supabase.co/auth/v1/callback`). While the Google consent screen is in testing mode only listed test users can sign in; publish it to open it up. `node scripts/google-redirect-check.mjs` confirms the button reaches Google.
 - E2E: `e2e/global-setup.ts` wipes the e2e user's rows before each run.
 - Photo spec: `E2E_VISION_CONFIGURED=1` plus a real photo at `e2e/fixtures/meal.jpg` (gitignored, never commit third-party images).

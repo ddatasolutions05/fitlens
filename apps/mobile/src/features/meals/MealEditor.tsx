@@ -19,7 +19,7 @@ import { usePreferences, useProfile } from '@/features/profile/hooks';
 import { config } from '@/lib/config';
 import { errorMessage } from '@/lib/net';
 import { reportError, track } from '@/lib/telemetry';
-import { Button, Card, DateField, Icon, Input, NumberField, Segmented, Text, radius, space, touch, useTheme } from '@/ui';
+import { Button, Card, DateField, Icon, Input, NumberField, Segmented, Text, TimeField, radius, space, touch, useTheme } from '@/ui';
 
 import { removeItem, setDraft, updateDraft, updateItem, useDraft } from './draft-store';
 import { useDeleteMeal, useSaveMeal } from './hooks';
@@ -227,13 +227,13 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
             />
           </View>
           <View style={{ flex: 1 }}>
-            <Input
+            <TimeField
               label="Time"
               value={timeInZone(draft.eatenAt, draft.tz)}
-              onChangeText={(v) => {
+              onChange={(v) => {
                 if (/^\d{2}:\d{2}$/.test(v)) updateDraft((d) => ({ ...d, eatenAt: localDateTimeToIso(d.localDate, v, d.tz), eatenAtSource: 'manual' }));
               }}
-              placeholder="HH:MM"
+              testID="meal-time"
             />
           </View>
         </View>

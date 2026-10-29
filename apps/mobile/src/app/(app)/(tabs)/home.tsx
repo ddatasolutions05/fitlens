@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useMemo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { addDays, formatLocalDate, greetingFor, quoteForDate, streakLabel, suggestionsForDay, todayLocal } from '@fitlens/core';
+import { type UnitSystem, addDays, formatLocalDate, formatWater, greetingFor, quoteForDate, streakLabel, suggestionsForDay, todayLocal } from '@fitlens/core';
 
 import { useSession } from '@/features/auth/session';
 import { useDay } from '@/features/day/hooks';
@@ -40,6 +40,7 @@ export default function HomeScreen() {
 
   const name = profile.data?.display_name?.trim() || null;
   const hideNumbers = profile.data?.hide_numbers ?? false;
+  const unitSystem = (profile.data?.unit_system ?? 'metric') as UnitSystem;
   const totals = day.data?.totals?.totals ?? null;
   const target = profile.data?.mode === 'tracking_only' ? null : (day.data?.goal?.calorie_target ?? null);
   const kcalRaw = totals?.kcal != null ? Math.round(totals.kcal / 10) * 10 : null;
@@ -108,7 +109,7 @@ export default function HomeScreen() {
             <BigTile label="Protein" value={protein} note={protein && day.data?.goal?.protein_g ? `of ${day.data.goal.protein_g} g` : protein ? undefined : 'From your meals'} onPress={() => router.push('/today')} testID="home-protein" />
           </View>
           <View style={styles.row}>
-            <SmallTile icon="water" label={day.data?.waterMl ? `${day.data.waterMl.toLocaleString()} ml water` : 'Add water'} onPress={() => router.push({ pathname: '/log/water', params: { date: today } })} testID="home-water" />
+            <SmallTile icon="water" label={day.data?.waterMl ? `${formatWater(day.data.waterMl, unitSystem)} water` : 'Add water'} onPress={() => router.push({ pathname: '/log/water', params: { date: today } })} testID="home-water" />
             <SmallTile icon="activity" label={day.data?.steps != null ? `${day.data.steps.toLocaleString()} steps` : 'Log steps'} onPress={() => router.push({ pathname: '/log/activity', params: { date: today } })} testID="home-steps" />
           </View>
         </View>
