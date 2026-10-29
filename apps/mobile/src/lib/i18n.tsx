@@ -119,6 +119,9 @@ const en: Record<string, string> = {
   'onb.back': 'Back',
   'onb.start': 'Start tracking',
   'profile.language': 'Language',
+  'time.set': 'Set time',
+  'time.now': 'Now',
+  'time.cancel': 'Cancel',
 };
 
 const hi: Record<string, string> = {
@@ -227,6 +230,9 @@ const hi: Record<string, string> = {
   'onb.back': 'पीछे',
   'onb.start': 'ट्रैकिंग शुरू करें',
   'profile.language': 'भाषा',
+  'time.set': 'समय तय करें',
+  'time.now': 'अभी',
+  'time.cancel': 'रद्द करें',
 };
 
 const pa: Record<string, string> = {
@@ -335,6 +341,9 @@ const pa: Record<string, string> = {
   'onb.back': 'ਪਿੱਛੇ',
   'onb.start': 'ਟ੍ਰੈਕਿੰਗ ਸ਼ੁਰੂ ਕਰੋ',
   'profile.language': 'ਭਾਸ਼ਾ',
+  'time.set': 'ਸਮਾਂ ਤੈਅ ਕਰੋ',
+  'time.now': 'ਹੁਣ',
+  'time.cancel': 'ਰੱਦ ਕਰੋ',
 };
 
 const DICTS: Record<Lang, Record<string, string>> = { en, hi, pa };

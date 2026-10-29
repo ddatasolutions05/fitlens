@@ -2,6 +2,12 @@
 
 Newest first. Each entry: context, decision, consequences.
 
+## D-036 Admin overview for the owner (2026-10-29)
+Decision: admins are rows in `app_admins` (no policies; inserted by hand through the SQL editor or Management API, never from the client). `is_admin()` and `admin_overview(p_days)` are security definer functions; the overview returns one JSON document (totals, every account with counts and last activity, errors caught on devices, feature events) and raises `admin only` for anyone else. The screen is `/admin`, reached from a Profile row that only admins see. Edge function logs are not in the database, so they stay with `scripts/telemetry.mjs`.
+
+## D-035 Time is picked in an app sheet (2026-10-29)
+Decision: `TimeField` opens an in-app sheet (hour, minute in fives, AM/PM, Now) with a Set time button on every platform. The browser and OS wheels have no confirm button on phones, so a tester changed the time and saw only Clear and Cancel. The native file was removed; one component serves web and native.
+
 ## D-034 Interface language: English, Hindi, Punjabi (2026-10-28)
 Decision: a small dictionary module (`src/lib/i18n.tsx`) with `useT()`, no i18n library. The choice is stored on the device (`fitlens.lang`, like the theme) and defaults from the browser locale; Profile exposes it next to Theme. Covered: tab bar, Home, Today labels and tiles, the Add sheet, meal editor buttons, sign-in and onboarding. Food names, quotes, the Coach and long explanations stay English. The Hindi and Punjabi strings were written in-house and need a native speaker's read before the gym pitch; keys fall back to English when a string is missing.
 

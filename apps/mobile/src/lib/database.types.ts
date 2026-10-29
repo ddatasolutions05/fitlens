@@ -472,6 +472,12 @@ isOneToOne: false
 "make_trainer_code":
 { Args: Record<PropertyKey, never>; Returns: string
                            },
+"is_admin":
+{ Args: Record<PropertyKey, never>; Returns: boolean
+                           },
+"admin_overview":
+{ Args: { "p_days"?: number }; Returns: Json
+                           },
 "trainer_members":
 { Args: { "p_days"?: number }; Returns: {
               "member_user_id": string,

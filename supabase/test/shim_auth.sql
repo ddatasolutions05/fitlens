@@ -35,6 +35,9 @@ create table if not exists auth.users (
   email text unique,
   created_at timestamptz not null default now()
 );
+alter table auth.users add column if not exists phone text;
+alter table auth.users add column if not exists raw_app_meta_data jsonb;
+alter table auth.users add column if not exists last_sign_in_at timestamptz;
 grant select on auth.users to authenticated, service_role;
 
 create or replace function auth.uid()

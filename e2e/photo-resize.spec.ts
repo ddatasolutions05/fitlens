@@ -100,7 +100,7 @@ test.describe('photo capture time', () => {
     await expect(page.getByTestId('meal-editor')).toBeVisible();
     await expect(page.getByTestId('time-from-photo')).toBeVisible();
     await expect(page.getByLabel('Date')).toHaveValue('2026-10-20');
-    await expect(page.getByLabel('Time')).toHaveValue('07:35');
+    await expect(page.getByTestId('meal-time')).toHaveText('7:35 AM');
     await expect(page.getByRole('radio', { name: 'Breakfast', exact: true })).toBeChecked();
   });
 });

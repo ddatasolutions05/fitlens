@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { formatHeight, formatWeight, type UnitSystem } from '@fitlens/core';
 
+import { useIsAdmin } from '@/features/admin/hooks';
 import { useSession } from '@/features/auth/session';
 import { SectionLabel } from '@/features/day/components';
 import { Avatar, AvatarCancelled, initialsFor, useUploadAvatar } from '@/features/profile/Avatar';
@@ -13,6 +14,7 @@ import { Button, Card, ErrorState, Row, Screen, Segmented, SkeletonCard, Stat, T
 
 export default function ProfileScreen() {
   const { lang, setLang, t } = useI18n();
+  const isAdmin = useIsAdmin();
   const { session, signOut } = useSession();
   const { preference, setPreference } = useTheme();
   const profile = useProfile();
@@ -82,7 +84,8 @@ export default function ProfileScreen() {
         <SectionLabel>Coaching</SectionLabel>
         <Row title="Your trainer" subtitle="Share a weekly summary with a coach, or stop sharing" onPress={() => router.push('/profile/trainer')} divider />
         <Row title="Trainer view" subtitle="Your code and the people who share with you" onPress={() => router.push('/trainer')} divider />
-        <Row title="How it works" subtitle="Drafts, unknown values, targets, the trend and the Coach" onPress={() => router.push('/profile/help')} />
+        <Row title="How it works" subtitle="Drafts, unknown values, targets, the trend and the Coach" onPress={() => router.push('/profile/help')} divider={isAdmin.data === true} />
+        {isAdmin.data === true ? <Row title="Admin" subtitle="Accounts, activity, errors and feature use" onPress={() => router.push('/admin')} accessibilityLabel="Admin" /> : null}
       </Card>
 
       <Card style={{ gap: space.md }}>

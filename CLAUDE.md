@@ -111,6 +111,8 @@ browser keeps the old bundle and e2e results lie.
 - Every way to log food must stay one tap from Today: the three tiles and the centre tab sheet (`features/day/AddSheet.tsx`).
 - User-facing strings on the everyday screens go through `useT()` from `lib/i18n.tsx` (en, hi, pa; stored as `fitlens.lang`). Add the key to all three dictionaries; a missing key falls back to English. Food names, quotes and the Coach stay English.
 - Dates are picked, not typed: use `DateField` (web date input, native OS picker; `.native.tsx` split) and keep values as YYYY-MM-DD.
+- Times use `TimeField`, an in-app sheet with a Set time button (the browser and OS wheels have none on phones); values stay HH:MM.
+- Admin: `/admin` reads `admin_overview()`; access is a row in `app_admins`, added only by hand (`insert into public.app_admins (user_id) select id from auth.users where email = '<owner>'` through the Management API query endpoint). Never grant it from the client or seed an email in a migration.
 - Confirm quick saves with `toast('...')` from `@/ui`; never block with an alert. Animated values are `useState(() => new Animated.Value())`, not refs, and every animation checks `reducedMotion`.
 - Pushed screens start with `PageHeader` (chevron falls back to the owning tab); no trailing Back buttons. Forms sit on the background; use `Note` for asides and `Chips` for multi-select.
 - Brand: `EXPO_PUBLIC_BRAND_NAME`, `EXPO_PUBLIC_BRAND_TAGLINE` and `EXPO_PUBLIC_BRAND_LOGO_URL` white-label sign-in, onboarding, setup and the app name. Default FitLens with the built-in mark; the icon files under `assets/images` and `public/icons` come from `BrandMark`'s geometry.

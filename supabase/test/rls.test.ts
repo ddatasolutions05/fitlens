@@ -431,3 +431,24 @@ describe('trainer notes', () => {
     expect(cleared.rowCount).toBe(1);
   });
 });
+
+describe('admin overview', () => {
+  it('is denied unless the caller is listed in app_admins, and then sees every account', async () => {
+    const denied = await expectDenied(as(userA, (c) => c.query('select public.admin_overview(7)')));
+    expect(denied).toMatch(/admin only/);
+    const flag = await as(userA, (c) => c.query('select public.is_admin() as ok'));
+    expect(flag.rows[0].ok).toBe(false);
+    const forged = await expectDenied(as(userA, (c) => c.query('insert into app_admins (user_id) values ($1)', [userA.id])));
+    expect(forged).toMatch(/permission denied|row-level security/i);
+    await admin((c) => c.query('insert into app_admins (user_id) values ($1)', [userA.id]));
+    const now = await as(userA, (c) => c.query('select public.is_admin() as ok'));
+    expect(now.rows[0].ok).toBe(true);
+    const res = await as(userA, (c) => c.query('select public.admin_overview(7) as o'));
+    const o = res.rows[0].o;
+    expect(Number(o.totals.accounts)).toBeGreaterThanOrEqual(2);
+    expect(o.users.some((u: { user_id: string }) => u.user_id === userB.id)).toBe(true);
+    expect(Array.isArray(o.errors)).toBe(true);
+    expect(Array.isArray(o.events)).toBe(true);
+    await admin((c) => c.query('delete from app_admins where user_id = $1', [userA.id]));
+  });
+});
