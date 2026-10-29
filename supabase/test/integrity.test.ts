@@ -262,8 +262,9 @@ describe('search_foods', () => {
 
   it('matches aliases such as chawal for rice', async () => {
     await admin((c) => c.query(`insert into foods (source, source_ref, name, aliases, kcal, verified) values ('ifct', 'al1', 'Rice, white, cooked, plain', 'chawal, bhaat, steamed rice', 130, true)`));
+    await admin((c) => c.query(`insert into foods (source, source_ref, name, kcal, verified) values ('ifct', 'al2', 'Chawal puri snack', 300, true)`));
     const rows = await as(user, (c) => c.query(`select name from search_foods('chawal', 10)`));
-    expect(rows.rows.map((r) => r.name)).toContain('Rice, white, cooked, plain');
+    expect(rows.rows[0].name).toBe('Rice, white, cooked, plain');
   });
 
   it('does not surface other users\' private foods', async () => {
