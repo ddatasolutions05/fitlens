@@ -19,6 +19,7 @@ import { usePreferences, useProfile } from '@/features/profile/hooks';
 import { config } from '@/lib/config';
 import { errorMessage } from '@/lib/net';
 import { reportError, track } from '@/lib/telemetry';
+import { useT } from '@/lib/i18n';
 import { Button, Card, DateField, Icon, Input, NumberField, Segmented, Text, TimeField, radius, space, touch, useTheme } from '@/ui';
 
 import { removeItem, setDraft, updateDraft, updateItem, useDraft } from './draft-store';
@@ -33,6 +34,7 @@ const FRACTIONS = [
 ];
 
 export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
+  const t = useT();
   const { colors } = useTheme();
   const draft = useDraft();
   const save = useSaveMeal();
@@ -258,7 +260,7 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
             ))}
           </Card>
         )}
-        <Button label="Add another item" variant="secondary" onPress={() => router.push({ pathname: '/food/search', params: { date: draft.localDate } })} testID="add-item" />
+        <Button label={t('editor.addItem')} variant="secondary" onPress={() => router.push({ pathname: '/food/search', params: { date: draft.localDate } })} testID="add-item" />
       </View>
 
       {allergenHits.length > 0 ? (
@@ -277,10 +279,10 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
         </Text>
       ) : null}
 
-      <Button label={mode === 'existing' && draft.mealId ? 'Save changes' : 'Confirm meal'} size="lg" onPress={() => void confirm()} loading={save.isPending} disabled={draft.items.length === 0 || save.isPending} testID="confirm-meal" />
+      <Button label={mode === 'existing' && draft.mealId ? t('editor.saveChanges') : t('editor.confirm')} size="lg" onPress={() => void confirm()} loading={save.isPending} disabled={draft.items.length === 0 || save.isPending} testID="confirm-meal" />
       <View style={styles.row}>
-        <Button label="Keep as draft" variant="ghost" style={{ flex: 1 }} onPress={() => void saveDraft()} disabled={save.isPending} testID="save-draft" />
-        <Button label={draft.mealId ? 'Delete meal' : 'Discard'} variant="ghost" style={{ flex: 1 }} onPress={() => void remove()} disabled={del.isPending} testID="delete-meal" />
+        <Button label={t('editor.keepDraft')} variant="ghost" style={{ flex: 1 }} onPress={() => void saveDraft()} disabled={save.isPending} testID="save-draft" />
+        <Button label={draft.mealId ? t('editor.deleteMeal') : t('editor.discard')} variant="ghost" style={{ flex: 1 }} onPress={() => void remove()} disabled={del.isPending} testID="delete-meal" />
       </View>
       <Text variant="caption" color="textFaint">
         Drafts never count toward daily totals until confirmed.

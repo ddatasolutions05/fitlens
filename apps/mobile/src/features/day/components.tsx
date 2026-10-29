@@ -1,4 +1,5 @@
 import { router } from 'expo-router';
+import { useT } from '@/lib/i18n';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { type UnitSystem, addDays, formatLocalDate, formatWeight, roundKcal, todayLocal, waterUnit, waterValue } from '@fitlens/core';
 
@@ -42,6 +43,7 @@ export function DateSwitcher({ localDate, onChange }: { localDate: string; onCha
 
 /** The white plate: the one loud element on the screen. */
 export function CalorieCard({ day, hideNumbers, trackingOnly, tdeeEstimate }: { day: DaySummary; hideNumbers: boolean; trackingOnly: boolean; tdeeEstimate: number | null }) {
+  const t = useT();
   const { colors } = useTheme();
   const eaten = day.totals?.totals.kcal ?? null;
   const shownKcal = useCountUp(eaten == null ? null : Math.round(eaten));
@@ -84,7 +86,7 @@ export function CalorieCard({ day, hideNumbers, trackingOnly, tdeeEstimate }: { 
     <Card tone="inverse" style={{ gap: space.md }} testID="calorie-card" accessible accessibilityLabel={`Calories: ${value} kcal. ${headline}`}>
       <View style={styles.plateHead}>
         <Text variant="label" style={{ color: fg, opacity: 0.6 }}>
-          Calories eaten
+          {t('today.caloriesEaten')}
         </Text>
         <Text variant="caption" style={{ color: fg, opacity: 0.6 }}>
           {mealCount} meal{mealCount === 1 ? '' : 's'}
@@ -109,11 +111,11 @@ export function CalorieCard({ day, hideNumbers, trackingOnly, tdeeEstimate }: { 
         </Text>
       ) : null}
       <View style={[styles.plateStats, { borderTopColor: colors.inverseLine }]}>
-        <PlateStat label="Target" value={target != null ? `${target.toLocaleString()} kcal` : 'Not set'} fg={fg} testID="calorie-target" />
+        <PlateStat label={t('today.target')} value={target != null ? `${target.toLocaleString()} kcal` : t('today.notSet')} fg={fg} testID="calorie-target" />
         <View style={[styles.plateDivider, { backgroundColor: colors.inverseLine }]} />
-        <PlateStat label="Est. burn" value={tdeeEstimate != null ? `${(roundKcal(tdeeEstimate) ?? 0).toLocaleString()} kcal` : 'Unknown'} fg={fg} onPress={() => router.push('/profile/tdee')} />
+        <PlateStat label={t('today.burn')} value={tdeeEstimate != null ? `${(roundKcal(tdeeEstimate) ?? 0).toLocaleString()} kcal` : 'Unknown'} fg={fg} onPress={() => router.push('/profile/tdee')} />
         <View style={[styles.plateDivider, { backgroundColor: colors.inverseLine }]} />
-        <PlateStat label="Protein" value={day.totals?.totals.protein_g != null ? `${Math.round(day.totals.totals.protein_g)} g` : (day.totals?.unknown.protein_g ?? 0) > 0 ? 'Unknown' : '0 g'} fg={fg} />
+        <PlateStat label={t('today.protein')} value={day.totals?.totals.protein_g != null ? `${Math.round(day.totals.totals.protein_g)} g` : (day.totals?.unknown.protein_g ?? 0) > 0 ? 'Unknown' : '0 g'} fg={fg} />
       </View>
     </Card>
   );
@@ -141,13 +143,14 @@ function PlateStat({ label, value, fg, onPress, testID }: { label: string; value
 }
 
 export function MacroCard({ day }: { day: DaySummary }) {
+  const tr = useT();
   const { colors } = useTheme();
   const t = day.totals?.totals;
   const u = day.totals?.unknown;
   const g = day.goal;
   return (
     <Card style={{ gap: space.md }}>
-      <SectionLabel>Macros</SectionLabel>
+      <SectionLabel>{tr('today.macros')}</SectionLabel>
       <Bar label="Protein" value={t?.protein_g ?? null} target={g?.protein_g ?? null} unit=" g" color={colors.protein} unknownCount={u?.protein_g ?? 0} />
       <Bar label="Carbs" value={t?.carbs_g ?? null} target={g?.carbs_g ?? null} unit=" g" color={colors.carbs} unknownCount={u?.carbs_g ?? 0} compact />
       <Bar label="Fat" value={t?.fat_g ?? null} target={g?.fat_g ?? null} unit=" g" color={colors.fat} unknownCount={u?.fat_g ?? 0} compact />
@@ -157,6 +160,7 @@ export function MacroCard({ day }: { day: DaySummary }) {
 }
 
 export function ActivityCard({ day, unitSystem }: { day: DaySummary; unitSystem: UnitSystem }) {
+  const t = useT();
   const { colors } = useTheme();
   const stepGoal = day.goal?.step_goal ?? null;
   const waterGoal = day.goal?.water_ml ?? null;
@@ -164,11 +168,11 @@ export function ActivityCard({ day, unitSystem }: { day: DaySummary; unitSystem:
     day.trendDirection === 'down' ? 'Trending down' : day.trendDirection === 'up' ? 'Trending up' : day.trendDirection === 'flat' ? 'Holding steady' : 'Needs more weigh-ins';
   return (
     <Card style={{ gap: space.md }}>
-      <SectionLabel>Body and activity</SectionLabel>
+      <SectionLabel>{t('today.body')}</SectionLabel>
       <View style={styles.logRow}>
-        <Button label="Steps" variant="secondary" size="sm" style={{ flex: 1 }} icon={<Icon name="activity" size={16} />} onPress={() => router.push({ pathname: '/log/activity', params: { date: day.localDate } })} testID="quick-activity" />
-        <Button label="Water" variant="secondary" size="sm" style={{ flex: 1 }} icon={<Icon name="water" size={16} />} onPress={() => router.push({ pathname: '/log/water', params: { date: day.localDate } })} testID="quick-water" />
-        <Button label="Weight" variant="secondary" size="sm" style={{ flex: 1 }} icon={<Icon name="scale" size={16} />} onPress={() => router.push({ pathname: '/log/weight', params: { date: day.localDate } })} testID="quick-weight" />
+        <Button label={t('today.steps')} variant="secondary" size="sm" style={{ flex: 1 }} icon={<Icon name="activity" size={16} />} onPress={() => router.push({ pathname: '/log/activity', params: { date: day.localDate } })} testID="quick-activity" />
+        <Button label={t('today.water')} variant="secondary" size="sm" style={{ flex: 1 }} icon={<Icon name="water" size={16} />} onPress={() => router.push({ pathname: '/log/water', params: { date: day.localDate } })} testID="quick-water" />
+        <Button label={t('today.weight')} variant="secondary" size="sm" style={{ flex: 1 }} icon={<Icon name="scale" size={16} />} onPress={() => router.push({ pathname: '/log/weight', params: { date: day.localDate } })} testID="quick-weight" />
       </View>
       <Bar label="Steps" value={day.steps} target={stepGoal} unit="" color={colors.steps} />
       {day.workoutCount > 0 ? (
@@ -204,12 +208,13 @@ export function ActivityCard({ day, unitSystem }: { day: DaySummary; unitSystem:
 }
 
 export function QuickActions({ localDate }: { localDate: string }) {
+  const t = useT();
   return (
     <View style={{ gap: space.sm }}>
       <View style={styles.actionRow}>
-        <ActionTile icon="search" label="Search food" onPress={() => router.push({ pathname: '/food/search', params: { date: localDate, fresh: '1' } })} testID="quick-add-food" />
-        <ActionTile icon="pencil" label="Enter manually" onPress={() => router.push({ pathname: '/food/manual', params: { date: localDate, fresh: '1' } })} testID="quick-manual" />
-        <ActionTile icon="camera" label="Scan meal" onPress={() => router.push({ pathname: '/scan', params: { date: localDate, fresh: '1' } })} testID="quick-scan" />
+        <ActionTile icon="search" label={t('today.searchFood')} onPress={() => router.push({ pathname: '/food/search', params: { date: localDate, fresh: '1' } })} testID="quick-add-food" />
+        <ActionTile icon="pencil" label={t('today.enterManually')} onPress={() => router.push({ pathname: '/food/manual', params: { date: localDate, fresh: '1' } })} testID="quick-manual" />
+        <ActionTile icon="camera" label={t('today.scanMeal')} onPress={() => router.push({ pathname: '/scan', params: { date: localDate, fresh: '1' } })} testID="quick-scan" />
       </View>
     </View>
   );
@@ -238,11 +243,12 @@ function ActionTile({ icon, label, onPress, quiet, testID }: { icon: IconName; l
 }
 
 export function InsightCard({ text }: { text: string }) {
+  const t = useT();
   const { colors } = useTheme();
   return (
     <View style={[styles.insight, { borderLeftColor: colors.text }]}>
       <Text variant="label" color="textMuted">
-        Insight
+        {t('today.insight')}
       </Text>
       <Text testID="insight">{text}</Text>
     </View>
@@ -261,13 +267,14 @@ export function SectionLabel({ children, right }: { children: string; right?: Re
 }
 
 export function MealTimeline({ meals, drafts, hideNumbers }: { meals: MealWithItems[]; drafts: MealWithItems[]; hideNumbers: boolean }) {
+  const t = useT();
   const { colors } = useTheme();
   if (meals.length === 0 && drafts.length === 0) {
     return (
       <Card tone="alt" style={{ alignItems: 'center', gap: space.xs }}>
-        <Text variant="bodyStrong">No meals on this day</Text>
+        <Text variant="bodyStrong">{t('today.noMeals')}</Text>
         <Text variant="small" color="textMuted" align="center">
-          Search the database, type it in, or scan the plate.
+          {t('today.noMealsBody')}
         </Text>
       </Card>
     );

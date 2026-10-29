@@ -2,6 +2,9 @@
 
 Newest first. Each entry: context, decision, consequences.
 
+## D-034 Interface language: English, Hindi, Punjabi (2026-10-28)
+Decision: a small dictionary module (`src/lib/i18n.tsx`) with `useT()`, no i18n library. The choice is stored on the device (`fitlens.lang`, like the theme) and defaults from the browser locale; Profile exposes it next to Theme. Covered: tab bar, Home, Today labels and tiles, the Add sheet, meal editor buttons, sign-in and onboarding. Food names, quotes, the Coach and long explanations stay English. The Hindi and Punjabi strings were written in-house and need a native speaker's read before the gym pitch; keys fall back to English when a string is missing.
+
 ## D-033 Friction pass: instant sign-up, pickers, units, editing, help (2026-10-28)
 Context: a review of where a new person stalls in the first week.
 Decision: email sign-ups are confirmed automatically on the project (auth setting), so nobody waits for a mail that may not arrive; Resend still matters for links and resets. The goal step offers "use sensible defaults" (light activity, maintenance). The first-meal screen after setup leads with "Scan the plate", then describe, then search. Time is picked with the phone's time control (`TimeField`) in the meal editor and the weigh-in form. Water follows the unit choice everywhere: fluid ounces and 8, 16 and 24 oz quick buttons for Imperial, millilitres otherwise. Weigh-ins and activity entries can be edited from Diary; the log screens open in edit mode keyed by the entry so the form mounts with its values rather than patching state in an effect. The Coach consent card shows one sample answer. Profile links to a short "How it works" page. Text props allow a per-element font scale cap for tight rows.

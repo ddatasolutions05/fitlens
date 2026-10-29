@@ -21,6 +21,7 @@ import { newIdempotencyKey } from '@/features/meals/model';
 import { useAddGoalVersion, useUpsertPreferences, useUpsertProfile } from '@/features/profile/hooks';
 import { planGoal } from '@/features/profile/targets';
 import { config } from '@/lib/config';
+import { useT } from '@/lib/i18n';
 import { errorMessage } from '@/lib/net';
 import { reportError, track } from '@/lib/telemetry';
 import { BrandMark, Button, Card, Chips, DateField, Input, Note, NumberField, Screen, Segmented, Stat, Text, radius, space, useTheme } from '@/ui';
@@ -54,10 +55,10 @@ interface Answers {
 
 // Four screens. Diet, allergies, steps and training details live in Profile.
 const STEPS = [
-  { key: 'about', title: 'About you', lead: 'Four answers, under a minute. Everything stays editable in Profile.' },
-  { key: 'body', title: 'Your body', lead: 'Weight drives resting energy, protein and water targets.' },
-  { key: 'goal', title: 'Goal and activity', lead: 'Decides the gap between what you burn and what you aim to eat.' },
-  { key: 'numbers', title: 'Your numbers', lead: 'Calculated from your answers. Change any of it later under Targets.' },
+  { key: 'about', title: 'onb.about', lead: 'onb.aboutLead' },
+  { key: 'body', title: 'onb.body', lead: 'onb.bodyLead' },
+  { key: 'goal', title: 'onb.goal', lead: 'onb.goalLead' },
+  { key: 'numbers', title: 'onb.numbers', lead: 'onb.numbersLead' },
 ] as const;
 
 
@@ -98,6 +99,7 @@ function kgOf(v: number | null, unit: UnitSystem): number | null {
 }
 
 export function OnboardingFlow() {
+  const t = useT();
   const { colors } = useTheme();
   const [step, setStep] = useState(0);
   const [a, setA] = useState<Answers>(initial);
@@ -211,7 +213,7 @@ export function OnboardingFlow() {
           <View style={[styles.fill, { width: `${((step + 1) / STEPS.length) * 100}%`, backgroundColor: colors.text }]} />
         </View>
         <Text variant="label" color="textMuted">
-          Step {step + 1} of {STEPS.length}
+          {t('onb.step', { n: step + 1, total: STEPS.length })}
         </Text>
       </View>
 
@@ -221,8 +223,8 @@ export function OnboardingFlow() {
             <BrandMark size={40} />
           </View>
         ) : null}
-        <Text variant="title">{step === 0 ? `Welcome to ${config.brandName}` : current.title}</Text>
-        <Text color="textMuted">{current.lead}</Text>
+        <Text variant="title">{step === 0 ? t('onb.welcome', { brand: config.brandName }) : t(current.title)}</Text>
+        <Text color="textMuted">{t(current.lead)}</Text>
       </View>
 
       {step === 0 ? (
@@ -424,10 +426,10 @@ export function OnboardingFlow() {
       ) : null}
 
       <View style={styles.nav}>
-        {step > 0 ? <Button label="Back" variant="ghost" onPress={() => setStep(step - 1)} style={{ flex: 1 }} /> : null}
+        {step > 0 ? <Button label={t('onb.back')} variant="ghost" onPress={() => setStep(step - 1)} style={{ flex: 1 }} /> : null}
         {step < STEPS.length - 1 ? (
           <Button
-            label="Continue"
+            label={t('onb.continue')}
             size="lg"
             onPress={() => {
               track('onboarding_step', { step: STEPS[step + 1]?.key ?? '' });
@@ -438,7 +440,7 @@ export function OnboardingFlow() {
             testID="continue"
           />
         ) : (
-          <Button label="Start tracking" size="lg" onPress={() => void finish()} disabled={!canFinish} loading={saving} style={{ flex: 2 }} testID="finish" />
+          <Button label={t('onb.start')} size="lg" onPress={() => void finish()} disabled={!canFinish} loading={saving} style={{ flex: 2 }} testID="finish" />
         )}
       </View>
     </Screen>

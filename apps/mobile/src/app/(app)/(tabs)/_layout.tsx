@@ -7,6 +7,7 @@ import { useSession } from '@/features/auth/session';
 import { AddSheet } from '@/features/day/AddSheet';
 import { useSelectedDate } from '@/features/day/selected-date';
 import { config } from '@/lib/config';
+import { useT } from '@/lib/i18n';
 import { Icon, Text, layout, radius, space, touch, useTheme, type IconName } from '@/ui';
 
 interface BottomTabBarProps {
@@ -16,38 +17,39 @@ type RawTabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar
 type TabName = 'home' | 'today' | 'train' | 'progress' | 'coach';
 // Diary and Profile live behind Home (and the avatar); five tabs is the most the bar holds.
 const TABS: { name: TabName; label: string; icon: IconName }[] = [
-  { name: 'home', label: 'Home', icon: 'home' },
-  { name: 'today', label: 'Today', icon: 'today' },
-  { name: 'train', label: 'Train', icon: 'dumbbell' },
-  { name: 'progress', label: 'Stats', icon: 'progress' },
-  { name: 'coach', label: 'Coach', icon: 'coach' },
+  { name: 'home', label: 'tab.home', icon: 'home' },
+  { name: 'today', label: 'tab.today', icon: 'today' },
+  { name: 'train', label: 'tab.train', icon: 'dumbbell' },
+  { name: 'progress', label: 'tab.stats', icon: 'progress' },
+  { name: 'coach', label: 'tab.coach', icon: 'coach' },
 ];
 
 function TabBar({ state }: BottomTabBarProps) {
+  const t = useT();
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const [localDate] = useSelectedDate();
   const [sheet, setSheet] = useState(false);
   const current = state.routes[state.index]?.name;
 
-  const renderTab = (t: (typeof TABS)[number]) => {
-    const focused = current === t.name;
+  const renderTab = (tab: (typeof TABS)[number]) => {
+    const focused = current === tab.name;
     return (
       <Pressable
-        key={t.name}
+        key={tab.name}
         accessibilityRole="tab"
         accessibilityState={{ selected: focused }}
-        accessibilityLabel={t.label}
-        testID={`tab-${t.name}`}
+        accessibilityLabel={t(tab.label)}
+        testID={`tab-${tab.name}`}
         onPress={() => {
           if (focused) return;
-          router.navigate(`/${t.name}`);
+          router.navigate(`/${tab.name}`);
         }}
         style={styles.tab}
       >
-        <Icon name={t.icon} size={22} color={focused ? colors.text : colors.textFaint} strokeWidth={focused ? 2.2 : 1.6} />
+        <Icon name={tab.icon} size={22} color={focused ? colors.text : colors.textFaint} strokeWidth={focused ? 2.2 : 1.6} />
         <Text variant="caption" style={{ color: focused ? colors.text : colors.textFaint, fontSize: 11, lineHeight: 14 }}>
-          {t.label}
+          {t(tab.label)}
         </Text>
       </Pressable>
     );

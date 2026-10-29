@@ -7,6 +7,7 @@ import { ActivityCard, CalorieCard, DateSwitcher, DayCompleteToggle, InsightCard
 import { useDay } from '@/features/day/hooks';
 import { ProteinPicks } from '@/features/day/ProteinPicks';
 import { useCopyMealsAsDrafts } from '@/features/meals/copy';
+import { useT } from '@/lib/i18n';
 import { useSelectedDate } from '@/features/day/selected-date';
 import { useSetDayStatus } from '@/features/logs/hooks';
 import { useProfile } from '@/features/profile/hooks';
@@ -16,6 +17,7 @@ import { retryParked } from '@/lib/offline-queue';
 import { Button, Card, ErrorState, OfflineBanner, Screen, SkeletonCard, Text, space, toast } from '@/ui';
 
 export default function TodayScreen() {
+  const t = useT();
   const qc = useQueryClient();
   const [localDate, setLocalDate] = useSelectedDate();
   const day = useDay(localDate);
@@ -80,7 +82,7 @@ export default function TodayScreen() {
           ) : null}
           {hideNumbers ? null : <MacroCard day={day.data} />}
           <View style={{ gap: space.sm }}>
-            <SectionLabel>Meals</SectionLabel>
+            <SectionLabel>{t('today.meals')}</SectionLabel>
             {day.data.meals.length === 0 && day.data.drafts.length === 0 && (yesterday.data?.meals.length ?? 0) > 0 ? (
               <Card style={{ gap: space.sm }} testID="same-as-yesterday">
                 <Text variant="bodyStrong">Same as yesterday?</Text>

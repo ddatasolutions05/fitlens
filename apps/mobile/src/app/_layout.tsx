@@ -9,6 +9,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { SessionProvider } from '@/features/auth/session';
 import { QueryProvider } from '@/lib/query';
+import { I18nProvider } from '@/lib/i18n';
 import { installGlobalErrorHandlers } from '@/lib/telemetry';
 import { AppErrorBoundary, ThemeProvider, ToastHost, useTheme } from '@/ui';
 
@@ -38,6 +39,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <ThemeProvider>
+          <I18nProvider>
           <QueryProvider>
             <SessionProvider>
               <AppErrorBoundary>
@@ -45,6 +47,7 @@ export default function RootLayout() {
               </AppErrorBoundary>
             </SessionProvider>
           </QueryProvider>
+          </I18nProvider>
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

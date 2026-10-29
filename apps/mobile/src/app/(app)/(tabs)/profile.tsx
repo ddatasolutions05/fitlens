@@ -8,9 +8,11 @@ import { SectionLabel } from '@/features/day/components';
 import { Avatar, AvatarCancelled, initialsFor, useUploadAvatar } from '@/features/profile/Avatar';
 import { useLatestWeight, usePreferences, useProfile, useUpsertProfile } from '@/features/profile/hooks';
 import { errorMessage } from '@/lib/net';
+import { LANGS, useI18n } from '@/lib/i18n';
 import { Button, Card, ErrorState, Row, Screen, Segmented, SkeletonCard, Stat, Text, space, useTheme, type ThemePreference } from '@/ui';
 
 export default function ProfileScreen() {
+  const { lang, setLang, t } = useI18n();
   const { session, signOut } = useSession();
   const { preference, setPreference } = useTheme();
   const profile = useProfile();
@@ -85,6 +87,7 @@ export default function ProfileScreen() {
 
       <Card style={{ gap: space.md }}>
         <SectionLabel>Display</SectionLabel>
+        <Segmented<string> label={t('profile.language')} value={lang} onChange={(v) => setLang(v as typeof lang)} options={LANGS.map((l) => ({ value: l.key, label: l.label }))} />
         <Segmented<ThemePreference>
           label="Theme"
           value={preference}

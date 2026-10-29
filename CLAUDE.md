@@ -109,6 +109,7 @@ browser keeps the old bundle and e2e results lie.
 - Workouts: library and plan rules live in `packages/core/src/workouts`; completed sessions are `activity_records` with note `plan:<id>` (`features/workouts/hooks.ts`).
 - Phone sign-in needs an SMS provider on the Supabase project (Twilio credentials via the Management API auth config); until then the option stays hidden.
 - Every way to log food must stay one tap from Today: the three tiles and the centre tab sheet (`features/day/AddSheet.tsx`).
+- User-facing strings on the everyday screens go through `useT()` from `lib/i18n.tsx` (en, hi, pa; stored as `fitlens.lang`). Add the key to all three dictionaries; a missing key falls back to English. Food names, quotes and the Coach stay English.
 - Dates are picked, not typed: use `DateField` (web date input, native OS picker; `.native.tsx` split) and keep values as YYYY-MM-DD.
 - Confirm quick saves with `toast('...')` from `@/ui`; never block with an alert. Animated values are `useState(() => new Animated.Value())`, not refs, and every animation checks `reducedMotion`.
 - Pushed screens start with `PageHeader` (chevron falls back to the owning tab); no trailing Back buttons. Forms sit on the background; use `Note` for asides and `Chips` for multi-select.

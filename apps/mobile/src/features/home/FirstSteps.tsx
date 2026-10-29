@@ -9,6 +9,7 @@ import { useUserId } from '@/features/auth/session';
 import { useProfile } from '@/features/profile/hooks';
 import { usePlanSettings } from '@/features/workouts/hooks';
 import { supabase } from '@/lib/supabase';
+import { useT } from '@/lib/i18n';
 import { Card, Icon, Text, space, useTheme } from '@/ui';
 
 function useHasConfirmedMeal() {
@@ -49,6 +50,7 @@ export interface FirstStep {
 }
 
 export function useFirstSteps(): { show: boolean; steps: FirstStep[]; done: number } {
+  const t = useT();
   const profile = useProfile();
   const meal = useHasConfirmedMeal();
   const coach = useHasAskedCoach();
@@ -57,9 +59,9 @@ export function useFirstSteps(): { show: boolean; steps: FirstStep[]; done: numb
   const completedAt = profile.data?.onboarding_completed_at ?? null;
   const ageDays = completedAt ? daysBetween(completedAt.slice(0, 10), today) : 0;
   const steps: FirstStep[] = [
-    { key: 'meal', title: 'Log your first meal', body: 'Search, type it, or photograph the plate.', done: meal.data === true, go: () => router.push({ pathname: '/food/search', params: { date: today, fresh: '1' } }), testID: 'first-step-meal' },
-    { key: 'plan', title: 'Build your workout plan', body: 'Four quick answers; the week fills itself.', done: configured, go: () => router.push('/workouts/plan'), testID: 'first-step-plan' },
-    { key: 'coach', title: 'Ask the Coach one thing', body: 'It answers from your own logs.', done: coach.data === true, go: () => router.push('/coach'), testID: 'first-step-coach' },
+    { key: 'meal', title: t('first.meal'), body: t('first.mealBody'), done: meal.data === true, go: () => router.push({ pathname: '/food/search', params: { date: today, fresh: '1' } }), testID: 'first-step-meal' },
+    { key: 'plan', title: t('first.plan'), body: t('first.planBody'), done: configured, go: () => router.push('/workouts/plan'), testID: 'first-step-plan' },
+    { key: 'coach', title: t('first.coach'), body: t('first.coachBody'), done: coach.data === true, go: () => router.push('/coach'), testID: 'first-step-coach' },
   ];
   const done = steps.filter((s) => s.done).length;
   const loaded = !meal.isLoading && !coach.isLoading && !profile.isLoading;
@@ -67,13 +69,14 @@ export function useFirstSteps(): { show: boolean; steps: FirstStep[]; done: numb
 }
 
 export function FirstSteps({ steps, done }: { steps: FirstStep[]; done: number }) {
+  const t = useT();
   const { colors } = useTheme();
   const fg = colors.onInverse;
   return (
     <Card tone="inverse" style={{ gap: space.md }} testID="first-steps">
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
         <Text variant="label" style={{ color: fg, opacity: 0.6 }}>
-          Start here
+          {t('first.title')}
         </Text>
         <Text variant="caption" style={{ color: fg, opacity: 0.6 }}>
           {done} of {steps.length}

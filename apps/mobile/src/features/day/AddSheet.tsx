@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { Modal, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useT } from '@/lib/i18n';
 import { Icon, Text, radius, space, touch, useTheme, type IconName } from '@/ui';
 
 interface Action {
@@ -13,22 +14,23 @@ interface Action {
 }
 
 const FOOD: Action[] = [
-  { key: 'search', icon: 'search', title: 'Search food', body: 'Three databases, your recents and saved meals', go: (d) => router.push({ pathname: '/food/search', params: { date: d, fresh: '1' } }) },
-  { key: 'manual', icon: 'pencil', title: 'Enter manually', body: 'Type the name and whatever nutrition you know', go: (d) => router.push({ pathname: '/food/manual', params: { date: d, fresh: '1' } }) },
-  { key: 'scan', icon: 'camera', title: 'Scan a meal', body: 'Photograph the plate for an editable estimate', go: (d) => router.push({ pathname: '/scan', params: { date: d, fresh: '1' } }) },
-  { key: 'barcode', icon: 'barcode', title: 'Scan a barcode', body: 'Packaged food, values from the label database', go: (d) => router.push({ pathname: '/food/barcode', params: { date: d } }) },
-  { key: 'describe', icon: 'coach', title: 'Describe it', body: 'Type or say what you ate, in your own words', go: (d) => router.push({ pathname: '/food/describe', params: { date: d } }) },
-  { key: 'label', icon: 'diary', title: 'Read a label', body: 'Photograph the nutrition panel', go: (d) => router.push({ pathname: '/food/label', params: { date: d } }) },
+  { key: 'search', icon: 'search', title: 'add.search', body: 'add.searchBody', go: (d) => router.push({ pathname: '/food/search', params: { date: d, fresh: '1' } }) },
+  { key: 'manual', icon: 'pencil', title: 'add.manual', body: 'add.manualBody', go: (d) => router.push({ pathname: '/food/manual', params: { date: d, fresh: '1' } }) },
+  { key: 'scan', icon: 'camera', title: 'add.scan', body: 'add.scanBody', go: (d) => router.push({ pathname: '/scan', params: { date: d, fresh: '1' } }) },
+  { key: 'barcode', icon: 'barcode', title: 'add.barcode', body: 'add.barcodeBody', go: (d) => router.push({ pathname: '/food/barcode', params: { date: d } }) },
+  { key: 'describe', icon: 'coach', title: 'add.describe', body: 'add.describeBody', go: (d) => router.push({ pathname: '/food/describe', params: { date: d } }) },
+  { key: 'label', icon: 'diary', title: 'add.label', body: 'add.labelBody', go: (d) => router.push({ pathname: '/food/label', params: { date: d } }) },
 ];
 
 const OTHER: Action[] = [
-  { key: 'water', icon: 'water', title: 'Water', body: '', go: (d) => router.push({ pathname: '/log/water', params: { date: d } }) },
-  { key: 'weight', icon: 'scale', title: 'Weight', body: '', go: (d) => router.push({ pathname: '/log/weight', params: { date: d } }) },
-  { key: 'activity', icon: 'activity', title: 'Activity', body: '', go: (d) => router.push({ pathname: '/log/activity', params: { date: d } }) },
+  { key: 'water', icon: 'water', title: 'add.water', body: '', go: (d) => router.push({ pathname: '/log/water', params: { date: d } }) },
+  { key: 'weight', icon: 'scale', title: 'add.weight', body: '', go: (d) => router.push({ pathname: '/log/weight', params: { date: d } }) },
+  { key: 'activity', icon: 'activity', title: 'add.activity', body: '', go: (d) => router.push({ pathname: '/log/activity', params: { date: d } }) },
 ];
 
 /** The sheet behind the centre tab button: every way to log, food first. */
 export function AddSheet({ visible, localDate, onClose }: { visible: boolean; localDate: string; onClose: () => void }) {
+  const t = useT();
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const run = (a: Action) => {
@@ -41,14 +43,14 @@ export function AddSheet({ visible, localDate, onClose }: { visible: boolean; lo
       <View style={[styles.sheet, { backgroundColor: colors.bg, borderColor: colors.border, paddingBottom: Math.max(insets.bottom, space.lg) }]} testID="add-sheet">
         <View style={[styles.grabber, { backgroundColor: colors.border }]} />
         <Text variant="label" color="textMuted" style={{ marginBottom: space.sm }}>
-          Log food
+          {t('add.logFood')}
         </Text>
         <View style={{ gap: space.sm }}>
           {FOOD.map((a) => (
             <Pressable
               key={a.key}
               accessibilityRole="button"
-              accessibilityLabel={a.title}
+              accessibilityLabel={t(a.title)}
               testID={`add-${a.key}`}
               onPress={() => run(a)}
               style={({ pressed }) => [styles.foodRow, { backgroundColor: colors.surface, borderColor: colors.border, opacity: pressed ? 0.8 : 1 }]}
@@ -57,9 +59,9 @@ export function AddSheet({ visible, localDate, onClose }: { visible: boolean; lo
                 <Icon name={a.icon} size={22} color={colors.onInverse} />
               </View>
               <View style={{ flex: 1, gap: 2 }}>
-                <Text variant="bodyStrong">{a.title}</Text>
+                <Text variant="bodyStrong">{t(a.title)}</Text>
                 <Text variant="small" color="textMuted" numberOfLines={2}>
-                  {a.body}
+                  {t(a.body)}
                 </Text>
               </View>
               <Icon name="chevronRight" size={18} color={colors.textFaint} />
@@ -67,20 +69,20 @@ export function AddSheet({ visible, localDate, onClose }: { visible: boolean; lo
           ))}
         </View>
         <Text variant="label" color="textMuted" style={{ marginTop: space.lg, marginBottom: space.sm }}>
-          Also log
+          {t('add.alsoLog')}
         </Text>
         <View style={{ flexDirection: 'row', gap: space.sm }}>
           {OTHER.map((a) => (
             <Pressable
               key={a.key}
               accessibilityRole="button"
-              accessibilityLabel={`Log ${a.title.toLowerCase()}`}
+              accessibilityLabel={`Log ${t(a.title).toLowerCase()}`}
               testID={`add-${a.key}`}
               onPress={() => run(a)}
               style={({ pressed }) => [styles.tile, { borderColor: colors.border, opacity: pressed ? 0.8 : 1 }]}
             >
               <Icon name={a.icon} size={22} />
-              <Text variant="small">{a.title}</Text>
+              <Text variant="small">{t(a.title)}</Text>
             </Pressable>
           ))}
         </View>

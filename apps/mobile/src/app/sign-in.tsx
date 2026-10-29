@@ -7,6 +7,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { useAuthProviders } from '@/features/auth/providers';
 import { useSession } from '@/features/auth/session';
 import { config } from '@/lib/config';
+import { useT } from '@/lib/i18n';
 import { errorMessage } from '@/lib/net';
 import { reportError } from '@/lib/telemetry';
 import { getSupabase } from '@/lib/supabase';
@@ -30,6 +31,7 @@ function redirectTo(path = ''): string {
 }
 
 export default function SignIn() {
+  const t = useT();
   const { colors } = useTheme();
   const { session } = useSession();
   const providers = useAuthProviders();
@@ -160,8 +162,8 @@ export default function SignIn() {
         <View style={[styles.tabs, { backgroundColor: colors.surfaceAlt }]} accessibilityRole="radiogroup">
           {(
             [
-              ['signin', 'Sign in'],
-              ['signup', 'Create account'],
+              ['signin', t('auth.signIn')],
+              ['signup', t('auth.createAccount')],
             ] as const
           ).map(([value, label]) => {
             const active = mode === value;
@@ -262,7 +264,7 @@ export default function SignIn() {
                 <View style={styles.divider}>
                   <View style={[styles.rule, { backgroundColor: colors.border }]} />
                   <Text variant="caption" color="textFaint">
-                    or with email
+                    {t('auth.orEmail')}
                   </Text>
                   <View style={[styles.rule, { backgroundColor: colors.border }]} />
                 </View>
@@ -271,7 +273,7 @@ export default function SignIn() {
 
             {mode === 'signup' ? <Input label="Name (optional)" value={displayName} onChangeText={setDisplayName} placeholder="What should we call you?" autoComplete="name" /> : null}
             <Input
-              label="Email"
+              label={t('auth.email')}
               autoCapitalize="none"
               autoComplete="email"
               keyboardType="email-address"
@@ -283,7 +285,7 @@ export default function SignIn() {
               testID="email"
             />
             <Input
-              label="Password"
+              label={t('auth.password')}
               secureTextEntry
               autoComplete={mode === 'signup' ? 'new-password' : 'password'}
               textContentType={mode === 'signup' ? 'newPassword' : 'password'}
@@ -300,14 +302,14 @@ export default function SignIn() {
               </View>
             ) : null}
             {mode === 'signin' ? (
-              <Button label="Sign in" size="lg" onPress={signInWithPassword} loading={busy === 'password'} disabled={!emailValid || !passwordValid || busy != null} testID="sign-in" />
+              <Button label={t('auth.signIn')} size="lg" onPress={signInWithPassword} loading={busy === 'password'} disabled={!emailValid || !passwordValid || busy != null} testID="sign-in" />
             ) : (
-              <Button label="Create account" size="lg" onPress={createAccount} loading={busy === 'signup'} disabled={!emailValid || !passwordValid || busy != null || providers.data?.signupDisabled} testID="sign-up" />
+              <Button label={t('auth.createAccount')} size="lg" onPress={createAccount} loading={busy === 'signup'} disabled={!emailValid || !passwordValid || busy != null || providers.data?.signupDisabled} testID="sign-up" />
             )}
             <View style={styles.links}>
               <Pressable accessibilityRole="button" onPress={sendMagicLink} disabled={!emailValid || busy != null} style={styles.link} testID="send-link">
                 <Text variant="small" style={{ color: emailValid ? colors.text : colors.textFaint, textDecorationLine: 'underline' }}>
-                  {busy === 'magic' ? 'Sending' : 'Email me a link instead'}
+                  {busy === 'magic' ? 'Sending' : t('auth.magic')}
                 </Text>
               </Pressable>
               {providers.data?.phone ? (
@@ -328,7 +330,7 @@ export default function SignIn() {
               {mode === 'signin' ? (
                 <Pressable accessibilityRole="button" onPress={sendReset} disabled={!emailValid || busy != null} style={styles.link} testID="forgot-password">
                   <Text variant="small" style={{ color: emailValid ? colors.text : colors.textFaint, textDecorationLine: 'underline' }}>
-                    {busy === 'reset' ? 'Sending' : 'Forgot password?'}
+                    {busy === 'reset' ? 'Sending' : t('auth.forgot')}
                   </Text>
                 </Pressable>
               ) : null}
