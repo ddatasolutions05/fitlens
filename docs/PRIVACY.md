@@ -20,8 +20,10 @@ accuracy, safeguards, openness, individual access, challenging compliance).
 | Weight, activity, water, day status | Trends and adaptive estimates | `weight_logs`, `activity_records`, `water_logs`, `day_status` |
 | AI usage counters and analysis metadata | Rate limiting and cost tracking | `ai_usage`, `photo_analyses` (validated JSON only, never the raw image) |
 | Error reports (what failed, the error text, device and app version, the screen) | Fixing bugs users hit | `client_events` (own rows only; purged after 30 days) |
+| Page opens (invite tag from the link, device type, city and country from the IP, the account once signed in) | Knowing which invitations reached people and roughly where they are; the IP is looked up and dropped | `visits` (owner only, through the admin page; purge after 90 days) |
+| Browser push subscription and reminder time | Sending the daily reminder you turned on | `push_subscriptions`, `reminders` (own rows only) |
 
-Usage analytics are off and there is no third-party SDK in the client. The only telemetry is the error report above, sent to the owner's own project when something fails; it never carries food, photos or messages.
+There is no third-party analytics SDK in the client. Telemetry is the error report, named feature events (no content), searches that found nothing (the words only), and the page-open record above. None of it carries food, photos or messages. Coarse location comes from a one-off IP lookup at ipapi.co inside the owner's function; the IP is not kept.
 
 ## Consent for AI photo analysis
 

@@ -2,6 +2,9 @@
 
 Newest first. Each entry: context, decision, consequences.
 
+## D-040 Who opened the link, from where (2026-10-29)
+Decision: the owner shares the app by hand, so the admin page records page opens: a random visitor id kept in the browser, the invite tag from the link (`?s=mom`), the device, the referrer, and a coarse location (city, region, country) from a one-off IP lookup at ipapi.co inside the `track-visit` function. The IP is not stored, nothing about food travels with it, and automation (Playwright) is excluded. Once the person signs in the next record carries their account, so each account shows the link it came from. The admin page gets an Opens tab with by-link and by-place rollups, the recent list, and an invite-link maker. Rows are written only by the function and read only through `admin_overview()`.
+
 ## D-039 Daily reminder over web push (2026-10-29)
 Decision: one notification a day at a time the person picks, delivered by web push so it needs no native build or push vendor. The browser subscription (endpoint and keys) lives in `push_subscriptions`, the time in `reminders` (local to the profile timezone). A pg_cron job every ten minutes posts to the `send-reminders` function with a secret stored in Vault; the function decides who is due (`packages/core/src/reminders.ts`), skips anyone who confirmed a meal in the last two hours, sends through the `web-push` package with the project's VAPID pair, and drops subscriptions the push service reports gone. The function is deployed without gateway JWT verification; it checks the secret itself, or a user token for the "send a test" path. iPhone needs the site on the Home Screen first, which the screen explains. The public key ships as `EXPO_PUBLIC_VAPID_PUBLIC_KEY`; the private key, subject, cron secret and app URL are function secrets.
 

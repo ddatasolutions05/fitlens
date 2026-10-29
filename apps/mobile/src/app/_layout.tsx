@@ -7,14 +7,26 @@ import { View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { SessionProvider } from '@/features/auth/session';
+import { SessionProvider, useSession } from '@/features/auth/session';
 import { QueryProvider } from '@/lib/query';
 import { I18nProvider } from '@/lib/i18n';
 import { installGlobalErrorHandlers } from '@/lib/telemetry';
+import { recordVisit } from '@/lib/visits';
 import { AppErrorBoundary, ThemeProvider, ToastHost, useTheme } from '@/ui';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 installGlobalErrorHandlers();
+
+function VisitTracker() {
+  const { userId } = useSession();
+  useEffect(() => {
+    void recordVisit('open');
+  }, []);
+  useEffect(() => {
+    if (userId) void recordVisit('signin');
+  }, [userId]);
+  return null;
+}
 
 function Navigator({ fontsReady }: { fontsReady: boolean }) {
   const { colors, scheme } = useTheme();
@@ -42,6 +54,7 @@ export default function RootLayout() {
           <I18nProvider>
           <QueryProvider>
             <SessionProvider>
+              <VisitTracker />
               <AppErrorBoundary>
                 <Navigator fontsReady={fontsReady} />
               </AppErrorBoundary>

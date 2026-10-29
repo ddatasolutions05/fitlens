@@ -23,6 +23,9 @@ export interface AdminUser {
   coach_calls: number;
   analyses: number;
   errors_recent: number;
+  first_source: string | null;
+  last_place: string | null;
+  reminder_on: boolean | null;
   last_active_at: string | null;
 }
 
@@ -50,11 +53,34 @@ export interface AdminOverview {
     coach_calls_recent: number;
     analyses_recent: number;
     search_misses_recent: number;
+    visits_recent: number;
+    visitors_recent: number;
+    reminders_on: number;
   };
   users: AdminUser[];
   errors: AdminError[];
   events: { name: string; count: number; people: number }[];
   misses: { query: string; count: number; people: number; last_at: string }[];
+  visits: AdminVisit[];
+  sources: { source: string; visits: number; visitors: number; signed_in: number; last_at: string }[];
+  places: { city: string; region: string; country: string; visits: number; visitors: number }[];
+}
+
+export interface AdminVisit {
+  id: string;
+  created_at: string;
+  visitor_id: string;
+  source: string | null;
+  campaign: string | null;
+  referrer: string | null;
+  path: string | null;
+  platform: string | null;
+  country: string | null;
+  region: string | null;
+  city: string | null;
+  user_agent: string | null;
+  email: string | null;
+  display_name: string | null;
 }
 
 export function useIsAdmin() {

@@ -52,6 +52,11 @@ import_map = "./functions/import_map.json"
 verify_jwt = true
 import_map = "./functions/import_map.json"
 
+[functions.track-visit]
+# Visitors are mostly anonymous; the function reads a user token itself when one is sent.
+verify_jwt = false
+import_map = "./functions/import_map.json"
+
 [functions.send-reminders]
 # The schedule calls it with a shared secret; a signed-in test request carries a user token.
 verify_jwt = false

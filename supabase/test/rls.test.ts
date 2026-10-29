@@ -473,3 +473,21 @@ describe('reminders and push subscriptions', () => {
     expect(forged).toMatch(/row-level security/i);
   });
 });
+
+describe('visits', () => {
+  it('cannot be read or written by accounts, and the admin sees them with sources and places', async () => {
+    await admin((c) => c.query(`insert into visits (visitor_id, user_id, source, country, city, platform) values (gen_random_uuid(), $1, 'mom', 'Canada', 'Brampton', 'ios-web'), (gen_random_uuid(), null, 'gym-whatsapp', 'Canada', 'Caledon', 'android-web')`, [userB.id]));
+    const denied = await expectDenied(as(userA, (c) => c.query('select * from visits')));
+    expect(denied).toMatch(/permission denied/i);
+    const forged = await expectDenied(as(userA, (c) => c.query(`insert into visits (visitor_id) values (gen_random_uuid())`)));
+    expect(forged).toMatch(/permission denied/i);
+    await admin((c) => c.query('insert into app_admins (user_id) values ($1)', [userA.id]));
+    const res = await as(userA, (c) => c.query('select public.admin_overview(7) as o'));
+    const o = res.rows[0].o;
+    expect(o.visits.length).toBeGreaterThanOrEqual(2);
+    expect(o.sources.map((s: { source: string }) => s.source)).toEqual(expect.arrayContaining(['mom', 'gym-whatsapp']));
+    expect(o.places.some((p: { city: string }) => p.city === 'Brampton')).toBe(true);
+    expect(o.users.find((u: { user_id: string }) => u.user_id === userB.id).first_source).toBe('mom');
+    await admin((c) => c.query('delete from app_admins where user_id = $1', [userA.id]));
+  });
+});

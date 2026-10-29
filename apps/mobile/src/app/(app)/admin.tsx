@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useAdminOverview, useIsAdmin, type AdminUser } from '@/features/admin/hooks';
+import { VisitsPanel } from '@/features/admin/VisitsPanel';
 import { errorMessage } from '@/lib/net';
 import { Button, Card, EmptyState, ErrorState, PageHeader, Screen, Segmented, SkeletonCard, Stat, Text, space, useTheme } from '@/ui';
 
@@ -29,7 +30,7 @@ export default function AdminScreen() {
   const isAdmin = useIsAdmin();
   const [days, setDays] = useState<'1' | '7' | '30'>('7');
   const overview = useAdminOverview(Number(days), isAdmin.data === true);
-  const [tab, setTab] = useState<'people' | 'errors' | 'usage' | 'searches'>('people');
+  const [tab, setTab] = useState<'visits' | 'people' | 'errors' | 'usage' | 'searches'>('visits');
 
   if (isAdmin.isLoading) {
     return (
@@ -69,6 +70,7 @@ export default function AdminScreen() {
         <>
           <View style={styles.grid}>
             <Stat tone="inverse" label="Accounts" value={String(o.totals.accounts)} note={`${o.totals.onboarded} finished setup`} style={styles.half} testID="admin-accounts" />
+            <Stat label="Opens" value={String(o.totals.visits_recent)} note={`${o.totals.visitors_recent} people, last ${o.days} d`} style={styles.half} testID="admin-opens" />
             <Stat label="Logged a meal" value={String(o.totals.logged_a_meal)} note="ever" style={styles.half} />
             <Stat label="Signed in" value={String(o.totals.signed_in_recent)} note={`last ${o.days} d`} style={styles.half} />
             <Stat label="Meals" value={String(o.totals.meals_recent)} note={`last ${o.days} d`} style={styles.half} />
@@ -76,17 +78,20 @@ export default function AdminScreen() {
             <Stat label="Errors" value={String(o.totals.errors_recent)} note={`last ${o.days} d`} tone={o.totals.errors_recent > 0 ? 'on' : undefined} style={styles.half} testID="admin-errors" />
           </View>
 
-          <Segmented<'people' | 'errors' | 'usage' | 'searches'>
+          <Segmented<'visits' | 'people' | 'errors' | 'usage' | 'searches'>
             value={tab}
             onChange={setTab}
             wrap
             options={[
+              { value: 'visits', label: `Opens (${o.visits?.length ?? 0})` },
               { value: 'people', label: `People (${o.users.length})` },
               { value: 'errors', label: `Errors (${o.errors.length})` },
               { value: 'usage', label: 'Usage' },
               { value: 'searches', label: `Missed searches (${o.misses?.length ?? 0})` },
             ]}
           />
+
+          {tab === 'visits' ? <VisitsPanel o={o} /> : null}
 
           {tab === 'people' ? (
             <Card style={{ gap: 0 }} testID="admin-people">
@@ -106,6 +111,11 @@ export default function AdminScreen() {
                   <Text variant="caption" color="textMuted">
                     Joined {when(u.signed_up_at)}. Signed in {when(u.last_sign_in_at)}. Active {when(u.last_active_at)}.
                   </Text>
+                  {u.first_source || u.last_place || u.reminder_on ? (
+                    <Text variant="caption" color="textMuted" numberOfLines={1}>
+                      {[u.first_source ? `Link: ${u.first_source}` : null, u.last_place, u.reminder_on ? 'Reminder on' : null].filter(Boolean).join('. ')}
+                    </Text>
+                  ) : null}
                   <Text variant="caption" tabular>
                     {u.meals} meals ({u.meals_recent} recent), {u.weights} weigh-ins, {u.activity} activity, {u.water} water, {u.analyses} photos, {u.coach_calls} coach
                     {u.errors_recent > 0 ? `, ${u.errors_recent} errors` : ''}
