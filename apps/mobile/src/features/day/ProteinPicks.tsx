@@ -23,9 +23,14 @@ export function ProteinPicks({ remainingG, localDate }: { remainingG: number; lo
   if (picks.length === 0) return null;
   return (
     <Card style={{ gap: space.sm }} testID="protein-picks">
-      <Text variant="label" color="textMuted">
-        {Math.round(remainingG)} g of protein to go. From your history
-      </Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' }}>
+        <Text variant="label" color="textMuted">
+          Protein to go: {Math.round(remainingG)} g
+        </Text>
+        <Text variant="caption" color="textFaint">
+          from your history
+        </Text>
+      </View>
       {picks.map((p) => (
         <Pressable
           key={p.id}

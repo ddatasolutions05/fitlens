@@ -5,7 +5,7 @@ import { addDays, formatLocalDate, formatWeight, roundKcal, todayLocal, type Uni
 import type { MealWithItems } from '@/features/meals/api';
 import { displayKcal } from '@/features/meals/model';
 import { MealPhotoThumb } from '@/features/photo/MealPhotoThumb';
-import { AnimatedFill, Bar, Card, Icon, Text, radius, space, touch, type IconName, useCountUp, useTheme } from '@/ui';
+import { AnimatedFill, Bar, Button, Card, Icon, Text, radius, space, touch, type IconName, useCountUp, useTheme } from '@/ui';
 
 import type { DaySummary } from './hooks';
 
@@ -165,6 +165,11 @@ export function ActivityCard({ day, unitSystem }: { day: DaySummary; unitSystem:
   return (
     <Card style={{ gap: space.md }}>
       <SectionLabel>Body and activity</SectionLabel>
+      <View style={styles.logRow}>
+        <Button label="Steps" variant="secondary" size="sm" style={{ flex: 1 }} icon={<Icon name="activity" size={16} />} onPress={() => router.push({ pathname: '/log/activity', params: { date: day.localDate } })} testID="quick-activity" />
+        <Button label="Water" variant="secondary" size="sm" style={{ flex: 1 }} icon={<Icon name="water" size={16} />} onPress={() => router.push({ pathname: '/log/water', params: { date: day.localDate } })} testID="quick-water" />
+        <Button label="Weight" variant="secondary" size="sm" style={{ flex: 1 }} icon={<Icon name="scale" size={16} />} onPress={() => router.push({ pathname: '/log/weight', params: { date: day.localDate } })} testID="quick-weight" />
+      </View>
       <Bar label="Steps" value={day.steps} target={stepGoal} unit="" color={colors.steps} />
       {day.workoutCount > 0 ? (
         <Text variant="caption" color="textMuted">
@@ -205,11 +210,6 @@ export function QuickActions({ localDate }: { localDate: string }) {
         <ActionTile icon="search" label="Search food" onPress={() => router.push({ pathname: '/food/search', params: { date: localDate, fresh: '1' } })} testID="quick-add-food" />
         <ActionTile icon="pencil" label="Enter manually" onPress={() => router.push({ pathname: '/food/manual', params: { date: localDate, fresh: '1' } })} testID="quick-manual" />
         <ActionTile icon="camera" label="Scan meal" onPress={() => router.push({ pathname: '/scan', params: { date: localDate, fresh: '1' } })} testID="quick-scan" />
-      </View>
-      <View style={styles.actionRow}>
-        <ActionTile icon="water" label="Water" quiet onPress={() => router.push({ pathname: '/log/water', params: { date: localDate } })} testID="quick-water" />
-        <ActionTile icon="scale" label="Weight" quiet onPress={() => router.push({ pathname: '/log/weight', params: { date: localDate } })} testID="quick-weight" />
-        <ActionTile icon="activity" label="Activity" quiet onPress={() => router.push({ pathname: '/log/activity', params: { date: localDate } })} testID="quick-activity" />
       </View>
     </View>
   );
@@ -375,6 +375,7 @@ const styles = StyleSheet.create({
   plateDivider: { width: 1, marginHorizontal: space.md },
   weightRow: { flexDirection: 'row', alignItems: 'center', gap: space.md, borderTopWidth: StyleSheet.hairlineWidth, paddingTop: space.md },
   actionRow: { flexDirection: 'row', gap: space.sm },
+  logRow: { flexDirection: 'row', gap: space.sm },
   actionTile: {
     flex: 1,
     minHeight: 84,

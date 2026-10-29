@@ -2,6 +2,11 @@
 
 Newest first. Each entry: context, decision, consequences.
 
+## D-032 Today with one row of actions (2026-10-28)
+Context: Today carried two rows of tiles above the fold, and the owner kept asking for a calmer screen.
+Decision: the second row (water, weight, activity) moved into the Body and activity card as three small outlined buttons above the bars they affect. The three food tiles stay. Test ids are unchanged.
+Consequences: Today shows the calorie plate, the three ways to log food and the insight in the first screen; the body card holds its own actions.
+
 ## D-031 Describe a meal in words; read a label from a photo (2026-10-28)
 Context: two more ways to log that suit people who will not search or photograph a plate.
 Decision: a `describe-meal` function turns a typed or dictated description into the same JSON contract as photo analysis (same consent gate, same daily cap, no image), so the existing database mapping applies and the result lands in the editor like a scan. The screen uses the browser's speech recogniser where one exists and falls back to typing. The `read-label` function, deployed since Phase 1, now has a screen: photograph the nutrition panel, confirm the serving weight and the number of servings, and the product is saved as a label-sourced food with per-100 g values derived from the printed serving.

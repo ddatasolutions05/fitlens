@@ -154,6 +154,7 @@ once a working Anthropic key was set. Milestone 9 (export, delete) remains
 | 36 | White-label logo via `EXPO_PUBLIC_BRAND_LOGO_URL` | built | config only |
 | 37 | Describe a meal (typed or spoken) through `describe-meal`, mapped like a photo | built, verified live | `e2e/describe-label.spec.ts` |
 | 38 | Read a nutrition label from a photo through `read-label`, saved as a label-sourced food | built, verified live | `e2e/describe-label.spec.ts` |
+| 39 | Today: water, weight and activity actions live in the body card; one row of food tiles | built, verified live | suite green; screenshot reviewed |
 
 ## 5. Open risks
 
