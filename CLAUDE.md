@@ -115,6 +115,7 @@ browser keeps the old bundle and e2e results lie.
 - Dates are picked, not typed: use `DateField` (web date input, native OS picker; `.native.tsx` split) and keep values as YYYY-MM-DD.
 - Times use `TimeField`, an in-app sheet with a Set time button (the browser and OS wheels have none on phones); values stay HH:MM.
 - Food search matches `foods.aliases` as well as the name; give every curated dish the names people type (`supabase/seed/indian_dishes.json`, `aliases`). Searches with no result land in `search_misses` and show on the admin page.
+- Deploys keep the previous build's chunks (Actions cache in deploy.yml) and `lib/stale-build.ts` reloads once on a chunk load failure; keep both when touching the workflow or the error boundary.
 - Opens tracking: `lib/visits.ts` posts to `track-visit` once per tab and once on sign-in (web only, skipped under automation); invite links carry `?s=<tag>`; the admin page Opens tab reads it. Never add food or health fields to that payload.
 - Reminders are web push: `public/sw.js` is the service worker, `features/reminders/push.ts` subscribes (iPhone only from the Home Screen), `reminders` holds the time. Reminder copy lives in `packages/core/src/reminders.ts` and is tone-tested.
 - Admin: `/admin` reads `admin_overview()`; access is a row in `app_admins`, added only by hand (`insert into public.app_admins (user_id) select id from auth.users where email = '<owner>'` through the Management API query endpoint). Never grant it from the client or seed an email in a migration.

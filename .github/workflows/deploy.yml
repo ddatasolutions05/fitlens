@@ -33,6 +33,27 @@ jobs:
           EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ vars.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
           EXPO_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
           EXPO_PUBLIC_VAPID_PUBLIC_KEY: ${{ vars.EXPO_PUBLIC_VAPID_PUBLIC_KEY }}
+      # A tab opened before this deploy still asks for the previous build's chunks.
+      # Keep the last build's static files next to the new ones so it keeps working.
+      - name: Restore the previous build's chunks
+        uses: actions/cache/restore@v4
+        with:
+          path: previous-static
+          key: web-static-${{ github.sha }}
+          restore-keys: web-static-
+      - name: Merge previous chunks into this build
+        run: |
+          if [ -d previous-static ]; then
+            cp -rn previous-static/. apps/mobile/dist/_expo/static/ || true
+          fi
+          rm -rf previous-static
+          mkdir -p previous-static
+          cp -r apps/mobile/dist/_expo/static/. previous-static/
+      - name: Save this build's chunks for the next deploy
+        uses: actions/cache/save@v4
+        with:
+          path: previous-static
+          key: web-static-${{ github.sha }}
       - name: Sub-path asset links and SPA fallback
         run: |
           sed -i 's#href="/manifest.webmanifest"#href="/${{ github.event.repository.name }}/manifest.webmanifest"#; s#href="/icons/#href="/${{ github.event.repository.name }}/icons/#' apps/mobile/dist/index.html

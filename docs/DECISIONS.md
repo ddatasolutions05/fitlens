@@ -2,6 +2,9 @@
 
 Newest first. Each entry: context, decision, consequences.
 
+## D-041 Surviving a deploy with the app open (2026-10-29)
+Decision: a tab opened before a deploy still asks for the previous build's hashed chunks, which Pages no longer serves, and the next lazy screen fails with "Loading module ... failed". Two layers: the deploy keeps the previous build's `_expo/static` files next to the new ones (restored from the Actions cache and merged, never overwriting), so one generation back keeps working; and the error boundary and global handlers recognise a chunk load failure, reload once with a fresh query string, and only show an "Update ready" screen if that reload did not help. Seen by the owner on an iPhone right after the opens-tracking deploy.
+
 ## D-040 Who opened the link, from where (2026-10-29)
 Decision: the owner shares the app by hand, so the admin page records page opens: a random visitor id kept in the browser, the invite tag from the link (`?s=mom`), the device, the referrer, and a coarse location (city, region, country) from a one-off IP lookup at ipapi.co inside the `track-visit` function. The IP is not stored, nothing about food travels with it, and automation (Playwright) is excluded. Once the person signs in the next record carries their account, so each account shows the link it came from. The admin page gets an Opens tab with by-link and by-place rollups, the recent list, and an invite-link maker. Rows are written only by the function and read only through `admin_overview()`.
 

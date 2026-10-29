@@ -4,6 +4,7 @@ import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
 import { config } from './config';
+import { isStaleBuildError, reloadForNewBuild } from './stale-build';
 import type { Json } from './database.types';
 import { errorMessage } from './net';
 import { supabase } from './supabase';
@@ -93,8 +94,15 @@ export function installGlobalErrorHandlers(): void {
   installed = true;
   if (Platform.OS === 'web') {
     if (typeof window === 'undefined') return;
-    window.addEventListener('error', (event) => reportError('window.error', event.error ?? event.message));
-    window.addEventListener('unhandledrejection', (event) => reportError('window.unhandledrejection', event.reason));
+    window.addEventListener('error', (event) => {
+      const err = event.error ?? event.message;
+      if (isStaleBuildError(err) && reloadForNewBuild()) return;
+      reportError('window.error', err);
+    });
+    window.addEventListener('unhandledrejection', (event) => {
+      if (isStaleBuildError(event.reason) && reloadForNewBuild()) return;
+      reportError('window.unhandledrejection', event.reason);
+    });
     return;
   }
   const utils = (globalThis as { ErrorUtils?: { getGlobalHandler(): (e: Error, fatal?: boolean) => void; setGlobalHandler(h: (e: Error, fatal?: boolean) => void): void } }).ErrorUtils;

@@ -1,6 +1,7 @@
 import { Component, type ReactNode } from 'react';
 import { Platform, View } from 'react-native';
 
+import { isStaleBuildError, reloadForNewBuild } from '@/lib/stale-build';
 import { reportError } from '@/lib/telemetry';
 
 import { Button } from './Button';
@@ -25,6 +26,11 @@ export class AppErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: { componentStack?: string | null }): void {
+    if (isStaleBuildError(error)) {
+      if (reloadForNewBuild()) return;
+      reportError('stale-build', error);
+      return;
+    }
     reportError('render', error, { componentStack: info.componentStack?.slice(0, 1500) ?? null });
   }
 
@@ -35,16 +41,17 @@ export class AppErrorBoundary extends Component<Props, State> {
 
   render(): ReactNode {
     if (!this.state.error) return this.props.children;
+    if (isStaleBuildError(this.state.error)) return <Crashed stale message="A newer version of the app was published while this one was open." onReset={this.reset} />;
     return <Crashed message={this.state.error.message} onReset={this.reset} />;
   }
 }
 
-function Crashed({ message, onReset }: { message: string; onReset: () => void }) {
+function Crashed({ message, onReset, stale }: { message: string; onReset: () => void; stale?: boolean }) {
   const { colors } = useTheme();
   return (
     <View style={{ flex: 1, backgroundColor: colors.bg, justifyContent: 'center', padding: space.xl, gap: space.lg }} testID="crash-screen">
-      <Text variant="title">Something went wrong</Text>
-      <Text color="textMuted">This screen hit an error it could not recover from. The details were recorded so it can be fixed. Your logs are safe.</Text>
+      <Text variant="title">{stale ? 'Update ready' : 'Something went wrong'}</Text>
+      <Text color="textMuted">{stale ? 'Reload to pick up the new version. Nothing you logged is affected.' : 'This screen hit an error it could not recover from. The details were recorded so it can be fixed. Your logs are safe.'}</Text>
       <Text variant="caption" color="textFaint">
         {message}
       </Text>
