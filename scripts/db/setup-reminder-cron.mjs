@@ -41,5 +41,15 @@ await query(`select cron.schedule('fitlens-reminders', '*/10 * * * *', $cron$
     timeout_milliseconds := 20000
   )
 $cron$)`);
-const check = await query(`select jobname, schedule, active from cron.job where jobname = 'fitlens-reminders'`);
+const weekly = await query(`select jobid from cron.job where jobname = 'fitlens-weekly-email'`);
+for (const j of weekly) await query(`select cron.unschedule(${j.jobid})`);
+await query(`select cron.schedule('fitlens-weekly-email', '5 * * * *', $cron$
+  select net.http_post(
+    url := 'https://${ref}.supabase.co/functions/v1/weekly-summary',
+    headers := jsonb_build_object('Content-Type', 'application/json', 'x-reminder-secret', (select decrypted_secret from vault.decrypted_secrets where name = 'reminder_cron_secret')),
+    body := '{}'::jsonb,
+    timeout_milliseconds := 60000
+  )
+$cron$)`);
+const check = await query(`select jobname, schedule, active from cron.job where jobname in ('fitlens-reminders', 'fitlens-weekly-email')`);
 console.log(JSON.stringify(check));

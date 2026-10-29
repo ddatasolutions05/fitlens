@@ -26,6 +26,7 @@ const OTHER: Action[] = [
   { key: 'water', icon: 'water', title: 'add.water', body: '', go: (d) => router.push({ pathname: '/log/water', params: { date: d } }) },
   { key: 'weight', icon: 'scale', title: 'add.weight', body: '', go: (d) => router.push({ pathname: '/log/weight', params: { date: d } }) },
   { key: 'activity', icon: 'activity', title: 'add.activity', body: '', go: (d) => router.push({ pathname: '/log/activity', params: { date: d } }) },
+  { key: 'measure', icon: 'trend', title: 'add.measure', body: '', go: (d) => router.push({ pathname: '/log/measure', params: { date: d } }) },
 ];
 
 /** The sheet behind the centre tab button: every way to log, food first. */

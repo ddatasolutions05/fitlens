@@ -2,11 +2,12 @@ import { useState } from 'react';
 import { View } from 'react-native';
 
 import { useUserId } from '@/features/auth/session';
+import { usePreferences, useUpsertPreferences } from '@/features/profile/hooks';
 import { useReminder, useSaveReminder, useSendTestReminder } from '@/features/reminders/hooks';
 import { pushSupport, subscribeToPush, unsubscribeFromPush } from '@/features/reminders/push';
 import { errorMessage } from '@/lib/net';
 import { reportError } from '@/lib/telemetry';
-import { Button, Card, Note, PageHeader, Screen, SkeletonCard, Text, TimeField, format12, space, toast, useTheme } from '@/ui';
+import { Button, Card, Note, PageHeader, Screen, Segmented, SkeletonCard, Text, TimeField, format12, space, toast, useTheme } from '@/ui';
 
 export default function RemindersScreen() {
   const { colors } = useTheme();
@@ -15,6 +16,8 @@ export default function RemindersScreen() {
   const save = useSaveReminder();
   const sendTest = useSendTestReminder();
   const support = pushSupport();
+  const prefs = usePreferences();
+  const savePrefs = useUpsertPreferences();
   const [error, setError] = useState<string | null>(null);
 
   if (reminder.isLoading) {
@@ -97,6 +100,20 @@ export default function RemindersScreen() {
       ) : (
         <Note>Reminders come through this browser. On a phone, keep the app on your Home Screen so they can arrive when it is closed.</Note>
       )}
+      <Card style={{ gap: space.sm }} testID="weekly-email">
+        <Text variant="bodyStrong">Weekly email</Text>
+        <Text variant="small" color="textMuted">
+          Sunday evening: the week in review, the same one as on Home, in your inbox.
+        </Text>
+        <Segmented<'on' | 'off'>
+          value={prefs.data?.weekly_email === false ? 'off' : 'on'}
+          onChange={(v) => savePrefs.mutate({ weekly_email: v === 'on' }, { onSuccess: () => toast(v === 'on' ? 'Weekly email on' : 'Weekly email off'), onError: (err) => setError(errorMessage(err)) })}
+          options={[
+            { value: 'on', label: 'On' },
+            { value: 'off', label: 'Off' },
+          ]}
+        />
+      </Card>
       {error ? (
         <Text color="danger" variant="small" testID="reminder-error">
           {error}

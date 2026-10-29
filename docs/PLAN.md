@@ -163,6 +163,12 @@ once a working Anthropic key was set. Milestone 9 (export, delete) remains
 | 45 | Indian food list 86 to 248 dishes with aliases; missed searches recorded and shown to the admin | built, loaded on the project | seed tests; alias and miss SQL tests |
 | 46 | Daily reminder over web push: Profile > Daily reminder, time picker, test send, pg_cron schedule, `send-reminders` function | built, schedule live; a real phone subscription still to be confirmed by the owner | core tests for due logic and copy; RLS test; `e2e/reminders.spec.ts`; function probed with and without the secret |
 | 47 | Opens tracking for the admin: invite tags, device, coarse location, by-link and by-place rollups (`visits`, `track-visit`) | built, verified live | RLS and overview SQL test; function probed |
+| 48 | App shell cache in the service worker: instant second open, works offline, survives deploys | built, verified live | sw.js; hosted check |
+| 49 | Home Screen install card and Share with a friend link | built, verified live | Home renders; tagged links show on the admin page |
+| 50 | Weekly summary email (`weekly-summary`, hourly schedule, Resend) with an opt-out | built, waits on RESEND_API_KEY and EMAIL_FROM | function probed: reports not configured |
+| 51 | Measurements and private progress photos; Body card on Stats; Measure tile | built, verified live | RLS test; `e2e/measure.spec.ts` |
+| 52 | Demo gym: trainer plus five members with two weeks of data | built, seeded on the project | `scripts/demo-gym.mjs` |
+| 53 | Branded link (`?brand=megagym`) and draft Plans page | built, verified live | `e2e/plans.spec.ts` |
 
 ## 5. Open risks
 

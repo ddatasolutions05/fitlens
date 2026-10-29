@@ -21,6 +21,7 @@ status in `docs/PLAN.md`, decisions in `docs/DECISIONS.md`.
 | Deploy edge functions | `npx supabase functions deploy` |
 | Typecheck edge functions | `npm run functions:check` (uses `~/tools/deno/deno.exe`, `DENO_BIN`, or `deno` on PATH; passes `--node-modules-dir=none` so npm specifiers come from Deno's cache) |
 | Import food data | `npm run seed -- --source usda|cnf|indian|all` |
+| Demo gym accounts (trainer plus five members) | `node scripts/demo-gym.mjs` (prints the demo trainer password once) |
 | Reminder schedule (one time, after setting the function secrets) | `SUPABASE_ACCESS_TOKEN=... SUPABASE_PROJECT_REF=... REMINDER_CRON_SECRET=... node scripts/db/setup-reminder-cron.mjs` |
 | Push the Indian seed to the linked project | `SUPABASE_ACCESS_TOKEN=... SUPABASE_PROJECT_REF=... npx tsx scripts/db/push-foods-remote.ts` |
 | Funnel: sign-ups, finished setup, first meal, feature use | `node scripts/funnel.mjs [--days 7]` |
@@ -51,7 +52,7 @@ browser keeps the old bundle and e2e results lie.
 - Without the database password, migrations go through the Management API:
   `SUPABASE_ACCESS_TOKEN=... SUPABASE_PROJECT_REF=... npx tsx scripts/db/push-remote.ts`.
   With the password, `npx supabase db push` works too.
-- Eleven functions are deployed (analyze-meal, describe-meal, read-label, lookup-barcode, lookup-product, features, export-data, delete-account, coach, send-reminders, track-visit). `track-visit` is deployed with `--no-verify-jwt` (anonymous visitors) and writes `visits` with the service role. `send-reminders` is deployed with `--no-verify-jwt` and checks `REMINDER_CRON_SECRET` itself; its secrets are `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, `REMINDER_CRON_SECRET`, `APP_URL`. The pg_cron job `fitlens-reminders` calls it every 10 minutes with the secret from Vault. Functions: `npx supabase functions deploy --project-ref <ref>`; secrets with
+- Twelve functions are deployed (analyze-meal, describe-meal, read-label, lookup-barcode, lookup-product, features, export-data, delete-account, coach, send-reminders, track-visit, weekly-summary). `weekly-summary` needs `RESEND_API_KEY`, `EMAIL_FROM` (and optional `BRAND_NAME`); until then it reports not configured. The cron job `fitlens-weekly-email` calls it hourly. `track-visit` is deployed with `--no-verify-jwt` (anonymous visitors) and writes `visits` with the service role. `send-reminders` is deployed with `--no-verify-jwt` and checks `REMINDER_CRON_SECRET` itself; its secrets are `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, `REMINDER_CRON_SECRET`, `APP_URL`. The pg_cron job `fitlens-reminders` calls it every 10 minutes with the secret from Vault. Functions: `npx supabase functions deploy --project-ref <ref>`; secrets with
   `npx supabase secrets set`. `ANTHROPIC_API_KEY` is a user key from the owner's Console (set 2026-10-28); photo analysis and the coach answer live. A key that is not scoped to a workspace needs `ANTHROPIC_WORKSPACE_ID` as well, otherwise the functions report `not_configured`.
 - Food data was loaded once by exporting the local import to CSV and
   inserting through the Management API. With the database password the
@@ -115,6 +116,9 @@ browser keeps the old bundle and e2e results lie.
 - Dates are picked, not typed: use `DateField` (web date input, native OS picker; `.native.tsx` split) and keep values as YYYY-MM-DD.
 - Times use `TimeField`, an in-app sheet with a Set time button (the browser and OS wheels have none on phones); values stay HH:MM.
 - Food search matches `foods.aliases` as well as the name; give every curated dish the names people type (`supabase/seed/indian_dishes.json`, `aliases`). Searches with no result land in `search_misses` and show on the admin page.
+- `public/sw.js` caches the app shell (cache first for hashed static files, network first for the page). Bump `CACHE` in it when the caching rules change.
+- Demo gym accounts end in `@fitlens.demo` (`node scripts/demo-gym.mjs`, needs `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`); every report excludes them.
+- Runtime brand: `?brand=<key>` from the registry in `lib/config.ts`; add a gym there with its name and tagline.
 - Deploys keep the previous build's chunks (Actions cache in deploy.yml) and `lib/stale-build.ts` reloads once on a chunk load failure; keep both when touching the workflow or the error boundary.
 - Opens tracking: `lib/visits.ts` posts to `track-visit` once per tab and once on sign-in (web only, skipped under automation); invite links carry `?s=<tag>`; the admin page Opens tab reads it. Never add food or health fields to that payload.
 - Reminders are web push: `public/sw.js` is the service worker, `features/reminders/push.ts` subscribes (iPhone only from the Home Screen), `reminders` holds the time. Reminder copy lives in `packages/core/src/reminders.ts` and is tone-tested.

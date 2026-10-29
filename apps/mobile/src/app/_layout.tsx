@@ -11,15 +11,19 @@ import { SessionProvider, useSession } from '@/features/auth/session';
 import { QueryProvider } from '@/lib/query';
 import { I18nProvider } from '@/lib/i18n';
 import { installGlobalErrorHandlers } from '@/lib/telemetry';
+import { captureInstallPrompt } from '@/lib/install';
+import { registerServiceWorker } from '@/lib/sw';
 import { recordVisit } from '@/lib/visits';
 import { AppErrorBoundary, ThemeProvider, ToastHost, useTheme } from '@/ui';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 installGlobalErrorHandlers();
+captureInstallPrompt();
 
 function VisitTracker() {
   const { userId } = useSession();
   useEffect(() => {
+    void registerServiceWorker();
     void recordVisit('open');
   }, []);
   useEffect(() => {

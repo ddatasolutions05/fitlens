@@ -7,6 +7,7 @@ import { adherenceLabel, formatWater, formatWeight, rangeSummary, waterUnit, wat
 import { SectionLabel } from '@/features/day/components';
 import { BarChart, ChartFrame, ConsistencyGrid, LineChart } from '@/features/progress/charts';
 import { useProgress, type Range } from '@/features/progress/hooks';
+import { BodyCard } from '@/features/body/BodyCard';
 import { useProfile } from '@/features/profile/hooks';
 import { Card, EmptyState, ErrorState, Screen, Segmented, SkeletonCard, Stat, Text, space, useTheme } from '@/ui';
 
@@ -69,6 +70,8 @@ export default function ProgressScreen() {
           )}
 
           <KpiGrid stats={progress.data.stats} hideNumbers={hideNumbers} trackingOnly={trackingOnly} unitSystem={unitSystem} range={range} />
+
+          <BodyCard unitSystem={unitSystem} />
 
           <Card>
             <ChartFrame

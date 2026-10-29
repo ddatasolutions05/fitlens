@@ -87,7 +87,8 @@ export default function ProfileScreen() {
         <Row title="Your trainer" subtitle="Share a weekly summary with a coach, or stop sharing" onPress={() => router.push('/profile/trainer')} divider />
         <Row title="Trainer view" subtitle="Your code and the people who share with you" onPress={() => router.push('/trainer')} divider />
         <Row title="Daily reminder" subtitle={reminder.data?.enabled ? `On, ${format12(reminder.data.local_time.slice(0, 5))}` : 'Off. One notification a day at a time you choose'} onPress={() => router.push('/profile/reminders')} accessibilityLabel="Daily reminder" divider />
-        <Row title="How it works" subtitle="Drafts, unknown values, targets, the trend and the Coach" onPress={() => router.push('/profile/help')} divider={isAdmin.data === true} />
+        <Row title="How it works" subtitle="Drafts, unknown values, targets, the trend and the Coach" onPress={() => router.push('/profile/help')} divider />
+        <Row title="Plans" subtitle="Draft pricing for members, personal use and gyms" onPress={() => router.push('/profile/plans')} divider={isAdmin.data === true} />
         {isAdmin.data === true ? <Row title="Admin" subtitle="Accounts, activity, errors and feature use" onPress={() => router.push('/admin')} accessibilityLabel="Admin" /> : null}
       </Card>
 

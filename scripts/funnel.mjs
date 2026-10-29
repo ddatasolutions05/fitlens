@@ -23,7 +23,7 @@ async function sql(query) {
 }
 
 const since = `now() - interval '${days} days'`;
-const notTest = `u.email not like 'e2e-%'`;
+const notTest = `u.email not like 'e2e-%' and u.email not like '%@fitlens.demo'`;
 
 const [funnel] = await sql(`
   select

@@ -35,7 +35,7 @@ select to_char(created_at at time zone 'America/Toronto','MM-DD HH24:MI') as at,
   payload->>'action' as action, payload->>'actor_username' as who,
   payload->'traits'->>'provider' as provider
 from auth.audit_log_entries
-where created_at > now() - interval '3 days' and coalesce(payload->>'actor_username','') not like 'e2e-%'
+where created_at > now() - interval '3 days' and coalesce(payload->>'actor_username','') not like 'e2e-%' and coalesce(payload->>'actor_username','') not like '%@fitlens.demo'
 order by created_at desc limit 80`);
 console.log('AUDIT');
 for (const a of audit) console.log(`${a.at}  ${a.action}  ${a.who ?? ''}  ${a.provider ?? ''}`);

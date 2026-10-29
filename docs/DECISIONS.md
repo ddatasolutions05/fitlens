@@ -2,6 +2,21 @@
 
 Newest first. Each entry: context, decision, consequences.
 
+## D-046 Draft plans page (2026-10-29)
+Decision: `/profile/plans` lists three draft tiers (gym member, personal, gym) with placeholder prices and a clear "nothing is charged" note, so the gym conversation has numbers to react to. A mailto button appears only when `EXPO_PUBLIC_CONTACT_EMAIL` is set.
+
+## D-045 Branded link for a gym (2026-10-29)
+Decision: `?brand=megagym` on the shared build switches the name and tagline at runtime and the browser remembers it (`?brand=default` clears it). The registry lives in `lib/config.ts`; a dedicated build with `EXPO_PUBLIC_BRAND_*` still wins. Logo stays the built-in mark until the gym supplies one.
+
+## D-044 Demo gym (2026-10-29)
+Decision: `scripts/demo-gym.mjs` creates a demo trainer and five demo members (`@fitlens.demo`) with two weeks of meals, weigh-ins, workouts and water through the admin API, links them and leaves a note, so the trainer view can be shown in a meeting. Demo accounts are excluded from the funnel, the user list and the weekly email.
+
+## D-043 Measurements and progress photos (2026-10-29)
+Decision: `measurements` holds waist and hips in cm with an optional progress photo in the private `body-photos` bucket (same owner-folder policy as avatars, 4 MB, JPEG only, resized on the device). Stats gets a Body card with the waist trend and the photo strip; the Add sheet gets a Measure tile. A row must carry a value or a photo.
+
+## D-042 Instant open, Home Screen card, share link, weekly email (2026-10-29)
+Decision: the service worker caches the app shell (hashed bundles, fonts, icons cache first; the page network first with the cached copy offline), which makes the second open instant and keeps an open app working through a deploy. Home shows a one-time card to put the app on the Home Screen (the browser's own prompt where it exists, the two Safari taps on iPhone) and a "Share with a friend" row that hands out a tagged link. The Sunday email reuses the in-app week review through `weekly-summary` (hourly schedule, 18:00 local on Sundays, once a week) and sends with Resend when `RESEND_API_KEY` and `EMAIL_FROM` are set; people can turn it off under Daily reminder.
+
 ## D-041 Surviving a deploy with the app open (2026-10-29)
 Decision: a tab opened before a deploy still asks for the previous build's hashed chunks, which Pages no longer serves, and the next lazy screen fails with "Loading module ... failed". Two layers: the deploy keeps the previous build's `_expo/static` files next to the new ones (restored from the Actions cache and merged, never overwriting), so one generation back keeps working; and the error boundary and global handlers recognise a chunk load failure, reload once with a fresh query string, and only show an "Update ready" screen if that reload did not help. Seen by the owner on an iPhone right after the opens-tracking deploy.
 

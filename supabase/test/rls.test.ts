@@ -491,3 +491,20 @@ describe('visits', () => {
     await admin((c) => c.query('delete from app_admins where user_id = $1', [userA.id]));
   });
 });
+
+describe('measurements and the weekly email list', () => {
+  it('measurements are owner only and need a value or a photo', async () => {
+    await as(userA, (c) => c.query(`insert into measurements (user_id, local_date, tz, waist_cm) values ($1, '2026-10-29', 'UTC', 86.5)`, [userA.id]));
+    const empty = await expectDenied(as(userA, (c) => c.query(`insert into measurements (user_id, local_date, tz) values ($1, '2026-10-29', 'UTC')`, [userA.id])));
+    expect(empty).toMatch(/measurements_something/);
+    const theirs = await as(userB, (c) => c.query('select * from measurements'));
+    expect(theirs.rowCount).toBe(0);
+    const mine = await as(userA, (c) => c.query('select waist_cm from measurements'));
+    expect(Number(mine.rows[0].waist_cm)).toBe(86.5);
+  });
+
+  it('weekly_email_candidates is not callable by accounts', async () => {
+    const denied = await expectDenied(as(userA, (c) => c.query('select * from public.weekly_email_candidates()')));
+    expect(denied).toMatch(/permission denied/i);
+  });
+});

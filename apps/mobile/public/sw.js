@@ -1,6 +1,66 @@
-// Web push: show the reminder and open the app when it is tapped.
+// Service worker: app shell cache so the second open is instant and works
+// offline, plus web push for the daily reminder.
+const CACHE = 'fitlens-shell-v1';
+
 self.addEventListener('install', () => self.skipWaiting());
-self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()));
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches
+      .keys()
+      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim()),
+  );
+});
+
+function scopePath() {
+  return new URL(self.registration.scope).pathname;
+}
+
+function isStatic(pathname) {
+  return pathname.includes('/_expo/static/') || pathname.includes('/assets/') || pathname.includes('/icons/') || pathname.endsWith('.webmanifest') || pathname.endsWith('.ttf') || pathname.endsWith('.woff2');
+}
+
+self.addEventListener('fetch', (event) => {
+  const req = event.request;
+  if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  if (url.origin !== self.location.origin) return;
+  const scope = scopePath();
+  if (!url.pathname.startsWith(scope)) return;
+
+  // Any route: the page from the network, the cached page when offline.
+  if (req.mode === 'navigate') {
+    event.respondWith(
+      fetch(req)
+        .then((res) => {
+          if (res.ok) {
+            const copy = res.clone();
+            caches.open(CACHE).then((c) => c.put(scope, copy)).catch(() => {});
+          }
+          return res;
+        })
+        .catch(() => caches.match(scope).then((hit) => hit || Response.error())),
+    );
+    return;
+  }
+
+  // Hashed bundles, fonts and icons never change under the same name: cache first.
+  if (isStatic(url.pathname)) {
+    event.respondWith(
+      caches.match(req).then(
+        (hit) =>
+          hit ||
+          fetch(req).then((res) => {
+            if (res.ok) {
+              const copy = res.clone();
+              caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
+            }
+            return res;
+          }),
+      ),
+    );
+  }
+});
 
 self.addEventListener('push', (event) => {
   let data = {};

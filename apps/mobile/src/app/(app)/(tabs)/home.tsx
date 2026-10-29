@@ -9,6 +9,8 @@ import { GREETING_KEYS, useT } from '@/lib/i18n';
 import { useDay } from '@/features/day/hooks';
 import { useLogDays } from '@/features/day/useLogDays';
 import { FirstSteps, useFirstSteps } from '@/features/home/FirstSteps';
+import { InstallCard } from '@/features/home/InstallCard';
+import { ShareRow } from '@/features/home/ShareRow';
 import { Avatar, initialsFor } from '@/features/profile/Avatar';
 import { useProfile } from '@/features/profile/hooks';
 import { useDismissTrainerNote, useLatestTrainerNote } from '@/features/trainer/notes';
@@ -75,6 +77,7 @@ export default function HomeScreen() {
       </View>
 
       {first.show ? <FirstSteps steps={first.steps} done={first.done} /> : null}
+      <InstallCard />
 
       {trainerNote.data ? (
         <Card style={{ gap: space.sm }} testID="trainer-note">
@@ -147,6 +150,8 @@ export default function HomeScreen() {
         </View>
         <Icon name="chevronRight" size={18} color={colors.textFaint} />
       </Pressable>
+
+      <ShareRow name={name} userId={session?.user.id ?? ''} />
 
       <View style={styles.navGrid}>
         {SECTIONS.map((s) => (

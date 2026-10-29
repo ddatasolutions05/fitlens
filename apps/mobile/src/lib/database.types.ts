@@ -209,16 +209,30 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
-                },"preferences": {
+                },"measurements": {
                   Row: {
-                    "ai_consent_version": string | null,"ai_photo_consent_at": string | null,"allergies": (string)[],"avoid_foods": (string)[],"created_at": string,"cuisines": (string)[],"diet_pattern": string | null,"reduced_motion": boolean,"updated_at": string,"user_id": string,"workout_days_per_week": number | null,"workout_minutes": number | null,"workout_level": string | null,"workout_focus": string | null,"workout_equipment": string[],"workout_plan_seed": number
+                    "created_at": string,"hips_cm": number | null,"id": string,"local_date": string,"measured_at": string,"note": string | null,"photo_path": string | null,"tz": string,"updated_at": string,"user_id": string,"waist_cm": number | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "ai_consent_version"?: string | null,"ai_photo_consent_at"?: string | null,"allergies"?: (string)[],"avoid_foods"?: (string)[],"created_at"?: string,"cuisines"?: (string)[],"diet_pattern"?: string | null,"reduced_motion"?: boolean,"updated_at"?: string,"user_id": string,"workout_days_per_week"?: number | null,"workout_minutes"?: number | null,"workout_level"?: string | null,"workout_focus"?: string | null,"workout_equipment"?: string[],"workout_plan_seed"?: number
+                    "created_at"?: string,"hips_cm"?: number | null,"id"?: string,"local_date": string,"measured_at"?: string,"note"?: string | null,"photo_path"?: string | null,"tz": string,"updated_at"?: string,"user_id": string,"waist_cm"?: number | null
                   }
                   Update: {
-                    "ai_consent_version"?: string | null,"ai_photo_consent_at"?: string | null,"allergies"?: (string)[],"avoid_foods"?: (string)[],"created_at"?: string,"cuisines"?: (string)[],"diet_pattern"?: string | null,"reduced_motion"?: boolean,"updated_at"?: string,"user_id"?: string,"workout_days_per_week"?: number | null,"workout_minutes"?: number | null,"workout_level"?: string | null,"workout_focus"?: string | null,"workout_equipment"?: string[],"workout_plan_seed"?: number
+                    "created_at"?: string,"hips_cm"?: number | null,"id"?: string,"local_date"?: string,"measured_at"?: string,"note"?: string | null,"photo_path"?: string | null,"tz"?: string,"updated_at"?: string,"user_id"?: string,"waist_cm"?: number | null
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"preferences": {
+                  Row: {
+                    "ai_consent_version": string | null,"ai_photo_consent_at": string | null,"allergies": (string)[],"avoid_foods": (string)[],"created_at": string,"cuisines": (string)[],"diet_pattern": string | null,"reduced_motion": boolean,"updated_at": string,"user_id": string,"workout_days_per_week": number | null,"workout_minutes": number | null,"workout_level": string | null,"workout_focus": string | null,"workout_equipment": string[],"workout_plan_seed": number,"weekly_email": boolean,"weekly_email_sent_on": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "ai_consent_version"?: string | null,"ai_photo_consent_at"?: string | null,"allergies"?: (string)[],"avoid_foods"?: (string)[],"created_at"?: string,"cuisines"?: (string)[],"diet_pattern"?: string | null,"reduced_motion"?: boolean,"updated_at"?: string,"user_id": string,"workout_days_per_week"?: number | null,"workout_minutes"?: number | null,"workout_level"?: string | null,"workout_focus"?: string | null,"workout_equipment"?: string[],"workout_plan_seed"?: number,"weekly_email"?: boolean,"weekly_email_sent_on"?: string | null
+                  }
+                  Update: {
+                    "ai_consent_version"?: string | null,"ai_photo_consent_at"?: string | null,"allergies"?: (string)[],"avoid_foods"?: (string)[],"created_at"?: string,"cuisines"?: (string)[],"diet_pattern"?: string | null,"reduced_motion"?: boolean,"updated_at"?: string,"user_id"?: string,"workout_days_per_week"?: number | null,"workout_minutes"?: number | null,"workout_level"?: string | null,"workout_focus"?: string | null,"workout_equipment"?: string[],"workout_plan_seed"?: number,"weekly_email"?: boolean,"weekly_email_sent_on"?: string | null
                   }
                   Relationships: [
                     
