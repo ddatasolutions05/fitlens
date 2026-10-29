@@ -16,6 +16,7 @@ export function useSearchFoods(query: string) {
     queryFn: async (): Promise<SearchFoodRow[]> => {
       const { data, error } = await supabase.rpc('search_foods', { p_query: q, p_limit: 30 });
       if (error) throw error;
+      if (data.length === 0 && q.length >= 3) void supabase.rpc('note_search_miss', { p_query: q });
       return data;
     },
     enabled: q.length >= 2,

@@ -159,6 +159,8 @@ once a working Anthropic key was set. Milestone 9 (export, delete) remains
 | 41 | Interface language: English, Hindi and Punjabi for the everyday screens, chosen in Profile | built, verified live; translations need a native speaker's review | `e2e/language.spec.ts`; suite green |
 | 42 | Time picker sheet with a Set time button (meal editor, weigh-in) | built, verified live | `e2e/time-picker.spec.ts`; EXIF spec updated |
 | 43 | Admin overview for the owner: accounts, activity, errors, feature use (`/admin`, `app_admins`) | built, verified live | SQL test in `rls.test.ts`; `e2e/admin.spec.ts` (denied path) |
+| 44 | First meal pays off: day-after bars, first-meal headline, low-confidence chips, scan progress with a way out | built, verified live | `manual-log.spec.ts` checks the bars |
+| 45 | Indian food list 86 to 248 dishes with aliases; missed searches recorded and shown to the admin | built, loaded on the project | seed tests; alias and miss SQL tests |
 
 ## 5. Open risks
 

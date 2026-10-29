@@ -2,6 +2,12 @@
 
 Newest first. Each entry: context, decision, consequences.
 
+## D-038 Indian food list and search aliases (2026-10-29)
+Decision: the curated seed grows from 86 to 248 dishes (breads, rice dishes, dals, sabzis, eggs and meat, street food, Indo-Chinese, regional staples, drinks, sweets, sides), each with household servings and values set so kcal matches 4/4/9 from the macros. `foods.aliases` holds the other names people type (chawal, anda, sabji, gol gappe, kaapi) and `search_foods` matches it beside the name. Searches that return nothing are written to `search_misses` through `note_search_miss()` (words only, no other data) and listed on the admin page so the list grows where people actually look. `scripts/db/push-foods-remote.ts` upserts the seed through the Management API.
+
+## D-037 Make the first meal pay off (2026-10-29)
+Decision: after a confirm the editor shows the day after this meal as two bars (calories, protein against the targets); the first confirmed meal is headed "First meal logged" with one line on what logging the rest of the day unlocks. Items the photo model marked low confidence carry a "Check this" chip. While a photo is being identified the screen shows the seconds elapsed, the usual range, and a "Type it instead" way out that keeps the photo attached.
+
 ## D-036 Admin overview for the owner (2026-10-29)
 Decision: admins are rows in `app_admins` (no policies; inserted by hand through the SQL editor or Management API, never from the client). `is_admin()` and `admin_overview(p_days)` are security definer functions; the overview returns one JSON document (totals, every account with counts and last activity, errors caught on devices, feature events) and raises `admin only` for anyone else. The screen is `/admin`, reached from a Profile row that only admins see. Edge function logs are not in the database, so they stay with `scripts/telemetry.mjs`.
 

@@ -12,7 +12,7 @@ import { supabase } from '@/lib/supabase';
 import { useT } from '@/lib/i18n';
 import { Card, Icon, Text, space, useTheme } from '@/ui';
 
-function useHasConfirmedMeal() {
+export function useHasConfirmedMeal() {
   const userId = useUserId();
   return useQuery({
     queryKey: ['first-steps', 'meal', userId],

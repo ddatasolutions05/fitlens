@@ -49,10 +49,12 @@ export interface AdminOverview {
     errors_recent: number;
     coach_calls_recent: number;
     analyses_recent: number;
+    search_misses_recent: number;
   };
   users: AdminUser[];
   errors: AdminError[];
   events: { name: string; count: number; people: number }[];
+  misses: { query: string; count: number; people: number; last_at: string }[];
 }
 
 export function useIsAdmin() {

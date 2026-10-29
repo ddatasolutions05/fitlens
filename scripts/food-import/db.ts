@@ -30,14 +30,14 @@ async function upsertBatch(client: Client, batch: FoodRow[], counts: WriteCounts
   const res = await client.query<{ id: string; source_ref: string; inserted: boolean }>(
     `insert into public.foods as f
        (source, source_ref, name, verified, kcal, protein_g, carbs_g, fat_g, fibre_g, sodium_mg, sat_fat_g,
-        default_serving_g, variant_of, variant_label, attribution)
+        default_serving_g, variant_of, variant_label, attribution, aliases)
      select v.source, v.source_ref, v.name, v.verified, v.kcal, v.protein_g, v.carbs_g, v.fat_g, v.fibre_g,
-            v.sodium_mg, v.sat_fat_g, v.default_serving_g, p.id, v.variant_label, v.attribution
+            v.sodium_mg, v.sat_fat_g, v.default_serving_g, p.id, v.variant_label, v.attribution, v.aliases
      from unnest($1::text[], $2::text[], $3::text[], $4::boolean[], $5::numeric[], $6::numeric[], $7::numeric[],
                  $8::numeric[], $9::numeric[], $10::numeric[], $11::numeric[], $12::numeric[], $13::text[],
-                 $14::text[], $15::text[])
+                 $14::text[], $15::text[], $16::text[])
        as v(source, source_ref, name, verified, kcal, protein_g, carbs_g, fat_g, fibre_g, sodium_mg, sat_fat_g,
-            default_serving_g, variant_of_ref, variant_label, attribution)
+            default_serving_g, variant_of_ref, variant_label, attribution, aliases)
      left join public.foods p
        on p.owner_user_id is null and p.source = v.source and p.source_ref = v.variant_of_ref
      on conflict (source, source_ref) where owner_user_id is null and source_ref is not null do update set
@@ -53,7 +53,8 @@ async function upsertBatch(client: Client, batch: FoodRow[], counts: WriteCounts
        default_serving_g = excluded.default_serving_g,
        variant_of = excluded.variant_of,
        variant_label = excluded.variant_label,
-       attribution = excluded.attribution
+       attribution = excluded.attribution,
+       aliases = excluded.aliases
      returning f.id, f.source_ref, (f.xmax = 0) as inserted`,
     [
       col((r) => r.source),
@@ -71,6 +72,7 @@ async function upsertBatch(client: Client, batch: FoodRow[], counts: WriteCounts
       col((r) => r.variantOfRef),
       col((r) => r.variantLabel),
       col((r) => r.attribution),
+      col((r) => r.aliases ?? null),
     ],
   );
   const ids = new Map<string, string>();

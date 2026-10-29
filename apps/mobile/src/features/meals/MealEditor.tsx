@@ -14,13 +14,14 @@ import {
 import { SectionLabel } from '@/features/day/components';
 import { useDay } from '@/features/day/hooks';
 import { setSelectedDate } from '@/features/day/selected-date';
+import { useHasConfirmedMeal } from '@/features/home/FirstSteps';
 import { MealPhotoThumb } from '@/features/photo/MealPhotoThumb';
 import { usePreferences, useProfile } from '@/features/profile/hooks';
 import { config } from '@/lib/config';
 import { errorMessage } from '@/lib/net';
 import { reportError, track } from '@/lib/telemetry';
 import { useT } from '@/lib/i18n';
-import { Button, Card, DateField, Icon, Input, NumberField, Segmented, Text, TimeField, radius, space, touch, useTheme } from '@/ui';
+import { Bar, Button, Card, DateField, Icon, Input, NumberField, Segmented, Text, TimeField, radius, space, touch, useTheme } from '@/ui';
 
 import { removeItem, setDraft, updateDraft, updateItem, useDraft } from './draft-store';
 import { useDeleteMeal, useSaveMeal } from './hooks';
@@ -45,6 +46,8 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
   const [error, setError] = useState<string | null>(null);
   const [confirmedId, setConfirmedId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const [after, setAfter] = useState<{ kcal: number | null; protein_g: number | null; calorieTarget: number | null; proteinTarget: number | null; first: boolean } | null>(null);
+  const hadMeal = useHasConfirmedMeal();
   const [undoLeft, setUndoLeft] = useState(0);
   const undoTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -111,6 +114,7 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
           mealItemNames: draft.items.map((i) => i.name),
         }),
       );
+      setAfter({ kcal: dayAfter.kcal, protein_g: dayAfter.protein_g, calorieTarget: goal?.calorie_target ?? null, proteinTarget: goal?.protein_g ?? null, first: hadMeal.data === false && !draft.previouslyConfirmed });
       setConfirmedId(draft.mealId ?? (result.queued ? 'queued' : 'saved'));
       setSelectedDate(draft.localDate);
       setUndoLeft(draft.previouslyConfirmed ? 0 : Math.round(config.undoWindowMs / 1000));
@@ -138,6 +142,7 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
       await save.mutateAsync({ draft, status: 'draft' });
       setConfirmedId(null);
       setFeedback(null);
+      setAfter(null);
     } catch (err) {
       reportError('meal.editor', err);
       setError(errorMessage(err));
@@ -179,7 +184,21 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
   if (confirmedId) {
     return (
       <View style={{ gap: space.lg }} testID="meal-confirmed">
-        <SavedPlate totals={totals} hideNumbers={hideNumbers} queued={confirmedId === 'queued'} />
+        <SavedPlate totals={totals} hideNumbers={hideNumbers} queued={confirmedId === 'queued'} first={after?.first ?? false} />
+        {after && !hideNumbers && (after.calorieTarget || after.proteinTarget) ? (
+          <Card style={{ gap: space.md }} testID="day-after">
+            <Text variant="label" color="textMuted">
+              {after.first ? 'Your day so far' : 'Today after this meal'}
+            </Text>
+            <Bar label="Calories" value={after.kcal} target={after.calorieTarget} unit=" kcal" color={colors.text} />
+            <Bar label="Protein" value={after.protein_g} target={after.proteinTarget} unit=" g" color={colors.protein} compact />
+            {after.first ? (
+              <Text variant="small" color="textMuted">
+                Log the rest of today and the Coach can read your whole day tomorrow.
+              </Text>
+            ) : null}
+          </Card>
+        ) : null}
         {feedback ? (
           <View style={[styles.feedback, { borderLeftColor: colors.text }]}>
             <Text>{feedback.observation}</Text>
@@ -341,7 +360,7 @@ function TotalsPlate({ totals, hideNumbers, empty }: { totals: ReturnType<typeof
   );
 }
 
-function SavedPlate({ totals, hideNumbers, queued }: { totals: ReturnType<typeof draftTotals> | null; hideNumbers: boolean; queued: boolean }) {
+function SavedPlate({ totals, hideNumbers, queued, first }: { totals: ReturnType<typeof draftTotals> | null; hideNumbers: boolean; queued: boolean; first: boolean }) {
   const { colors, reducedMotion } = useTheme();
   const [scale] = useState(() => new Animated.Value(reducedMotion ? 1 : 0.92));
   const [opacity] = useState(() => new Animated.Value(reducedMotion ? 1 : 0));
@@ -359,8 +378,8 @@ function SavedPlate({ totals, hideNumbers, queued }: { totals: ReturnType<typeof
         <View style={[styles.check, { borderColor: fg }]}>
           <Icon name="check" size={22} color={fg} strokeWidth={2.6} />
         </View>
-        <Text variant="title" style={{ color: fg }}>
-          Meal saved
+        <Text variant="title" style={{ color: fg }} testID="saved-title">
+          {first ? 'First meal logged' : 'Meal saved'}
         </Text>
         {!hideNumbers && totals ? (
           <Text tabular style={{ color: fg }}>
@@ -385,7 +404,16 @@ function ItemRow({ item, hideNumbers, last }: { item: DraftItem; hideNumbers: bo
     <View style={[styles.item, last ? null : { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border }]} testID={`item-${item.localId}`}>
       <Pressable onPress={() => setOpen(!open)} accessibilityRole="button" accessibilityLabel={`${item.name}, ${open ? 'collapse' : 'edit'}`} style={styles.itemHead}>
         <View style={{ flex: 1, gap: 2 }}>
-          <Text variant="bodyStrong">{item.name}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm, flexWrap: 'wrap' }}>
+            <Text variant="bodyStrong">{item.name}</Text>
+            {item.confidence === 'low' ? (
+              <View style={[styles.checkChip, { borderColor: colors.text }]} testID={`check-${item.localId}`}>
+                <Text variant="label" style={{ fontSize: 10, lineHeight: 12 }}>
+                  Check this
+                </Text>
+              </View>
+            ) : null}
+          </View>
           <Text variant="caption" color="textMuted">
             {item.servingLabel ? `${item.servingLabel}, ` : ''}
             {Math.round(item.grams)} g{item.fractionEaten < 1 ? `, ate ${Math.round(item.fractionEaten * 100)}%` : ''}
@@ -470,5 +498,6 @@ const styles = StyleSheet.create({
   item: { paddingHorizontal: space.lg, paddingVertical: space.md },
   itemHead: { flexDirection: 'row', gap: space.md, alignItems: 'flex-start', minHeight: touch.min },
   feedback: { borderLeftWidth: 3, paddingLeft: space.md, gap: space.xs },
+  checkChip: { borderWidth: 1, borderRadius: radius.sm, paddingHorizontal: 6, paddingVertical: 2 },
   check: { width: 40, height: 40, borderRadius: radius.pill, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
 });

@@ -260,6 +260,12 @@ describe('search_foods', () => {
     expect(rows.rows[0].rank_bucket).toBe(0);
   });
 
+  it('matches aliases such as chawal for rice', async () => {
+    await admin((c) => c.query(`insert into foods (source, source_ref, name, aliases, kcal, verified) values ('ifct', 'al1', 'Rice, white, cooked, plain', 'chawal, bhaat, steamed rice', 130, true)`));
+    const rows = await as(user, (c) => c.query(`select name from search_foods('chawal', 10)`));
+    expect(rows.rows.map((r) => r.name)).toContain('Rice, white, cooked, plain');
+  });
+
   it('does not surface other users\' private foods', async () => {
     await as(other, (c) => c.query(`insert into foods (owner_user_id, source, name) values ($1, 'user', 'Secret sandwich')`, [other.id]));
     const rows = await as(user, (c) => c.query(`select name from search_foods('secret sandwich', 10)`));

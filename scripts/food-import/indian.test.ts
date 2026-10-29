@@ -5,8 +5,7 @@ const dishes = readIndianSeed();
 
 describe('indian_dishes.json', () => {
   it('has the expected rows with unique slugs', () => {
-    expect(dishes.length).toBeGreaterThanOrEqual(60);
-    expect(dishes).toHaveLength(86);
+    expect(dishes.length).toBeGreaterThanOrEqual(200);
     expect(new Set(dishes.map((d) => d.slug)).size).toBe(dishes.length);
   });
 

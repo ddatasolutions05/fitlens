@@ -29,7 +29,7 @@ export default function AdminScreen() {
   const isAdmin = useIsAdmin();
   const [days, setDays] = useState<'1' | '7' | '30'>('7');
   const overview = useAdminOverview(Number(days), isAdmin.data === true);
-  const [tab, setTab] = useState<'people' | 'errors' | 'usage'>('people');
+  const [tab, setTab] = useState<'people' | 'errors' | 'usage' | 'searches'>('people');
 
   if (isAdmin.isLoading) {
     return (
@@ -76,13 +76,15 @@ export default function AdminScreen() {
             <Stat label="Errors" value={String(o.totals.errors_recent)} note={`last ${o.days} d`} tone={o.totals.errors_recent > 0 ? 'on' : undefined} style={styles.half} testID="admin-errors" />
           </View>
 
-          <Segmented<'people' | 'errors' | 'usage'>
+          <Segmented<'people' | 'errors' | 'usage' | 'searches'>
             value={tab}
             onChange={setTab}
+            wrap
             options={[
               { value: 'people', label: `People (${o.users.length})` },
               { value: 'errors', label: `Errors (${o.errors.length})` },
               { value: 'usage', label: 'Usage' },
+              { value: 'searches', label: `Missed searches (${o.misses?.length ?? 0})` },
             ]}
           />
 
@@ -148,6 +150,26 @@ export default function AdminScreen() {
                     <Text style={{ flex: 1 }}>{ev.name}</Text>
                     <Text tabular color="textMuted">
                       {ev.count} by {ev.people}
+                    </Text>
+                  </View>
+                ))}
+              </Card>
+            )
+          ) : null}
+
+          {tab === 'searches' ? (
+            (o.misses?.length ?? 0) === 0 ? (
+              <EmptyState title="No missed searches" body={`Every food search found something in the last ${o.days} days.`} />
+            ) : (
+              <Card style={{ gap: 0 }} testID="admin-misses">
+                <Text variant="caption" color="textMuted" style={{ paddingBottom: space.sm }}>
+                  Searches that returned nothing. Add these to the food list or as aliases.
+                </Text>
+                {o.misses.map((m, i) => (
+                  <View key={m.query} style={[styles.usageRow, i < o.misses.length - 1 ? { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.border } : null]}>
+                    <Text style={{ flex: 1 }}>{m.query}</Text>
+                    <Text tabular color="textMuted">
+                      {m.count} by {m.people}, {when(m.last_at)}
                     </Text>
                   </View>
                 ))}

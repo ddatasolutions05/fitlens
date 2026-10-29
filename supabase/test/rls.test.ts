@@ -449,6 +449,11 @@ describe('admin overview', () => {
     expect(o.users.some((u: { user_id: string }) => u.user_id === userB.id)).toBe(true);
     expect(Array.isArray(o.errors)).toBe(true);
     expect(Array.isArray(o.events)).toBe(true);
+    await as(userB, (c) => c.query(`select public.note_search_miss('gulab jamun dry')`));
+    const denied2 = await expectDenied(as(userB, (c) => c.query('select * from search_misses')));
+    expect(denied2).toMatch(/permission denied/i);
+    const again = await as(userA, (c) => c.query('select public.admin_overview(7) as o'));
+    expect(again.rows[0].o.misses.some((m: { query: string }) => m.query === 'gulab jamun dry')).toBe(true);
     await admin((c) => c.query('delete from app_admins where user_id = $1', [userA.id]));
   });
 });

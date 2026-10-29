@@ -41,6 +41,7 @@ test.describe('manual food log', () => {
     await draftRow.click();
     await page.getByTestId('confirm-meal').click();
     await expect(page.getByTestId('meal-confirmed')).toBeVisible();
+    await expect(page.getByTestId('day-after')).toBeVisible();
     await page.getByTestId('done').click();
 
     await expect(page.getByTestId('today-screen')).toBeVisible();

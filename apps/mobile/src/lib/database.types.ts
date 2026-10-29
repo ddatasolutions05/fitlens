@@ -475,6 +475,9 @@ isOneToOne: false
 "is_admin":
 { Args: Record<PropertyKey, never>; Returns: boolean
                            },
+"note_search_miss":
+{ Args: { "p_query": string }; Returns: undefined
+                           },
 "admin_overview":
 { Args: { "p_days"?: number }; Returns: Json
                            },

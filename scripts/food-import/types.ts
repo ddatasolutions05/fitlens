@@ -15,6 +15,7 @@ export interface FoodRow {
   source: SharedSource;
   sourceRef: string;
   name: string;
+  aliases?: string | null;
   verified: boolean;
   kcal: number | null;
   proteinG: number | null;

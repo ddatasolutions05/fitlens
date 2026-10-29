@@ -38,6 +38,8 @@ export default function ScanScreen() {
   const [packaged, setPackaged] = useState<PackagedSuggestion[]>([]);
   const [products, setProducts] = useState<Record<string, Product[] | 'loading' | 'failed'>>({});
   const [model, setModel] = useState('');
+  const [startedAt, setStartedAt] = useState<number | null>(null);
+  const elapsed = useElapsedSeconds(startedAt);
   const [approving, setApproving] = useState<string | null>(null);
   const [unmatched, setUnmatched] = useState<string[]>([]);
 
@@ -96,6 +98,7 @@ export default function ScanScreen() {
     const draft = getDraft();
     if (!draft?.mealId || photos.length === 0) return;
     setStage('analyzing');
+    setStartedAt(Date.now());
     track('scan_started', { photos: photos.length });
     setError(null);
     try {
@@ -252,10 +255,14 @@ export default function ScanScreen() {
       ) : null}
 
       {busy ? (
-        <Card style={{ gap: space.md }}>
+        <Card style={{ gap: space.md }} testID="scan-progress">
           <Text variant="bodyStrong">{stage === 'uploading' ? 'Uploading photo' : stage === 'analyzing' ? 'Identifying foods' : 'Matching to the food database'}</Text>
+          <Text variant="caption" color="textMuted">
+            {stage === 'analyzing' ? `${elapsed} s so far. Usually 10 to 30 seconds; the photo stays attached either way.` : 'A few seconds.'}
+          </Text>
           <Skeleton />
           <Skeleton width="70%" />
+          {stage === 'analyzing' ? <Button label="Type it instead" variant="ghost" size="sm" onPress={() => router.push({ pathname: '/food/search', params: { date: localDate } })} testID="type-instead" /> : null}
         </Card>
       ) : null}
 
@@ -406,3 +413,13 @@ const styles = StyleSheet.create({
   photos: { flexDirection: 'row', gap: space.sm, flexWrap: 'wrap' },
   row: { flexDirection: 'row', gap: space.sm },
 });
+
+function useElapsedSeconds(startedAt: number | null): number {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (startedAt === null) return;
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [startedAt]);
+  return startedAt === null ? 0 : Math.max(0, Math.round((now - startedAt) / 1000));
+}

@@ -9,6 +9,7 @@ const ATTRIBUTION = 'Compiled from IFCT 2017 published values and typical recipe
 export interface IndianDish {
   slug: string;
   name: string;
+  aliases?: string | null;
   kcal: number;
   protein_g: number;
   carbs_g: number;
@@ -41,6 +42,7 @@ export function validateIndianSeed(data: unknown): IndianDish[] {
     else if (slugs.has(f.slug)) errors.push(`${at}: duplicate slug`);
     else slugs.add(f.slug);
     if (typeof f.name !== 'string' || !f.name.trim()) errors.push(`${at}: missing name`);
+    if ('aliases' in f && f.aliases !== null && (typeof f.aliases !== 'string' || !f.aliases.trim())) errors.push(`${at}: aliases must be a non-empty string or null`);
     for (const k of REQUIRED_NUMBERS) {
       if (typeof f[k] !== 'number' || !Number.isFinite(f[k]) || (f[k] as number) < 0) errors.push(`${at}: ${k} must be a number >= 0`);
     }
@@ -82,6 +84,7 @@ export async function loadIndian(): Promise<FoodRow[]> {
       source: 'ifct',
       sourceRef: `curated:${d.slug}`,
       name: d.name,
+      aliases: d.aliases ?? null,
       verified: true,
       kcal: d.kcal,
       proteinG: d.protein_g,
