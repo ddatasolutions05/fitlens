@@ -32,14 +32,14 @@ export function Stat({ label, value, note, tone = 'neutral', style, testID }: St
         style,
       ]}
     >
-      <Text variant="caption" style={{ color: muted }} numberOfLines={1}>
+      <Text variant="caption" style={{ color: muted }} numberOfLines={1} maxFontSizeMultiplier={1.3}>
         {label}
       </Text>
-      <Text variant="title" tabular style={{ color: fg, fontSize: 24, lineHeight: 28 }} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
+      <Text variant="title" tabular style={{ color: fg, fontSize: 24, lineHeight: 28 }} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} maxFontSizeMultiplier={1.3}>
         {value}
       </Text>
       {note ? (
-        <Text variant="caption" style={{ color: muted, opacity: inverse ? 0.75 : 1 }} numberOfLines={2}>
+        <Text variant="caption" style={{ color: muted, opacity: inverse ? 0.75 : 1 }} numberOfLines={2} maxFontSizeMultiplier={1.3}>
           {note}
         </Text>
       ) : null}

@@ -51,14 +51,14 @@ export default function TrainScreen() {
               return (
                 <Pressable key={s.workout.id} accessibilityRole="button" onPress={() => open(s.workout)} testID={`suggestion-${s.workout.id}`} style={({ pressed }) => [styles.row, { backgroundColor: s.planned ? colors.inverse : colors.surface, borderColor: s.planned ? colors.inverse : colors.border, opacity: pressed ? 0.85 : 1 }]}>
                   <View style={{ flex: 1, gap: 2 }}>
-                    <Text variant="label" style={{ color: s.planned ? colors.onInverse : colors.textMuted, opacity: s.planned ? 0.6 : 1 }}>
+                    <Text variant="label" style={{ color: s.planned ? colors.onInverse : colors.textMuted, opacity: s.planned ? 0.6 : 1 }} maxFontSizeMultiplier={1.3}>
                       {s.planned ? 'Planned' : 'Optional'}
                       {done ? ', done' : ''}
                     </Text>
-                    <Text variant="heading" style={{ color: s.planned ? colors.onInverse : colors.text }}>
+                    <Text variant="heading" style={{ color: s.planned ? colors.onInverse : colors.text }} maxFontSizeMultiplier={1.3}>
                       {s.workout.name}
                     </Text>
-                    <Text variant="small" style={{ color: s.planned ? colors.onInverse : colors.textMuted }}>
+                    <Text variant="small" style={{ color: s.planned ? colors.onInverse : colors.textMuted }} maxFontSizeMultiplier={1.3}>
                       {s.workout.minutes} min. {s.workout.summary}
                     </Text>
                   </View>

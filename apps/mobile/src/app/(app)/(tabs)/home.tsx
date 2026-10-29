@@ -162,16 +162,17 @@ export default function HomeScreen() {
 
 function BigTile({ label, value, note, onPress, testID }: { label: string; value: string | null; note?: string; onPress: () => void; testID: string }) {
   const { colors } = useTheme();
+  const t = useT();
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={`${label}: ${value ?? note ?? ''}`} onPress={onPress} testID={testID} style={({ pressed }) => [styles.big, { backgroundColor: colors.surface, borderColor: colors.border, opacity: pressed ? 0.85 : 1 }]}>
       <Text variant="label" color="textMuted">
         {label}
       </Text>
-      <Text variant="title" tabular numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={{ fontSize: 26, lineHeight: 32 }}>
-        {value ?? 'Not yet'}
+      <Text variant="title" tabular numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={{ fontSize: 26, lineHeight: 32 }} maxFontSizeMultiplier={1.3}>
+        {value ?? t('home.notYet')}
       </Text>
       {note ? (
-        <Text variant="caption" color="textMuted" numberOfLines={1}>
+        <Text variant="caption" color="textMuted" numberOfLines={1} maxFontSizeMultiplier={1.3}>
           {note}
         </Text>
       ) : null}
@@ -184,7 +185,7 @@ function SmallTile({ icon, label, onPress, testID }: { icon: IconName; label: st
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} testID={testID} style={({ pressed }) => [styles.small, { borderColor: colors.border, opacity: pressed ? 0.85 : 1 }]}>
       <Icon name={icon} size={18} color={colors.textMuted} />
-      <Text variant="small" numberOfLines={1} style={{ flexShrink: 1 }}>
+      <Text variant="small" numberOfLines={1} style={{ flexShrink: 1 }} maxFontSizeMultiplier={1.3}>
         {label}
       </Text>
     </Pressable>

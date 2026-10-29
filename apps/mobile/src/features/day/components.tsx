@@ -124,10 +124,10 @@ export function CalorieCard({ day, hideNumbers, trackingOnly, tdeeEstimate }: { 
 function PlateStat({ label, value, fg, onPress, testID }: { label: string; value: string; fg: string; onPress?: () => void; testID?: string }) {
   const inner = (
     <>
-      <Text variant="caption" style={{ color: fg, opacity: 0.6 }}>
+      <Text variant="caption" style={{ color: fg, opacity: 0.6 }} maxFontSizeMultiplier={1.3}>
         {label}
       </Text>
-      <Text variant="bodyStrong" tabular style={{ color: fg }} testID={testID}>
+      <Text variant="bodyStrong" tabular style={{ color: fg }} testID={testID} maxFontSizeMultiplier={1.3}>
         {value}
       </Text>
     </>
