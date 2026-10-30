@@ -520,6 +520,12 @@ isOneToOne: false
 "note_search_miss":
 { Args: { "p_query": string }; Returns: undefined
                            },
+"admin_alert_settings":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
+"set_admin_alerts":
+{ Args: { "p_on": boolean }; Returns: boolean
+                           },
 "admin_overview":
 { Args: { "p_days"?: number }; Returns: Json
                            },

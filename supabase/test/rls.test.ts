@@ -508,3 +508,21 @@ describe('measurements and the weekly email list', () => {
     expect(denied).toMatch(/permission denied/i);
   });
 });
+
+describe('owner alerts', () => {
+  it('only an admin can change the setting; the digest is service role only', async () => {
+    const denied = await expectDenied(as(userA, (c) => c.query('select public.set_admin_alerts(false)')));
+    expect(denied).toMatch(/admin only/);
+    const none = await as(userA, (c) => c.query('select public.admin_alert_settings() as s'));
+    expect(none.rows[0].s).toBeNull();
+    const digest = await expectDenied(as(userA, (c) => c.query(`select public.admin_alert_digest(now() - interval '1 hour')`)));
+    expect(digest).toMatch(/permission denied/i);
+    await admin((c) => c.query('insert into app_admins (user_id) values ($1)', [userA.id]));
+    await as(userA, (c) => c.query('select public.set_admin_alerts(false)'));
+    const off = await as(userA, (c) => c.query('select public.admin_alert_settings() as s'));
+    expect(off.rows[0].s.alerts).toBe(false);
+    const d = await admin((c) => c.query(`select public.admin_alert_digest(now() - interval '1 day') as d`));
+    expect(Array.isArray(d.rows[0].d.signups)).toBe(true);
+    await admin((c) => c.query('delete from app_admins where user_id = $1', [userA.id]));
+  });
+});

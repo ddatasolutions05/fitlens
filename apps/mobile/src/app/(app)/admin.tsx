@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { useAdminOverview, useIsAdmin, type AdminUser } from '@/features/admin/hooks';
+import { useAdminAlerts, useAdminOverview, useIsAdmin, useSetAdminAlerts, type AdminUser } from '@/features/admin/hooks';
 import { VisitsPanel } from '@/features/admin/VisitsPanel';
 import { errorMessage } from '@/lib/net';
-import { Button, Card, EmptyState, ErrorState, PageHeader, Screen, Segmented, SkeletonCard, Stat, Text, space, useTheme } from '@/ui';
+import { Button, Card, EmptyState, ErrorState, PageHeader, Screen, Segmented, SkeletonCard, Stat, Text, space, toast, useTheme } from '@/ui';
 
 function when(iso: string | null | undefined): string {
   if (!iso) return 'never';
@@ -30,6 +30,8 @@ export default function AdminScreen() {
   const isAdmin = useIsAdmin();
   const [days, setDays] = useState<'1' | '7' | '30'>('7');
   const overview = useAdminOverview(Number(days), isAdmin.data === true);
+  const alerts = useAdminAlerts();
+  const setAlerts = useSetAdminAlerts();
   const [tab, setTab] = useState<'visits' | 'people' | 'errors' | 'usage' | 'searches'>('visits');
 
   if (isAdmin.isLoading) {
@@ -64,6 +66,20 @@ export default function AdminScreen() {
           { value: '30', label: '30 days' },
         ]}
       />
+      <Card style={{ gap: space.sm }} testID="admin-alerts">
+        <Text variant="bodyStrong">Alerts to this phone</Text>
+        <Text variant="small" color="textMuted">
+          Every ten minutes with news: new sign-ups, first meals, errors. Arrives as a notification, so turn on Daily reminder once on this browser.
+        </Text>
+        <Segmented<'on' | 'off'>
+          value={alerts.data?.alerts === false ? 'off' : 'on'}
+          onChange={(v) => setAlerts.mutate(v === 'on', { onSuccess: () => toast(v === 'on' ? 'Alerts on' : 'Alerts off') })}
+          options={[
+            { value: 'on', label: 'On' },
+            { value: 'off', label: 'Off' },
+          ]}
+        />
+      </Card>
       {overview.isLoading ? <SkeletonCard /> : null}
       {overview.error ? <ErrorState message={errorMessage(overview.error)} onRetry={() => overview.refetch()} /> : null}
       {o ? (

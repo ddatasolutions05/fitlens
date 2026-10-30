@@ -1,6 +1,6 @@
 // Owner's overview. Access is decided by app_admins on the server; the client
 // only asks and renders.
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useUserId } from '@/features/auth/session';
 import { supabase } from '@/lib/supabase';
@@ -81,6 +81,30 @@ export interface AdminVisit {
   user_agent: string | null;
   email: string | null;
   display_name: string | null;
+}
+
+export function useAdminAlerts() {
+  const userId = useUserId();
+  return useQuery({
+    queryKey: ['admin-alerts', userId],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('admin_alert_settings');
+      if (error) throw error;
+      return (data as { alerts: boolean; alerted_at: string | null } | null) ?? null;
+    },
+  });
+}
+
+export function useSetAdminAlerts() {
+  const userId = useUserId();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (on: boolean) => {
+      const { error } = await supabase.rpc('set_admin_alerts', { p_on: on });
+      if (error) throw error;
+    },
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['admin-alerts', userId] }),
+  });
 }
 
 export function useIsAdmin() {

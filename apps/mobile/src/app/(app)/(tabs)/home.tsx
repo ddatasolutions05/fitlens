@@ -9,6 +9,7 @@ import { GREETING_KEYS, useT } from '@/lib/i18n';
 import { useDay } from '@/features/day/hooks';
 import { useLogDays } from '@/features/day/useLogDays';
 import { FirstSteps, useFirstSteps } from '@/features/home/FirstSteps';
+import { WhatsNewCard, YesterdayNudge } from '@/features/home/HomeCards';
 import { InstallCard } from '@/features/home/InstallCard';
 import { ShareRow } from '@/features/home/ShareRow';
 import { Avatar, initialsFor } from '@/features/profile/Avatar';
@@ -78,6 +79,8 @@ export default function HomeScreen() {
 
       {first.show ? <FirstSteps steps={first.steps} done={first.done} /> : null}
       <InstallCard />
+      <YesterdayNudge yesterday={addDays(today, -1)} mealCount={yesterday.data ? yesterday.data.meals.length : null} onboardedOn={profile.data?.onboarding_completed_at?.slice(0, 10) ?? null} />
+      <WhatsNewCard />
 
       {trainerNote.data ? (
         <Card style={{ gap: space.sm }} testID="trainer-note">

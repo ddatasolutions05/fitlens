@@ -31,6 +31,8 @@ status in `docs/PLAN.md`, decisions in `docs/DECISIONS.md`.
 | Error reports and function logs | `node scripts/telemetry.mjs [--hours 24] [--purge]` (needs `SUPABASE_ACCESS_TOKEN` and `SUPABASE_PROJECT_REF`) |
 | Regenerate DB types | `npx supabase gen types typescript --db-url "$DATABASE_URL?sslmode=disable" --schema public > apps/mobile/src/lib/database.types.ts` |
 
+The deploy exports with `EXPO_UNSTABLE_TREE_SHAKING=1 EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH=1`; use the same flags on a local `expo export` for browser tests so the tested build matches production.
+
 E2E notes: `npm run test:e2e` starts the web server itself; set `E2E_NO_SERVER=1`
 to reuse one already running on 8081. Specs that need a Supabase project skip
 with a reason until `EXPO_PUBLIC_SUPABASE_*` and `E2E_USER_*` are set; the
@@ -116,6 +118,8 @@ browser keeps the old bundle and e2e results lie.
 - Dates are picked, not typed: use `DateField` (web date input, native OS picker; `.native.tsx` split) and keep values as YYYY-MM-DD.
 - Times use `TimeField`, an in-app sheet with a Set time button (the browser and OS wheels have none on phones); values stay HH:MM.
 - Food search matches `foods.aliases` as well as the name; give every curated dish the names people type (`supabase/seed/indian_dishes.json`, `aliases`). Searches with no result land in `search_misses` and show on the admin page.
+- Release notes: add an entry to `lib/changelog.ts` (newest first, new key) when something user-visible ships; Home shows it once.
+- Owner alerts ride on the reminder sweep (`send-reminders`): `app_admins.alerts` plus a push subscription on the admin's browser.
 - `public/sw.js` caches the app shell (cache first for hashed static files, network first for the page). Bump `CACHE` in it when the caching rules change.
 - Demo gym accounts end in `@fitlens.demo` (`node scripts/demo-gym.mjs`, needs `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`); every report excludes them.
 - Runtime brand: `?brand=<key>` from the registry in `lib/config.ts`; add a gym there with its name and tagline.

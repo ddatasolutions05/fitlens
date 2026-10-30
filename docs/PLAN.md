@@ -169,6 +169,9 @@ once a working Anthropic key was set. Milestone 9 (export, delete) remains
 | 51 | Measurements and private progress photos; Body card on Stats; Measure tile | built, verified live | RLS test; `e2e/measure.spec.ts` |
 | 52 | Demo gym: trainer plus five members with two weeks of data | built, seeded on the project | `scripts/demo-gym.mjs` |
 | 53 | Branded link (`?brand=megagym`) and draft Plans page | built, verified live | `e2e/plans.spec.ts` |
+| 54 | Tree-shaken web export (3.7 MB to 2.7 MB) | built, verified live | nine specs green on the shaken build |
+| 55 | Owner alerts: push digest of sign-ups, first meals and errors to admins who opt in | built, verified live | SQL test; sweep probed |
+| 56 | Yesterday nudge and What's new card on Home | built, verified live | `e2e/home-cards.spec.ts` |
 
 ## 5. Open risks
 

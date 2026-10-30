@@ -93,7 +93,24 @@ Deno.serve(
         totals.removed += result.removed;
         totals.failed += result.failed;
       }
-      return json({ ok: true, ...totals }, 200, { 'x-request-id': requestId });
+      // Owner alerts: a short digest to admins who turned it on, once per sweep with news.
+      const alerts = { admins: 0, sent: 0 };
+      const { data: admins } = await admin.from('app_admins').select('user_id, alerts, alerted_at').eq('alerts', true);
+      for (const a of admins ?? []) {
+        alerts.admins += 1;
+        const since = (a.alerted_at as string | null) ?? new Date(now.getTime() - 10 * 60_000).toISOString();
+        const { data: digest } = await admin.rpc('admin_alert_digest', { p_since: since });
+        const d = (digest ?? {}) as { signups?: string[]; first_meals?: string[]; errors?: number };
+        const parts: string[] = [];
+        if (d.signups?.length) parts.push(`New: ${d.signups.join(', ')}`);
+        if (d.first_meals?.length) parts.push(`First meal: ${d.first_meals.join(', ')}`);
+        if (d.errors) parts.push(`${d.errors} error${d.errors === 1 ? '' : 's'}`);
+        await admin.from('app_admins').update({ alerted_at: now.toISOString() }).eq('user_id', a.user_id as string);
+        if (parts.length === 0) continue;
+        const result = await sendToUser(admin, a.user_id as string, { title: `${Deno.env.get('BRAND_NAME') ?? 'FitLens'} activity`, body: parts.join('. ') }, `${appUrl}${appUrl.endsWith('/') ? '' : '/'}admin`);
+        alerts.sent += result.sent;
+      }
+      return json({ ok: true, ...totals, alerts }, 200, { 'x-request-id': requestId });
     }
 
     // A signed-in person: send a test to their own browsers.

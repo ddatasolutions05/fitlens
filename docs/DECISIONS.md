@@ -2,6 +2,15 @@
 
 Newest first. Each entry: context, decision, consequences.
 
+## D-049 Yesterday nudge and release note on Home (2026-10-30)
+Decision: when yesterday has no meals (and the person finished setup before yesterday) Home shows one card with "Log yesterday" and "Nothing to add", remembered per day in the browser. After an update, a "What's new" card lists the latest changes from `lib/changelog.ts` once; add an entry with a new key when something worth telling people ships.
+
+## D-048 Owner alerts over push (2026-10-30)
+Decision: the ten-minute reminder sweep also sends admins who opted in (`app_admins.alerts`) a digest of what happened since the last sweep: new sign-ups, first meals, error count, through `admin_alert_digest()` (service role only) and the same push path as reminders. The toggle sits at the top of the admin page; the admin's browser needs a reminder subscription, which the card says.
+
+## D-047 Tree shaking in the web export (2026-10-30)
+Decision: the deploy sets `EXPO_UNSTABLE_TREE_SHAKING` and `EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH`, which took the bundle from 3.7 MB to 2.7 MB with the browser suite green against the result. Local exports for browser tests should use the same flags so they test the same build.
+
 ## D-046 Draft plans page (2026-10-29)
 Decision: `/profile/plans` lists three draft tiers (gym member, personal, gym) with placeholder prices and a clear "nothing is charged" note, so the gym conversation has numbers to react to. A mailto button appears only when `EXPO_PUBLIC_CONTACT_EMAIL` is set.
 
