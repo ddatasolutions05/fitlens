@@ -50,13 +50,18 @@ const clientErrors = await sql(`
   order by last_seen desc
   limit 100`);
 
+// A failed log query is reported as unavailable, never counted as an error.
 async function safely(fn) {
   try {
     return await fn();
   } catch (err) {
-    return [{ event_message: `query failed: ${err instanceof Error ? err.message : err}` }];
+    const rows = [];
+    rows.unavailable = `logs endpoint: ${err instanceof Error ? err.message : err}`.slice(0, 200);
+    return rows;
   }
 }
+
+const count = (rows) => (rows.unavailable ? `unavailable (${rows.unavailable})` : String(rows.length));
 
 const functionErrors = await safely(() =>
   logs(`
@@ -106,15 +111,15 @@ console.log(`Client error reports, last ${requestedHours} h: ${clientErrors.leng
 for (const r of clientErrors) {
   console.log(`  ${r.n}x [${r.scope}] ${r.message} (${r.platform ?? '?'} ${r.app_version ?? '?'}, ${r.users} user${r.users === 1 ? '' : 's'}, last ${ts(r.last_seen)})`);
 }
-console.log(`Edge function responses >= 400, last ${hours} h: ${functionErrors.length}`);
+console.log(`Edge function responses >= 400, last ${hours} h: ${count(functionErrors)}`);
 for (const r of functionErrors) {
   console.log(`  ${ts(r.timestamp)} ${r.status ?? ''} ${r.method ?? ''} ${r.path ?? ''} ${r.ms ? `${r.ms} ms` : ''} ${r.status ? '' : (r.event_message ?? '')}`.replace(/\s+/g, ' ').trim());
 }
-console.log(`Edge function console errors and warnings, last ${hours} h: ${functionConsole.length}`);
+console.log(`Edge function console errors and warnings, last ${hours} h: ${count(functionConsole)}`);
 for (const r of functionConsole) {
   console.log(`  ${ts(r.timestamp)} ${r.level ?? ''} ${(r.event_message ?? '').slice(0, 300)}`.trim());
 }
-console.log(`Auth errors, last ${hours} h: ${authErrors.length}`);
+console.log(`Auth errors, last ${hours} h: ${count(authErrors)}`);
 for (const r of authErrors) {
   console.log(`  ${ts(r.timestamp)} ${r.level ?? ''} ${r.path ?? ''} ${(r.event_message ?? '').slice(0, 300)}`.replace(/\s+/g, ' ').trim());
 }
