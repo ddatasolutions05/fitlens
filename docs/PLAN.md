@@ -172,6 +172,7 @@ once a working Anthropic key was set. Milestone 9 (export, delete) remains
 | 54 | Tree-shaken web export (3.7 MB to 2.7 MB) | built, verified live | nine specs green on the shaken build |
 | 55 | Owner alerts: push digest of sign-ups, first meals and errors to admins who opt in | built, verified live | SQL test; sweep probed |
 | 56 | Yesterday nudge and What's new card on Home | built, verified live | `e2e/home-cards.spec.ts` |
+| 57 | Daylight default with a green accent and macro colours; Night as the dark option | built, verified live | screenshots reviewed; suite green |
 
 ## 5. Open risks
 

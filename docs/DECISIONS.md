@@ -2,6 +2,9 @@
 
 Newest first. Each entry: context, decision, consequences.
 
+## D-050 Daylight by default, colour for the numbers (2026-10-31)
+Decision: the monochrome system of D-018 is replaced. The owner found the black screen negative. Daylight is the default: a soft green-tinted white, deep forest plates, a leaf-green accent for primary actions and progress, and warm distinct colours for protein, carbs, fat, fibre and water so the bars read without a legend. Night keeps the same family on a deep green-black for people who prefer a dark screen. Stored preferences carry over (`white` is Daylight, `black` is Night). Lato, one plate per screen and the rest of the visual rules stand.
+
 ## D-049 Yesterday nudge and release note on Home (2026-10-30)
 Decision: when yesterday has no meals (and the person finished setup before yesterday) Home shows one card with "Log yesterday" and "Nothing to add", remembered per day in the browser. After an update, a "What's new" card lists the latest changes from `lib/changelog.ts` once; add an entry with a new key when something worth telling people ships.
 

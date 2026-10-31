@@ -105,7 +105,7 @@ browser keeps the old bundle and e2e results lie.
 
 ## Visual system
 
-- Monochrome only: `ui/tokens.ts` holds the black (default) and white palettes; `useTheme().preference` switches them and Profile exposes the choice. Never add a colour outside the ramp; `danger` is the one exception.
+- Two schemes in `ui/tokens.ts`: Daylight (default, green-tinted white, leaf-green accent, distinct macro colours) and Night (same family on deep green-black). `useTheme().preference` switches them (`white` is Daylight, `black` is Night) and Profile exposes the choice. Take every colour from the palette; never hardcode a hex in a screen.
 - Type is Lato (`fonts.regular/bold/black`), loaded in `app/_layout.tsx`. Use `Text` variants; `label` is the uppercase eyebrow used for section labels and button text.
 - Icons come from `ui/Icon.tsx` (stroke SVG). No emoji or unicode glyphs in the UI.
 - One plate per screen: `Card tone="inverse"` (or `Stat tone="inverse"`) is the loud element; everything else is a hairline-bordered surface card.

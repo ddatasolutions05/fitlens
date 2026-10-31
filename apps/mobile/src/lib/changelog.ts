@@ -7,6 +7,15 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    key: '2026-10-31',
+    title: "What's new",
+    items: [
+      'A lighter look: Daylight is now the default, Night stays under Profile, Display',
+      'Colour for the numbers: green for protein, amber carbs, coral fat, blue water',
+      'Daily reminder, measurements with photos, and share links from the last update',
+    ],
+  },
+  {
     key: '2026-10-30',
     title: "What's new",
     items: [

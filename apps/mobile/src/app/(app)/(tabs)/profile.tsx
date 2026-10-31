@@ -100,8 +100,8 @@ export default function ProfileScreen() {
           value={preference}
           onChange={setPreference}
           options={[
-            { value: 'black', label: 'Black' },
-            { value: 'white', label: 'White' },
+            { value: 'white', label: 'Daylight' },
+            { value: 'black', label: 'Night' },
             { value: 'system', label: 'System' },
           ]}
         />

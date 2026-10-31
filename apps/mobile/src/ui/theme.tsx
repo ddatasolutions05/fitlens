@@ -17,16 +17,16 @@ export interface Theme {
 const STORAGE_KEY = 'fitlens.theme';
 
 const ThemeContext = createContext<Theme>({
-  scheme: 'dark',
+  scheme: 'light',
   colors: palette.dark,
   reducedMotion: false,
-  preference: 'black',
+  preference: 'white',
   setPreference: () => {},
 });
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const system = useColorScheme();
-  const [preference, setPreferenceState] = useState<ThemePreference>('black');
+  const [preference, setPreferenceState] = useState<ThemePreference>('white');
   const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
