@@ -12,6 +12,7 @@ export const CHANGELOG: ChangelogEntry[] = [
     items: [
       'A lighter look: Daylight is now the default, Night stays under Profile, Display',
       'Colour for the numbers: green for protein, amber carbs, coral fat, blue water',
+      'Green tab bar, soft green buttons and colour-keyed stat tiles',
       'Daily reminder, measurements with photos, and share links from the last update',
     ],
   },

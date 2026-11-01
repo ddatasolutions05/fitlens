@@ -49,7 +49,7 @@ export function Bar({ label, value, target, unit, color, unknownCount = 0, compa
       style={styles.wrap}
     >
       <View style={styles.row}>
-        <Text variant={compact ? 'caption' : 'small'} color="textMuted">
+        <Text variant={compact ? 'caption' : 'small'} style={{ color }}>
           {label}
         </Text>
         <Text variant={compact ? 'caption' : 'small'} tabular>

@@ -100,7 +100,7 @@ export function CalorieCard({ day, hideNumbers, trackingOnly, tdeeEstimate }: { 
           kcal
         </Text>
       </View>
-      <AnimatedFill ratio={ratio} color={fg} track={colors.inverseLine} height={6} />
+      <AnimatedFill ratio={ratio} color={colors.onInverseAccent} track={colors.inverseLine} height={6} />
       <Text variant="small" style={{ color: fg }}>
         {headline}
       </Text>
@@ -246,7 +246,7 @@ export function InsightCard({ text }: { text: string }) {
   const t = useT();
   const { colors } = useTheme();
   return (
-    <View style={[styles.insight, { borderLeftColor: colors.text }]}>
+    <View style={[styles.insight, { borderLeftColor: colors.accent, backgroundColor: colors.accentSoft }]}>
       <Text variant="label" color="textMuted">
         {t('today.insight')}
       </Text>
@@ -321,6 +321,7 @@ function MealRow({ meal, draft, hideNumbers }: { meal: MealWithItems; draft?: bo
       )}
       <View style={{ flex: 1, gap: 2 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
+          <View style={[styles.mealDot, { backgroundColor: mealColor(meal.meal_type, colors) }]} />
           <Text variant="bodyStrong">{meal.title ?? capitalize(meal.meal_type)}</Text>
           {draft ? (
             <View style={[styles.badge, { borderColor: colors.text }]}>
@@ -368,6 +369,10 @@ export function DayCompleteToggle({ status, onChange, busy }: { status: 'not_log
   );
 }
 
+function mealColor(type: string, colors: { carbs: string; accent: string; fibre: string; fat: string }): string {
+  return type === 'breakfast' ? colors.carbs : type === 'lunch' ? colors.accent : type === 'dinner' ? colors.fibre : colors.fat;
+}
+
 function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
@@ -393,7 +398,8 @@ const styles = StyleSheet.create({
     gap: space.sm,
     paddingHorizontal: space.sm,
   },
-  insight: { borderLeftWidth: 3, paddingLeft: space.md, paddingVertical: space.xs, gap: space.xs },
+  insight: { borderLeftWidth: 3, paddingLeft: space.md, paddingRight: space.md, paddingVertical: space.md, gap: space.xs, borderTopRightRadius: radius.md, borderBottomRightRadius: radius.md },
+  mealDot: { width: 8, height: 8, borderRadius: 4 },
   sectionLabel: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   mealRow: {
     flexDirection: 'row',

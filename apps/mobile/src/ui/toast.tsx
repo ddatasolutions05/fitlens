@@ -57,11 +57,11 @@ export function ToastHost() {
         testID="toast"
         style={[
           styles.toast,
-          { backgroundColor: colors.inverse, opacity: progress, transform: [{ translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] },
+          { backgroundColor: colors.accent, opacity: progress, transform: [{ translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] },
         ]}
       >
-        <Icon name="check" size={16} color={colors.onInverse} strokeWidth={2.4} />
-        <Text variant="bodyStrong" style={{ color: colors.onInverse }} numberOfLines={2}>
+        <Icon name="check" size={16} color={colors.onAccent} strokeWidth={2.4} />
+        <Text variant="bodyStrong" style={{ color: colors.onAccent }} numberOfLines={2}>
           {message}
         </Text>
       </Animated.View>

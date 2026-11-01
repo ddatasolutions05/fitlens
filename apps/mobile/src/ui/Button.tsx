@@ -28,9 +28,9 @@ export function Button({ label, variant = 'primary', loading, disabled, size = '
     Animated.spring(scale, { toValue: to, useNativeDriver: Platform.OS !== 'web', friction: 6, tension: 160 }).start();
   };
 
-  const bg = variant === 'primary' ? colors.accent : 'transparent';
-  const fg = variant === 'primary' ? colors.onAccent : variant === 'danger' ? colors.danger : variant === 'secondary' ? colors.text : colors.textMuted;
-  const borderColor = variant === 'secondary' ? colors.text : variant === 'danger' ? colors.danger : 'transparent';
+  const bg = variant === 'primary' ? colors.accent : variant === 'secondary' ? colors.accentSoft : 'transparent';
+  const fg = variant === 'primary' ? colors.onAccent : variant === 'danger' ? colors.danger : colors.accent;
+  const borderColor = variant === 'danger' ? colors.danger : 'transparent';
   const height = size === 'lg' ? 56 : size === 'sm' ? touch.min : 48;
 
   return (

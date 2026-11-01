@@ -144,7 +144,7 @@ export default function HomeScreen() {
       </Card>
 
       <Pressable accessibilityRole="button" accessibilityLabel="Your week in review" onPress={() => router.push('/review')} testID="home-review" style={({ pressed }) => [styles.reviewRow, { borderColor: colors.border, opacity: pressed ? 0.85 : 1 }]}>
-        <Icon name="trend" size={20} />
+        <Icon name="trend" size={20} color={colors.accent} />
         <View style={{ flex: 1 }}>
           <Text variant="bodyStrong">{t('home.review')}</Text>
           <Text variant="caption" color="textMuted">
@@ -159,7 +159,7 @@ export default function HomeScreen() {
       <View style={styles.navGrid}>
         {SECTIONS.map((s) => (
           <Pressable key={s.href} accessibilityRole="button" accessibilityLabel={t(s.title)} onPress={() => router.push(s.href as never)} testID={s.testID} style={({ pressed }) => [styles.nav, { backgroundColor: colors.surface, borderColor: colors.border, opacity: pressed ? 0.85 : 1 }]}>
-            <Icon name={s.icon} size={24} />
+            <Icon name={s.icon} size={24} color={colors.accent} />
             <Text variant="small">{t(s.title)}</Text>
           </Pressable>
         ))}
@@ -192,7 +192,7 @@ function SmallTile({ icon, label, onPress, testID }: { icon: IconName; label: st
   const { colors } = useTheme();
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={label} onPress={onPress} testID={testID} style={({ pressed }) => [styles.small, { borderColor: colors.border, opacity: pressed ? 0.85 : 1 }]}>
-      <Icon name={icon} size={18} color={colors.textMuted} />
+      <Icon name={icon} size={18} color={colors.accent} />
       <Text variant="small" numberOfLines={1} style={{ flexShrink: 1 }} maxFontSizeMultiplier={1.3}>
         {label}
       </Text>

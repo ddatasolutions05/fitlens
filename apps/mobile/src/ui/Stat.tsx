@@ -11,15 +11,19 @@ export interface StatProps {
   note?: string | null;
   /** 'on' outlines a figure that met its target; 'inverse' is the plate style. */
   tone?: 'neutral' | 'on' | 'inverse';
+  /** Colour for the number, e.g. the protein green on a protein tile. */
+  tint?: string;
   style?: StyleProp<ViewStyle>;
   testID?: string;
 }
 
 /** A KPI tile: big tabular number, quiet label and note. */
-export function Stat({ label, value, note, tone = 'neutral', style, testID }: StatProps) {
+export function Stat({ label, value, note, tone = 'neutral', tint, style, testID }: StatProps) {
   const { colors } = useTheme();
   const inverse = tone === 'inverse';
-  const fg = inverse ? colors.onInverse : colors.text;
+  // A tint only colours a real figure; placeholders stay in text colour.
+  const placeholder = /^(no data|off|not set|unknown|none yet|none)$/i.test(value.trim());
+  const fg = inverse ? colors.onInverse : tint && !placeholder ? tint : colors.text;
   const muted = inverse ? colors.onInverse : colors.textMuted;
   return (
     <View

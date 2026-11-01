@@ -2,12 +2,20 @@ import { StyleSheet, View } from 'react-native';
 
 import { Button } from './Button';
 import { Card } from './Card';
+import { Icon, type IconName } from './Icon';
 import { Text } from './Text';
+import { useTheme } from './theme';
 import { space } from './tokens';
 
-export function EmptyState({ title, body, action }: { title: string; body?: string; action?: { label: string; onPress: () => void } }) {
+export function EmptyState({ title, body, action, icon }: { title: string; body?: string; action?: { label: string; onPress: () => void }; icon?: IconName }) {
+  const { colors } = useTheme();
   return (
     <Card style={styles.center}>
+      {icon ? (
+        <View style={[styles.iconCircle, { backgroundColor: colors.accentSoft }]}>
+          <Icon name={icon} size={24} color={colors.accent} />
+        </View>
+      ) : null}
       <Text variant="heading" align="center">
         {title}
       </Text>
@@ -79,6 +87,7 @@ export function OfflineBanner({ pending, parked, syncing, onRetry }: { pending: 
 }
 
 const styles = StyleSheet.create({
+  iconCircle: { width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
   center: { alignItems: 'center', gap: space.md },
   banner: { flexDirection: 'row', alignItems: 'center', gap: space.md, paddingVertical: space.sm },
 });

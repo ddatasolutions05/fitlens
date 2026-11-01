@@ -47,8 +47,8 @@ function TabBar({ state }: BottomTabBarProps) {
         }}
         style={styles.tab}
       >
-        <Icon name={tab.icon} size={22} color={focused ? colors.text : colors.textFaint} strokeWidth={focused ? 2.2 : 1.6} />
-        <Text variant="caption" style={{ color: focused ? colors.text : colors.textFaint, fontSize: 11, lineHeight: 14 }}>
+        <Icon name={tab.icon} size={22} color={focused ? colors.accent : colors.textFaint} strokeWidth={focused ? 2.2 : 1.6} />
+        <Text variant="caption" style={{ color: focused ? colors.accent : colors.textFaint, fontSize: 11, lineHeight: 14 }}>
           {t(tab.label)}
         </Text>
       </Pressable>
@@ -66,9 +66,9 @@ function TabBar({ state }: BottomTabBarProps) {
             accessibilityLabel="Log something"
             testID="add-button"
             onPress={() => setSheet(true)}
-            style={({ pressed }) => [styles.centre, { backgroundColor: colors.inverse, opacity: pressed ? 0.85 : 1 }]}
+            style={({ pressed }) => [styles.centre, { backgroundColor: colors.accent, opacity: pressed ? 0.85 : 1 }]}
           >
-            <Icon name="plus" size={26} color={colors.onInverse} strokeWidth={2.4} />
+            <Icon name="plus" size={26} color={colors.onAccent} strokeWidth={2.4} />
           </Pressable>
         </View>
         {renderTab(TABS[2]!)}

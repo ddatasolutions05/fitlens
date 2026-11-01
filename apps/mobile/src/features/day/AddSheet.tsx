@@ -56,8 +56,8 @@ export function AddSheet({ visible, localDate, onClose }: { visible: boolean; lo
               onPress={() => run(a)}
               style={({ pressed }) => [styles.foodRow, { backgroundColor: colors.surface, borderColor: colors.border, opacity: pressed ? 0.8 : 1 }]}
             >
-              <View style={[styles.iconBox, { backgroundColor: colors.inverse }]}>
-                <Icon name={a.icon} size={22} color={colors.onInverse} />
+              <View style={[styles.iconBox, { backgroundColor: colors.accentSoft }]}>
+                <Icon name={a.icon} size={22} color={colors.accent} />
               </View>
               <View style={{ flex: 1, gap: 2 }}>
                 <Text variant="bodyStrong">{t(a.title)}</Text>
@@ -82,7 +82,7 @@ export function AddSheet({ visible, localDate, onClose }: { visible: boolean; lo
               onPress={() => run(a)}
               style={({ pressed }) => [styles.tile, { borderColor: colors.border, opacity: pressed ? 0.8 : 1 }]}
             >
-              <Icon name={a.icon} size={22} />
+              <Icon name={a.icon} size={22} color={colors.accent} />
               <Text variant="small">{t(a.title)}</Text>
             </Pressable>
           ))}

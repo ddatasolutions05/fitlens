@@ -64,7 +64,7 @@ export default function ProgressScreen() {
       ) : progress.data ? (
         <>
           {progress.data.stats.loggedDays === 0 ? (
-            <EmptyState title="Nothing logged in this range" body="Stats fill in from the first logged day." action={{ label: 'Log today', onPress: () => router.navigate('/today') }} />
+            <EmptyState icon="progress" title="Nothing logged in this range" body="Stats fill in from the first logged day." action={{ label: 'Log today', onPress: () => router.navigate('/today') }} />
           ) : (
             <SummaryPlate stats={progress.data.stats} range={range} hideNumbers={hideNumbers} trackingOnly={trackingOnly} unitSystem={unitSystem} />
           )}
@@ -179,13 +179,14 @@ function SummaryPlate({ stats, range, hideNumbers, trackingOnly, unitSystem }: {
 }
 
 function KpiGrid({ stats, hideNumbers, trackingOnly, unitSystem, range }: { stats: RangeStats; hideNumbers: boolean; trackingOnly: boolean; unitSystem: UnitSystem; range: Range }) {
+  const { colors } = useTheme();
   const kg = (v: number) => (unitSystem === 'imperial' ? `${signed(v * 2.20462, 1)} lb` : `${signed(v, 1)} kg`);
   return (
     <View style={{ gap: space.sm }} testID="kpi-grid">
       <SectionLabel>{`Last ${range} days`}</SectionLabel>
       <View style={styles.grid}>
         <Stat label="Days logged" value={`${stats.loggedDays} / ${stats.totalDays}`} note={`${stats.completeDays} marked complete`} testID="kpi-logged" />
-        <Stat label="Current streak" value={`${stats.streak} day${stats.streak === 1 ? '' : 's'}`} note={`Best ${stats.bestStreak} in range`} tone={stats.streak >= 3 ? 'on' : 'neutral'} testID="kpi-streak" />
+        <Stat label="Current streak" tint={colors.accent} value={`${stats.streak} day${stats.streak === 1 ? '' : 's'}`} note={`Best ${stats.bestStreak} in range`} tone={stats.streak >= 3 ? 'on' : 'neutral'} testID="kpi-streak" />
       </View>
       {!hideNumbers ? (
         <View style={styles.grid}>
@@ -207,31 +208,35 @@ function KpiGrid({ stats, hideNumbers, trackingOnly, unitSystem, range }: { stat
       <View style={styles.grid}>
         <Stat
           label="Avg protein"
+          tint={colors.protein}
           value={stats.avgProtein != null ? `${Math.round(stats.avgProtein)} g` : 'No data'}
           note={stats.proteinEligible ? `${adherenceLabel(stats.proteinHitDays, stats.proteinEligible, 'protein')} at target` : 'No logged days yet'}
           tone={stats.proteinEligible > 0 && stats.proteinHitDays / stats.proteinEligible >= 0.7 ? 'on' : 'neutral'}
           testID="kpi-protein"
         />
-        <Stat label="Avg fibre" value={stats.avgFibre != null ? `${Math.round(stats.avgFibre)} g` : 'No data'} note="Logged days only" />
+        <Stat label="Avg fibre" tint={colors.fibre} value={stats.avgFibre != null ? `${Math.round(stats.avgFibre)} g` : 'No data'} note="Logged days only" />
       </View>
       <View style={styles.grid}>
         <Stat
           label="Weight change"
+          tint={colors.weight}
           value={stats.weightChangeKg != null ? kg(stats.weightChangeKg) : 'No data'}
           note={stats.weeklyRateKg != null ? `${kg(stats.weeklyRateKg)} per week, trend` : 'Needs two weigh-ins'}
           testID="kpi-weight"
         />
         <Stat
           label="Avg steps"
+          tint={colors.steps}
           value={stats.avgSteps != null ? Math.round(stats.avgSteps).toLocaleString() : 'No data'}
           note={stats.stepEligible ? `${adherenceLabel(stats.stepHitDays, stats.stepEligible, 'step')} at goal` : 'No step logs yet'}
           tone={stats.stepEligible > 0 && stats.stepHitDays / stats.stepEligible >= 0.7 ? 'on' : 'neutral'}
         />
       </View>
       <View style={styles.grid}>
-        <Stat label="Workouts" value={`${stats.workoutDays} day${stats.workoutDays === 1 ? '' : 's'}`} note={stats.workoutMinutes > 0 ? `${Math.round(stats.workoutMinutes)} min in total` : 'None logged'} />
+        <Stat label="Workouts" tint={colors.accent} value={`${stats.workoutDays} day${stats.workoutDays === 1 ? '' : 's'}`} note={stats.workoutMinutes > 0 ? `${Math.round(stats.workoutMinutes)} min in total` : 'None logged'} />
         <Stat
           label="Avg water"
+          tint={colors.water}
           value={stats.avgWater != null ? formatWater(stats.avgWater, unitSystem) : 'No data'}
           note={stats.waterEligible ? `${adherenceLabel(stats.waterHitDays, stats.waterEligible, 'water')} at goal` : 'No water logs yet'}
         />

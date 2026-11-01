@@ -177,9 +177,9 @@ export default function SignIn() {
                   setSent(null);
                   setError(null);
                 }}
-                style={[styles.tab, active ? { backgroundColor: colors.inverse } : null]}
+                style={[styles.tab, active ? { backgroundColor: colors.accent } : null]}
               >
-                <Text variant="label" style={{ color: active ? colors.onInverse : colors.textMuted }}>
+                <Text variant="label" style={{ color: active ? colors.onAccent : colors.textMuted }}>
                   {label}
                 </Text>
               </Pressable>
@@ -356,8 +356,8 @@ function Feature({ icon, title, body }: { icon: 'camera' | 'ring' | 'leaf'; titl
   const { colors } = useTheme();
   return (
     <View style={styles.feature}>
-      <View style={[styles.featureIcon, { backgroundColor: colors.inverse }]}>
-        <Svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke={colors.onInverse} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <View style={[styles.featureIcon, { backgroundColor: colors.accentSoft }]}>
+        <Svg width={22} height={22} viewBox="0 0 24 24" fill="none" stroke={colors.accent} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
           {icon === 'camera' ? (
             <>
               <Path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
