@@ -55,7 +55,7 @@ export function Button({ label, variant = 'primary', loading, disabled, size = '
         ) : (
           <View style={styles.inner}>
             {icon ? <View style={styles.icon}>{icon}</View> : null}
-            <Text variant="label" style={{ color: fg, fontSize: size === 'lg' ? 14 : size === 'sm' ? 12 : 13, lineHeight: 18 }} numberOfLines={1}>
+            <Text variant="bodyStrong" style={{ color: fg, fontSize: size === 'lg' ? 17 : size === 'sm' ? 14 : 16, lineHeight: 22 }} numberOfLines={1}>
               {label}
             </Text>
           </View>
@@ -68,9 +68,9 @@ export function Button({ label, variant = 'primary', loading, disabled, size = '
 const styles = StyleSheet.create({
   base: {
     minHeight: touch.min,
-    borderRadius: radius.md,
+    borderRadius: radius.pill,
     borderWidth: 1,
-    paddingHorizontal: space.lg,
+    paddingHorizontal: space.xl,
     alignItems: 'center',
     justifyContent: 'center',
   },

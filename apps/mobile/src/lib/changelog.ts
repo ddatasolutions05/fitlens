@@ -13,6 +13,7 @@ export const CHANGELOG: ChangelogEntry[] = [
       'A lighter look: Daylight is now the default, Night stays under Profile, Display',
       'Colour for the numbers: green for protein, amber carbs, coral fat, blue water',
       'Green tab bar, soft green buttons and colour-keyed stat tiles',
+      'A new typeface for titles and the big numbers; labels in plain sentence case',
       'Daily reminder, measurements with photos, and share links from the last update',
     ],
   },

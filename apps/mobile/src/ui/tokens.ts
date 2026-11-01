@@ -65,6 +65,8 @@ export const fonts = {
   regular: 'Lato_400Regular',
   bold: 'Lato_700Bold',
   black: 'Lato_900Black',
+  /** Fraunces, loaded from Google Fonts in public/index.html; the system serif stands in elsewhere. */
+  display: 'Fraunces, Georgia, serif',
 } as const;
 
 export const space = {
@@ -79,21 +81,23 @@ export const space = {
 
 export const radius = {
   sm: 6,
-  md: 8,
-  lg: 14,
-  xl: 20,
+  md: 10,
+  lg: 18,
+  xl: 24,
   pill: 999,
 } as const;
 
+// Serif for what people read as a voice (titles, the big numbers), Lato for
+// everything else. Labels are sentence case; nothing is tracked-out capitals.
 export const type = {
-  display: { fontSize: 56, lineHeight: 58, fontFamily: fonts.black, letterSpacing: -1.5 },
-  title: { fontSize: 30, lineHeight: 34, fontFamily: fonts.black, letterSpacing: -0.5 },
-  heading: { fontSize: 20, lineHeight: 26, fontFamily: fonts.bold },
+  display: { fontSize: 58, lineHeight: 60, fontFamily: fonts.display, fontWeight: '700' as const, letterSpacing: -1 },
+  title: { fontSize: 31, lineHeight: 36, fontFamily: fonts.display, fontWeight: '700' as const, letterSpacing: -0.3 },
+  heading: { fontSize: 21, lineHeight: 27, fontFamily: fonts.display, fontWeight: '600' as const },
   body: { fontSize: 16, lineHeight: 23, fontFamily: fonts.regular },
   bodyStrong: { fontSize: 16, lineHeight: 23, fontFamily: fonts.bold },
   small: { fontSize: 14, lineHeight: 19, fontFamily: fonts.regular },
   caption: { fontSize: 12, lineHeight: 16, fontFamily: fonts.regular },
-  label: { fontSize: 12, lineHeight: 16, fontFamily: fonts.bold, letterSpacing: 1.2, textTransform: 'uppercase' as const },
+  label: { fontSize: 13, lineHeight: 17, fontFamily: fonts.bold, letterSpacing: 0 },
 } as const;
 
 export type TypeName = keyof typeof type;

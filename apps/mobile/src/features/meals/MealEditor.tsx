@@ -200,7 +200,7 @@ export function MealEditor({ mode }: { mode: 'new' | 'existing' }) {
           </Card>
         ) : null}
         {feedback ? (
-          <View style={[styles.feedback, { borderLeftColor: colors.text }]}>
+          <View style={[styles.feedback, { borderLeftColor: colors.accent, backgroundColor: colors.accentSoft }]}>
             <Text>{feedback.observation}</Text>
             <Text color="textMuted">{feedback.suggestion}</Text>
             {feedback.why ? <WhyLine why={feedback.why} /> : null}
@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', gap: space.sm },
   item: { paddingHorizontal: space.lg, paddingVertical: space.md },
   itemHead: { flexDirection: 'row', gap: space.md, alignItems: 'flex-start', minHeight: touch.min },
-  feedback: { borderLeftWidth: 3, paddingLeft: space.md, gap: space.xs },
+  feedback: { borderLeftWidth: 3, paddingLeft: space.md, paddingRight: space.md, paddingVertical: space.md, gap: space.xs, borderTopRightRadius: radius.md, borderBottomRightRadius: radius.md },
   checkChip: { borderWidth: 1, borderRadius: radius.sm, paddingHorizontal: 6, paddingVertical: 2 },
   check: { width: 40, height: 40, borderRadius: radius.pill, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
 });

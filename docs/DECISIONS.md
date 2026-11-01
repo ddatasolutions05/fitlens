@@ -2,6 +2,9 @@
 
 Newest first. Each entry: context, decision, consequences.
 
+## D-051 A typographic voice (2026-11-01)
+Decision: the owner said the app looked machine-made. The tells were tracked-out capitals on every section label, one radius on everything and a single sans. Titles, headings and the big numbers now set in Fraunces (loaded from Google Fonts on web, system serif elsewhere), labels are sentence case with no tracking, buttons are pills with real text, card radii loosened. Lato stays for body copy. No new npm dependency.
+
 ## D-050 Daylight by default, colour for the numbers (2026-10-31)
 Decision: the monochrome system of D-018 is replaced. The owner found the black screen negative. Daylight is the default: a soft green-tinted white, deep forest plates, a leaf-green accent for primary actions and progress, and warm distinct colours for protein, carbs, fat, fibre and water so the bars read without a legend. Night keeps the same family on a deep green-black for people who prefer a dark screen. Stored preferences carry over (`white` is Daylight, `black` is Night). Lato, one plate per screen and the rest of the visual rules stand.
 
