@@ -5,11 +5,22 @@ import { appName, dismissInstall, installKind, promptInstall, type InstallKind }
 import { track } from '@/lib/telemetry';
 import { Button, Card, Text, space, toast } from '@/ui';
 
+// Home remounts on every tab switch; count the card once per tab session.
+function markShownOnce(): boolean {
+  try {
+    if (window.sessionStorage.getItem('fitlens.install.shown')) return false;
+    window.sessionStorage.setItem('fitlens.install.shown', '1');
+    return true;
+  } catch {
+    return true;
+  }
+}
+
 /** Asks once to put the app on the Home Screen; that is where reminders and the instant open come from. */
 export function InstallCard() {
   const [kind, setKind] = useState<InstallKind>(() => {
     const k = installKind();
-    if (k !== 'none') track('install_shown', { kind: k });
+    if (k !== 'none' && markShownOnce()) track('install_shown', { kind: k });
     return k;
   });
   if (kind === 'none') return null;
