@@ -173,6 +173,7 @@ once a working Anthropic key was set. Milestone 9 (export, delete) remains
 | 55 | Owner alerts: push digest of sign-ups, first meals and errors to admins who opt in | built, verified live | SQL test; sweep probed |
 | 56 | Yesterday nudge and What's new card on Home | built, verified live | `e2e/home-cards.spec.ts` |
 | 57 | Daylight default with a green accent and macro colours; Night as the dark option | built, verified live | screenshots reviewed; suite green |
+| 58 | Warm paper background, hand-set Home header, Stats as a ledger | built, verified live | full browser suite green; screenshots reviewed |
 
 ## 5. Open risks
 

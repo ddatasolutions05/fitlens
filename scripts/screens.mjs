@@ -61,6 +61,8 @@ if (process.env.E2E_USER_EMAIL && process.env.E2E_USER_PASSWORD) {
     await page.getByTestId('first-skip').click();
     await page.waitForURL(/home/, { timeout: 60_000 });
   }
+  await go('home', 'greeting');
+  await shot('home');
   await go('today', 'calorie-card');
   await shot('today');
   await page.getByTestId('add-button').click();

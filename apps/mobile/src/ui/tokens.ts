@@ -1,21 +1,21 @@
-// Two schemes. Daylight (default): a soft green-tinted white with a leaf-green
+// Two schemes. Daylight (default): warm paper with a leaf-green
 // accent and warm colours for the macros. Night: the same family on a deep
 // green-black, for people who prefer a dark screen. The plate (`inverse`) is
 // the one loud element per screen in both.
 
 export const palette = {
   light: {
-    bg: '#F5F7F4',
-    surface: '#FFFFFF',
-    surfaceAlt: '#EAF0EB',
+    bg: '#F6F2EA',
+    surface: '#FFFDF8',
+    surfaceAlt: '#EEE9DD',
     inverse: '#16382A',
     onInverse: '#F3F8F4',
     inverseLine: 'rgba(255, 255, 255, 0.18)',
     onInverseAccent: '#4FD18F',
-    text: '#14201A',
-    textMuted: '#58665E',
-    textFaint: '#8A968F',
-    border: '#DEE5E0',
+    text: '#1A1F1A',
+    textMuted: '#5C6058',
+    textFaint: '#84877C',
+    border: '#E2DCCD',
     accent: '#1E9A62',
     accentSoft: '#DDF2E6',
     onAccent: '#FFFFFF',
@@ -28,7 +28,7 @@ export const palette = {
     steps: '#1E9A62',
     danger: '#C9372C',
     overlay: 'rgba(20, 32, 26, 0.5)',
-    skeleton: '#E6ECE8',
+    skeleton: '#E8E2D4',
   },
   dark: {
     bg: '#0F1512',

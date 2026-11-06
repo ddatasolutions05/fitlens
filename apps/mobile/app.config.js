@@ -24,7 +24,7 @@ module.exports = {
     android: {
       package: 'com.fitlens.app',
       adaptiveIcon: {
-        backgroundColor: '#F5F7F4',
+        backgroundColor: '#F6F2EA',
         foregroundImage: './assets/images/android-icon-foreground.png',
         backgroundImage: './assets/images/android-icon-background.png',
         monochromeImage: './assets/images/android-icon-monochrome.png',
@@ -40,7 +40,7 @@ module.exports = {
     },
     plugins: [
       'expo-router',
-      ['expo-splash-screen', { backgroundColor: '#F5F7F4', image: './assets/images/splash-icon.png', imageWidth: 76 }],
+      ['expo-splash-screen', { backgroundColor: '#F6F2EA', image: './assets/images/splash-icon.png', imageWidth: 76 }],
       [
         'expo-image-picker',
         {

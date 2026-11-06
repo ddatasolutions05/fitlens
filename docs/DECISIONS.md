@@ -2,6 +2,9 @@
 
 Newest first. Each entry: context, decision, consequences.
 
+## D-052 Paper, a hand-set Home header and a plain Stats ledger (2026-11-06)
+Decision: Daylight moves from a green-tinted white to warm paper (bg #F6F2EA, surface #FFFDF8, warm greys and borders); the green accent and macro colours stay. Home sets the greeting in two sizes, a small muted "Good morning," over the first name at 40 px in the serif. Stats lists its figures as rows between hairline rules (`ui/Ledger.tsx`) and the chart sections sit under a rule instead of in boxes; the summary plate and the body card stay as cards. "On target" figures get a small accent dot. The e2e reset now clears `measurements`, which made the measure spec fail on a second run.
+
 ## D-051 A typographic voice (2026-11-01)
 Decision: the owner said the app looked machine-made. The tells were tracked-out capitals on every section label, one radius on everything and a single sans. Titles, headings and the big numbers now set in Fraunces (loaded from Google Fonts on web, system serif elsewhere), labels are sentence case with no tracking, buttons are pills with real text, card radii loosened. Lato stays for body copy. No new npm dependency.
 

@@ -18,6 +18,7 @@ export default async function globalSetup(): Promise<void> {
   const tables = [
     'meals',
     'weight_logs',
+    'measurements',
     'activity_records',
     'water_logs',
     'day_status',

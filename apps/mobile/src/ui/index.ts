@@ -7,6 +7,7 @@ export { Chips } from './Chips';
 export { DateField } from './DateField';
 export { Icon, type IconName } from './Icon';
 export { Input, NumberField } from './Input';
+export { Ledger, LedgerRow } from './Ledger';
 export { Note } from './Note';
 export { PageHeader } from './PageHeader';
 export { Ring } from './Ring';

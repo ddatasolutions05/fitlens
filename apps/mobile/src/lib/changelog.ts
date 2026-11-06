@@ -7,6 +7,15 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    key: '2026-11-06',
+    title: "What's new",
+    items: [
+      'A warmer paper background across the app',
+      'Your name set large at the top of Home',
+      'Stats now read as a plain list with rules, charts without boxes',
+    ],
+  },
+  {
     key: '2026-10-31',
     title: "What's new",
     items: [

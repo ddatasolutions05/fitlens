@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { adherenceLabel, formatWater, formatWeight, rangeSummary, waterUnit, waterValue, type RangeStats, type UnitSystem } from '@fitlens/core';
 
 import { SectionLabel } from '@/features/day/components';
@@ -9,7 +9,7 @@ import { BarChart, ChartFrame, ConsistencyGrid, LineChart } from '@/features/pro
 import { useProgress, type Range } from '@/features/progress/hooks';
 import { BodyCard } from '@/features/body/BodyCard';
 import { useProfile } from '@/features/profile/hooks';
-import { Card, EmptyState, ErrorState, Screen, Segmented, SkeletonCard, Stat, Text, space, useTheme } from '@/ui';
+import { Card, EmptyState, ErrorState, Ledger, LedgerRow, Screen, Segmented, SkeletonCard, Text, space, useTheme } from '@/ui';
 
 function dayLabel(localDate: string): string {
   return localDate.slice(8);
@@ -23,6 +23,12 @@ function pct(hit: number, eligible: number): string {
 function signed(n: number, digits = 0): string {
   const v = digits ? n.toFixed(digits) : Math.round(n).toLocaleString();
   return n > 0 ? `+${v}` : v;
+}
+
+/** A chart section: a rule above it instead of a box around it. */
+function Plain({ children }: { children: React.ReactNode }) {
+  const { colors } = useTheme();
+  return <View style={{ borderTopWidth: 1, borderTopColor: colors.border, paddingTop: space.lg }}>{children}</View>;
 }
 
 export default function ProgressScreen() {
@@ -73,7 +79,7 @@ export default function ProgressScreen() {
 
           <BodyCard unitSystem={unitSystem} />
 
-          <Card>
+          <Plain>
             <ChartFrame
               title="Logging consistency"
               unit="days"
@@ -81,41 +87,41 @@ export default function ProgressScreen() {
             >
               <ConsistencyGrid days={progress.data.days.map((d) => ({ label: d.localDate, status: d.status }))} />
             </ChartFrame>
-          </Card>
+          </Plain>
 
           {!hideNumbers ? (
-            <Card>
+            <Plain>
               <ChartFrame title="Calories vs target" unit="kcal" summary="Bars are calories eaten; the dashed line is the target in force that day. Days without logs are gaps.">
                 <BarChart data={progress.data.days.map((d) => ({ label: dayLabel(d.localDate), value: d.kcal, target: trackingOnly ? null : d.kcalTarget }))} color={colors.text} />
               </ChartFrame>
-            </Card>
+            </Plain>
           ) : null}
 
-          <Card>
+          <Plain>
             <ChartFrame title="Protein" unit="g">
               <BarChart data={progress.data.days.map((d) => ({ label: dayLabel(d.localDate), value: d.protein, target: d.proteinTarget }))} color={colors.protein} />
             </ChartFrame>
-          </Card>
+          </Plain>
 
-          <Card>
+          <Plain>
             <ChartFrame title="Fibre" unit="g">
               <BarChart data={progress.data.days.map((d) => ({ label: dayLabel(d.localDate), value: d.fibre, target: d.fibreTarget }))} color={colors.carbs} />
             </ChartFrame>
-          </Card>
+          </Plain>
 
-          <Card>
+          <Plain>
             <ChartFrame title="Steps" unit="steps">
               <BarChart data={progress.data.days.map((d) => ({ label: dayLabel(d.localDate), value: d.steps, target: d.stepTarget }))} color={colors.carbs} />
             </ChartFrame>
-          </Card>
+          </Plain>
 
-          <Card>
+          <Plain>
             <ChartFrame title="Water" unit={waterUnit(unitSystem)}>
               <BarChart data={progress.data.days.map((d) => ({ label: dayLabel(d.localDate), value: waterValue(d.waterMl, unitSystem), target: waterValue(d.waterTarget, unitSystem) }))} color={colors.fat} />
             </ChartFrame>
-          </Card>
+          </Plain>
 
-          <Card>
+          <Plain>
             <ChartFrame
               title="Weight"
               unit={unitSystem === 'imperial' ? 'lb' : 'kg'}
@@ -138,10 +144,10 @@ export default function ProgressScreen() {
                 smoothColor={colors.text}
               />
             </ChartFrame>
-          </Card>
+          </Plain>
 
           {!hideNumbers ? (
-            <Card>
+            <Plain>
               <ChartFrame title="Estimated TDEE" unit="kcal" summary="Changes only when a new goal version is saved. Adaptive estimates arrive once enough complete days and weigh-ins exist.">
                 <LineChart
                   data={progress.data.days.map((d) => {
@@ -152,7 +158,7 @@ export default function ProgressScreen() {
                   minZero
                 />
               </ChartFrame>
-            </Card>
+            </Plain>
           ) : null}
         </>
       ) : null}
@@ -184,63 +190,57 @@ function KpiGrid({ stats, hideNumbers, trackingOnly, unitSystem, range }: { stat
   return (
     <View style={{ gap: space.sm }} testID="kpi-grid">
       <SectionLabel>{`Last ${range} days`}</SectionLabel>
-      <View style={styles.grid}>
-        <Stat label="Days logged" value={`${stats.loggedDays} / ${stats.totalDays}`} note={`${stats.completeDays} marked complete`} testID="kpi-logged" />
-        <Stat label="Current streak" tint={colors.accent} value={`${stats.streak} day${stats.streak === 1 ? '' : 's'}`} note={`Best ${stats.bestStreak} in range`} tone={stats.streak >= 3 ? 'on' : 'neutral'} testID="kpi-streak" />
-      </View>
-      {!hideNumbers ? (
-        <View style={styles.grid}>
-          <Stat
-            label="Avg calories"
-            value={stats.avgKcal != null ? Math.round(stats.avgKcal).toLocaleString() : 'No data'}
-            note={trackingOnly ? 'Tracking only' : stats.kcalDelta != null ? `${signed(stats.kcalDelta)} vs target` : 'Logged days only'}
-            testID="kpi-kcal"
-          />
-          <Stat
-            label="Days on target"
-            value={trackingOnly ? 'Off' : pct(stats.onTargetDays, stats.onTargetEligible)}
-            note={trackingOnly ? 'Tracking only, no calorie target' : stats.onTargetEligible ? `${adherenceLabel(stats.onTargetDays, stats.onTargetEligible, 'calorie')} within 10%` : 'No logged days with a target yet'}
-            tone={!trackingOnly && stats.onTargetEligible > 0 && stats.onTargetDays / stats.onTargetEligible >= 0.7 ? 'on' : 'neutral'}
-            testID="kpi-on-target"
-          />
-        </View>
-      ) : null}
-      <View style={styles.grid}>
-        <Stat
+      <Ledger>
+        <LedgerRow label="Days logged" value={`${stats.loggedDays} / ${stats.totalDays}`} note={`${stats.completeDays} marked complete`} testID="kpi-logged" />
+        <LedgerRow label="Current streak" tint={colors.accent} value={`${stats.streak} day${stats.streak === 1 ? '' : 's'}`} note={`Best ${stats.bestStreak} in range`} on={stats.streak >= 3} testID="kpi-streak" />
+        {!hideNumbers ? (
+          <>
+            <LedgerRow
+              label="Avg calories"
+              value={stats.avgKcal != null ? Math.round(stats.avgKcal).toLocaleString() : 'No data'}
+              note={trackingOnly ? 'Tracking only' : stats.kcalDelta != null ? `${signed(stats.kcalDelta)} vs target` : 'Logged days only'}
+              testID="kpi-kcal"
+            />
+            <LedgerRow
+              label="Days on target"
+              value={trackingOnly ? 'Off' : pct(stats.onTargetDays, stats.onTargetEligible)}
+              note={trackingOnly ? 'Tracking only, no calorie target' : stats.onTargetEligible ? `${adherenceLabel(stats.onTargetDays, stats.onTargetEligible, 'calorie')} within 10%` : 'No logged days with a target yet'}
+              on={!trackingOnly && stats.onTargetEligible > 0 && stats.onTargetDays / stats.onTargetEligible >= 0.7}
+              testID="kpi-on-target"
+            />
+          </>
+        ) : null}
+        <LedgerRow
           label="Avg protein"
           tint={colors.protein}
           value={stats.avgProtein != null ? `${Math.round(stats.avgProtein)} g` : 'No data'}
           note={stats.proteinEligible ? `${adherenceLabel(stats.proteinHitDays, stats.proteinEligible, 'protein')} at target` : 'No logged days yet'}
-          tone={stats.proteinEligible > 0 && stats.proteinHitDays / stats.proteinEligible >= 0.7 ? 'on' : 'neutral'}
+          on={stats.proteinEligible > 0 && stats.proteinHitDays / stats.proteinEligible >= 0.7}
           testID="kpi-protein"
         />
-        <Stat label="Avg fibre" tint={colors.fibre} value={stats.avgFibre != null ? `${Math.round(stats.avgFibre)} g` : 'No data'} note="Logged days only" />
-      </View>
-      <View style={styles.grid}>
-        <Stat
+        <LedgerRow label="Avg fibre" tint={colors.fibre} value={stats.avgFibre != null ? `${Math.round(stats.avgFibre)} g` : 'No data'} note="Logged days only" />
+        <LedgerRow
           label="Weight change"
           tint={colors.weight}
           value={stats.weightChangeKg != null ? kg(stats.weightChangeKg) : 'No data'}
           note={stats.weeklyRateKg != null ? `${kg(stats.weeklyRateKg)} per week, trend` : 'Needs two weigh-ins'}
           testID="kpi-weight"
         />
-        <Stat
+        <LedgerRow
           label="Avg steps"
           tint={colors.steps}
           value={stats.avgSteps != null ? Math.round(stats.avgSteps).toLocaleString() : 'No data'}
           note={stats.stepEligible ? `${adherenceLabel(stats.stepHitDays, stats.stepEligible, 'step')} at goal` : 'No step logs yet'}
-          tone={stats.stepEligible > 0 && stats.stepHitDays / stats.stepEligible >= 0.7 ? 'on' : 'neutral'}
+          on={stats.stepEligible > 0 && stats.stepHitDays / stats.stepEligible >= 0.7}
         />
-      </View>
-      <View style={styles.grid}>
-        <Stat label="Workouts" tint={colors.accent} value={`${stats.workoutDays} day${stats.workoutDays === 1 ? '' : 's'}`} note={stats.workoutMinutes > 0 ? `${Math.round(stats.workoutMinutes)} min in total` : 'None logged'} />
-        <Stat
+        <LedgerRow label="Workouts" tint={colors.accent} value={`${stats.workoutDays} day${stats.workoutDays === 1 ? '' : 's'}`} note={stats.workoutMinutes > 0 ? `${Math.round(stats.workoutMinutes)} min in total` : 'None logged'} />
+        <LedgerRow
           label="Avg water"
           tint={colors.water}
           value={stats.avgWater != null ? formatWater(stats.avgWater, unitSystem) : 'No data'}
           note={stats.waterEligible ? `${adherenceLabel(stats.waterHitDays, stats.waterEligible, 'water')} at goal` : 'No water logs yet'}
         />
-      </View>
+      </Ledger>
     </View>
   );
 }
@@ -248,7 +248,3 @@ function KpiGrid({ stats, hideNumbers, trackingOnly, unitSystem, range }: { stat
 function toUnit(kg: number, unitSystem: UnitSystem): number {
   return unitSystem === 'imperial' ? Math.round(kg * 2.20462 * 10) / 10 : Math.round(kg * 10) / 10;
 }
-
-const styles = StyleSheet.create({
-  grid: { flexDirection: 'row', gap: space.sm },
-});

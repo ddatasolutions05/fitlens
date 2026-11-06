@@ -44,6 +44,7 @@ export default function HomeScreen() {
   const doneToday = (sessions.data ?? []).some((s) => s.localDate === today && s.workoutId === suggestion?.workout.id);
 
   const name = profile.data?.display_name?.trim() || null;
+  const greeting = t(GREETING_KEYS[greetingFor(new Date().getHours())] ?? 'greet.morning');
   const hideNumbers = profile.data?.hide_numbers ?? false;
   const unitSystem = (profile.data?.unit_system ?? 'metric') as UnitSystem;
   const totals = day.data?.totals?.totals ?? null;
@@ -64,9 +65,9 @@ export default function HomeScreen() {
           <Text variant="label" color="textMuted">
             {formatLocalDate(today, 'long')}
           </Text>
-          <Text variant="title" testID="greeting">
-            {t(GREETING_KEYS[greetingFor(new Date().getHours())] ?? 'greet.morning')}
-            {name ? `, ${name.split(' ')[0]}` : ''}
+          <Text variant="title" testID="greeting" numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.6} style={{ fontSize: 40, lineHeight: 44, letterSpacing: -0.6 }}>
+            {name ? <Text style={{ fontSize: 19, lineHeight: 24, letterSpacing: 0, color: colors.textMuted }}>{`${greeting},\n`}</Text> : greeting}
+            {name ? name.split(' ')[0] : ''}
           </Text>
           {streak ? (
             <Text variant="small" color="textMuted" testID="streak">
